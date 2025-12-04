@@ -103,7 +103,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Ignora richieste a domini esterni (CDN, API, ecc.)
+  // Escludi esplicitamente Google Analytics - deve essere gestito direttamente dal browser
+  try {
+    const url = new URL(event.request.url);
+    if (url.href.includes('googletagmanager.com') || 
+        url.href.includes('google-analytics.com') ||
+        url.href.includes('analytics.google.com')) {
+      return; // Lascia passare al browser senza intercettare
+    }
+  } catch (e) {
+    // Se c'è un errore nel parsing dell'URL, ignora la richiesta
+    return;
+  }
+
+  // Ignora richieste a domini esterni (CDN, API, ecc.) - solo per risorse che vogliamo cacheare
   try {
     const url = new URL(event.request.url);
     const origin = self.location ? self.location.origin : url.origin;
@@ -111,10 +124,8 @@ self.addEventListener('fetch', (event) => {
     if (url.origin !== origin && 
         !url.href.includes('fonts.googleapis.com') &&
         !url.href.includes('fonts.gstatic.com') &&
-        !url.href.includes('cdnjs.cloudflare.com') &&
-        !url.href.includes('googletagmanager.com') &&
-        !url.href.includes('google-analytics.com')) {
-      return;
+        !url.href.includes('cdnjs.cloudflare.com')) {
+      return; // Lascia passare al browser senza intercettare
     }
   } catch (e) {
     // Se c'è un errore nel parsing dell'URL, ignora la richiesta
