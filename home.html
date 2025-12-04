@@ -426,31 +426,57 @@
                 cssReady = true;
             }
             
+            // Verifica anche se ci sono stylesheet caricati
             if (cssReady || document.styleSheets.length > 0) {
-                html.classList.add('css-loaded');
-                html.style.display = 'block';
+                // Piccolo delay per assicurarsi che il CSS sia applicato
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        html.classList.add('css-loaded');
+                        html.style.display = 'block';
+                    });
+                });
                 return true;
             }
             return false;
         }
         
-        // Verifica immediata (per cache del Service Worker)
-        if (!checkCSSLoaded()) {
-            // Se non è pronto, verifica periodicamente
-            var checkInterval = setInterval(function() {
-                if (checkCSSLoaded()) {
+        // Funzione per mostrare la pagina quando CSS è pronto
+        function showPageWhenReady() {
+            // Verifica immediata (per cache del Service Worker o bfcache)
+            if (!checkCSSLoaded()) {
+                // Se non è pronto, verifica periodicamente
+                var checkInterval = setInterval(function() {
+                    if (checkCSSLoaded()) {
+                        clearInterval(checkInterval);
+                    }
+                }, 10);
+                
+                // Timeout di sicurezza (max 1 secondo)
+                setTimeout(function() {
                     clearInterval(checkInterval);
-                }
-            }, 10);
-            
-            // Timeout di sicurezza (max 1 secondo)
-            setTimeout(function() {
-                clearInterval(checkInterval);
-                var html = document.documentElement;
-                html.classList.add('css-loaded');
-                html.style.display = 'block';
-            }, 1000);
+                    var html = document.documentElement;
+                    html.classList.add('css-loaded');
+                    html.style.display = 'block';
+                }, 1000);
+            }
         }
+        
+        // Gestisci anche il back/forward cache (bfcache)
+        window.addEventListener('pageshow', function(event) {
+            // Se la pagina viene ripristinata dalla cache
+            if (event.persisted) {
+                // Reimposta lo stato iniziale
+                var html = document.documentElement;
+                html.classList.remove('css-loaded');
+                html.style.display = 'none';
+                
+                // Verifica che il CSS sia ancora caricato
+                setTimeout(showPageWhenReady, 0);
+            }
+        });
+        
+        // Verifica iniziale
+        showPageWhenReady();
         
         // Attendi che tutto sia caricato (DOM + CSS + Font)
         if (document.readyState === 'loading') {
