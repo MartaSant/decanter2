@@ -19,12 +19,6 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="logo.ico">
     
-    <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts con font-display: swap per evitare FOUC -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
     <!-- Google tag (gtag.js) - Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2KB68FNNQ8"></script>
     <script>
@@ -33,6 +27,12 @@
       gtag('js', new Date());
       gtag('config', 'G-2KB68FNNQ8');
     </script>
+    
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts con font-display: swap per evitare FOUC -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
         /* Stili per i filtri */
@@ -714,15 +714,6 @@
                 if (detailsBtn) {
                     detailsBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        
-                        // Google Analytics 4: traccia l'evento product_info_click con il nome del prodotto
-                        if (typeof gtag === 'function') {
-                            gtag('event', 'product_info_click', {
-                                product_name: vino.nome
-                            });
-                        }
-                        
-                        // Mostra i dettagli del vino (comportamento esistente)
                         showWineDetails(vino);
                     });
                 }
@@ -776,6 +767,18 @@
         // Funzione per mostrare il banner con i dettagli
         function showWineDetails(vino) {
             const details = getWineDetails(vino);
+            
+            // Google Analytics 4: traccia l'apertura del banner dettagli prodotto
+            if (typeof gtag === 'function') {
+                gtag('event', 'product_details_view', {
+                    'product_name': vino.nome,
+                    'product_type': vino.tono,
+                    'product_region': vino.regione,
+                    'product_price': vino.prezzo,
+                    'event_category': 'Product Interaction',
+                    'event_label': vino.nome
+                });
+            }
             
             // Crea o aggiorna il banner
             let banner = document.getElementById('wineDetailsBanner');
