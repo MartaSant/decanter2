@@ -50,24 +50,24 @@
     
     <!-- Stile inline critico per evitare layout rotto durante il caricamento -->
     <style>
+        html {
+            visibility: hidden;
+        }
+        html.css-loaded {
+            visibility: visible;
+        }
         body {
             background-color: #000000;
             color: #ffffff;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.2s ease-in;
-        }
-        body.css-loaded {
-            visibility: visible;
-            opacity: 1;
         }
     </style>
     
-    <!-- CSS principale - caricamento bloccante per evitare FOUC -->
-    <link rel="stylesheet" href="style.css">
+    <!-- CSS principale - caricamento bloccante -->
+    <link rel="stylesheet" href="style.css" onload="document.documentElement.classList.add('css-loaded')" onerror="document.documentElement.classList.add('css-loaded')">
+    <noscript><style>html{visibility:visible;}</style></noscript>
     
     <!-- Google Fonts con font-display: swap per evitare FOUC -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
@@ -407,53 +407,14 @@
         }
         
         // Funzione per mostrare la pagina quando CSS è caricato
-        function showPage() {
-            document.body.classList.add('css-loaded');
-        }
-        
-        // Verifica che il CSS sia caricato in modo più robusto
-        function waitForCSS() {
-            var attempts = 0;
-            var maxAttempts = 100; // 2 secondi totali (20ms * 100)
-            
-            var checkCSS = setInterval(function() {
-                attempts++;
-                
-                // Verifica se il CSS è caricato in modo più affidabile
-                var cssLoaded = false;
-                try {
-                    // Controlla se styleSheets è disponibile e ha contenuto
-                    if (document.styleSheets.length > 0) {
-                        // Verifica che almeno uno stylesheet sia completamente caricato
-                        for (var i = 0; i < document.styleSheets.length; i++) {
-                            try {
-                                var sheet = document.styleSheets[i];
-                                // Se possiamo accedere alle regole, il CSS è caricato
-                                if (sheet.cssRules || sheet.rules) {
-                                    cssLoaded = true;
-                                    break;
-                                }
-                            } catch (e) {
-                                // Ignora errori di CORS per fogli esterni
-                            }
-                        }
-                    }
-                } catch (e) {
-                    // Ignora errori
-                }
-                
-                if (cssLoaded || attempts >= maxAttempts) {
-                    clearInterval(checkCSS);
-                    showPage();
-                }
-            }, 20); // Controlla ogni 20ms invece di 10ms per essere meno aggressivo
-        }
+        // Timeout di sicurezza per mostrare la pagina anche se onload del CSS fallisce
+        setTimeout(function() {
+            document.documentElement.classList.add('css-loaded');
+        }, 1000);
         
         // Attendi che tutto sia caricato (DOM + CSS + Font)
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
-                waitForCSS();
-                
                 // Attendi anche che i font siano caricati
                 if (document.fonts && document.fonts.ready) {
                     document.fonts.ready.then(initPage);
@@ -464,8 +425,6 @@
             });
         } else {
             // DOM già caricato
-            waitForCSS();
-            
             if (document.fonts && document.fonts.ready) {
                 document.fonts.ready.then(initPage);
             } else {
