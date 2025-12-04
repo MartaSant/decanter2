@@ -25,6 +25,15 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
+    <!-- Google tag (gtag.js) - Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2KB68FNNQ8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2KB68FNNQ8');
+    </script>
+    
     <style>
         /* Stili per i filtri */
         .filter-section {
@@ -179,6 +188,142 @@
         
         .favorite-btn.active:hover {
             color: #D4AF37;
+        }
+        
+        /* Pulsante dettagli (+) */
+        .details-btn {
+            position: absolute;
+            top: 0.65rem;
+            right: 2.5rem;
+            background: rgba(255, 201, 40, 0.2);
+            border: 2px solid rgba(255, 201, 40, 0.5);
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFC928;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .details-btn:hover {
+            background: rgba(255, 201, 40, 0.3);
+            border-color: #FFC928;
+            transform: scale(1.1);
+        }
+        
+        /* Banner dettagli */
+        .wine-details-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.98);
+            border-top: 3px solid #FFC928;
+            padding: 1.5rem;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+        }
+        
+        .wine-details-banner.open {
+            transform: translateY(0);
+        }
+        
+        .wine-details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 201, 40, 0.3);
+        }
+        
+        .wine-details-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #FFC928;
+            margin: 0;
+        }
+        
+        .wine-details-close {
+            background: transparent;
+            border: 2px solid rgba(255, 201, 40, 0.5);
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFC928;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .wine-details-close:hover {
+            background: rgba(255, 201, 40, 0.2);
+            border-color: #FFC928;
+            transform: rotate(90deg);
+        }
+        
+        .wine-details-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .wine-details-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .wine-details-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 201, 40, 0.7);
+            font-weight: 600;
+        }
+        
+        .wine-details-value {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+        
+        .wine-details-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FFC928;
+            margin-top: 0.5rem;
+        }
+        
+        .wine-details-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 999;
+        }
+        
+        .wine-details-overlay.show {
+            opacity: 1;
+            visibility: visible;
         }
         
         .wine-tag {
@@ -529,6 +674,11 @@
                             data-wine-name="${vino.nome}">
                         <i class="${isFav ? 'fas fa-heart' : 'far fa-heart'}"></i>
                     </button>
+                    <button class="details-btn" 
+                            aria-label="Mostra dettagli"
+                            data-wine-index="${index}">
+                        +
+                    </button>
                     <div class="menu-item-header">
                         <span class="menu-item-name">${vino.nome}</span>
                         <span class="menu-item-price">${vino.prezzo}&nbsp;&euro;</span>
@@ -558,7 +708,162 @@
                         icon.classList.add('far');
                     }
                 });
+                
+                // Aggiungi event listener al pulsante dettagli
+                const detailsBtn = wineItem.querySelector('.details-btn');
+                if (detailsBtn) {
+                    detailsBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        
+                        // Google Analytics 4: traccia l'evento product_info_click con il nome del prodotto
+                        if (typeof gtag === 'function') {
+                            gtag('event', 'product_info_click', {
+                                product_name: vino.nome
+                            });
+                        }
+                        
+                        // Mostra i dettagli del vino (comportamento esistente)
+                        showWineDetails(vino);
+                    });
+                }
             });
+        }
+        
+        // Funzione per generare informazioni dettagliate del vino
+        function getWineDetails(vino) {
+            const details = {
+                nome: vino.nome,
+                tono: vino.tono,
+                regione: vino.regione,
+                prezzo: vino.prezzo,
+                descrizione: '',
+                caratteristiche: '',
+                abbinamenti: ''
+            };
+            
+            // Descrizioni basate sul tipo di vino
+            const descrizioni = {
+                'bianco': 'Vino bianco elegante e raffinato, perfetto per accompagnare piatti di pesce e formaggi freschi.',
+                'rosso': 'Vino rosso strutturato e corposo, ideale per carni rosse e formaggi stagionati.',
+                'rosè': 'Vino rosato fresco e fruttato, versatile e perfetto per aperitivi e piatti leggeri.',
+                'prosecco': 'Bollicine italiane fresche e vivaci, ideali per celebrare momenti speciali.',
+                'champagne': 'Champagne pregiato, simbolo di eleganza e raffinatezza.'
+            };
+            
+            const caratteristiche = {
+                'bianco': 'Colore giallo paglierino, profumo delicato e floreale, sapore fresco e minerale.',
+                'rosso': 'Colore rosso rubino intenso, profumo complesso e speziato, sapore pieno e persistente.',
+                'rosè': 'Colore rosa salmone, profumo fruttato e floreale, sapore fresco e leggero.',
+                'prosecco': 'Perlage fine e persistente, profumo di frutta bianca, sapore secco e armonioso.',
+                'champagne': 'Perlage elegante e cremoso, profumo complesso, sapore raffinato e persistente.'
+            };
+            
+            const abbinamenti = {
+                'bianco': 'Pesce, frutti di mare, formaggi freschi, verdure, pasta al pesce.',
+                'rosso': 'Carni rosse, selvaggina, formaggi stagionati, pasta al ragù, funghi.',
+                'rosè': 'Aperitivi, insalate, pesce, pizza, formaggi freschi.',
+                'prosecco': 'Aperitivi, antipasti, pesce, formaggi freschi, dolci non troppo dolci.',
+                'champagne': 'Ostriche, caviale, formaggi cremosi, dolci raffinati, aperitivi.'
+            };
+            
+            details.descrizione = descrizioni[vino.tono] || 'Vino di qualità, selezionato per la nostra carta.';
+            details.caratteristiche = caratteristiche[vino.tono] || 'Vino pregiato con caratteristiche uniche.';
+            details.abbinamenti = abbinamenti[vino.tono] || 'Versatile, si abbina a diversi piatti.';
+            
+            return details;
+        }
+        
+        // Funzione per mostrare il banner con i dettagli
+        function showWineDetails(vino) {
+            const details = getWineDetails(vino);
+            
+            // Crea o aggiorna il banner
+            let banner = document.getElementById('wineDetailsBanner');
+            let overlay = document.getElementById('wineDetailsOverlay');
+            
+            if (!banner) {
+                // Crea il banner se non esiste
+                overlay = document.createElement('div');
+                overlay.id = 'wineDetailsOverlay';
+                overlay.className = 'wine-details-overlay';
+                overlay.addEventListener('click', closeWineDetails);
+                
+                banner = document.createElement('div');
+                banner.id = 'wineDetailsBanner';
+                banner.className = 'wine-details-banner';
+                banner.innerHTML = `
+                    <div class="wine-details-header">
+                        <h3 class="wine-details-title"></h3>
+                        <button class="wine-details-close" aria-label="Chiudi dettagli">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="wine-details-content">
+                        <div class="wine-details-section">
+                            <span class="wine-details-label">Descrizione</span>
+                            <p class="wine-details-value" id="wine-desc"></p>
+                        </div>
+                        <div class="wine-details-section">
+                            <span class="wine-details-label">Caratteristiche</span>
+                            <p class="wine-details-value" id="wine-char"></p>
+                        </div>
+                        <div class="wine-details-section">
+                            <span class="wine-details-label">Abbinamenti Consigliati</span>
+                            <p class="wine-details-value" id="wine-pair"></p>
+                        </div>
+                        <div class="wine-details-section">
+                            <span class="wine-details-label">Regione</span>
+                            <p class="wine-details-value" id="wine-region"></p>
+                        </div>
+                        <div class="wine-details-price" id="wine-price"></div>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                document.body.appendChild(banner);
+                
+                // Event listener per il pulsante chiudi
+                const closeBtn = banner.querySelector('.wine-details-close');
+                closeBtn.addEventListener('click', closeWineDetails);
+                
+                // Chiudi con ESC
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && banner.classList.contains('open')) {
+                        closeWineDetails();
+                    }
+                });
+            }
+            
+            // Aggiorna il contenuto
+            banner.querySelector('.wine-details-title').textContent = details.nome;
+            document.getElementById('wine-desc').textContent = details.descrizione;
+            document.getElementById('wine-char').textContent = details.caratteristiche;
+            document.getElementById('wine-pair').textContent = details.abbinamenti;
+            document.getElementById('wine-region').textContent = capitalize(details.regione);
+            document.getElementById('wine-price').textContent = details.prezzo + ' €';
+            
+            // Mostra il banner
+            setTimeout(() => {
+                overlay.classList.add('show');
+                banner.classList.add('open');
+            }, 10);
+            
+            // Previeni scroll del body quando il banner è aperto
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Funzione per chiudere il banner
+        function closeWineDetails() {
+            const banner = document.getElementById('wineDetailsBanner');
+            const overlay = document.getElementById('wineDetailsOverlay');
+            
+            if (banner && overlay) {
+                banner.classList.remove('open');
+                overlay.classList.remove('show');
+                
+                // Ripristina scroll del body
+                document.body.style.overflow = '';
+            }
         }
 
         // Parsing termini di ricerca (logica AND)
