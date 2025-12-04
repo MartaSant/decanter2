@@ -773,32 +773,41 @@
             
             // Google Analytics 4: traccia l'apertura del banner dettagli prodotto
             try {
-                // Usa sempre dataLayer per garantire che l'evento venga inviato
-                if (window.dataLayer) {
-                    const eventData = {
+                if (window.dataLayer && typeof window.gtag === 'function') {
+                    // Invia evento con parametri personalizzati
+                    window.gtag('event', 'product_details_view', {
+                        'product_name': vino.nome,
+                        'product_type': vino.tono,
+                        'product_region': vino.regione,
+                        'product_price': vino.prezzo
+                    });
+                    
+                    // Invia anche tramite dataLayer per compatibilità
+                    window.dataLayer.push({
                         'event': 'product_details_view',
                         'product_name': vino.nome,
                         'product_type': vino.tono,
                         'product_region': vino.regione,
                         'product_price': vino.prezzo
-                    };
-                    
-                    window.dataLayer.push(eventData);
+                    });
                     
                     // Debug: mostra in console cosa viene inviato
-                    console.log('GA4 Event sent:', eventData);
-                    
-                    // Invia anche tramite gtag se disponibile (doppio invio per sicurezza)
-                    if (typeof window.gtag === 'function') {
-                        window.gtag('event', 'product_details_view', {
-                            'product_name': vino.nome,
-                            'product_type': vino.tono,
-                            'product_region': vino.regione,
-                            'product_price': vino.prezzo
-                        });
-                    }
-                } else {
-                    console.warn('GA4 dataLayer non disponibile');
+                    console.log('GA4 Event sent:', {
+                        event: 'product_details_view',
+                        product_name: vino.nome,
+                        product_type: vino.tono,
+                        product_region: vino.regione,
+                        product_price: vino.prezzo
+                    });
+                } else if (window.dataLayer) {
+                    // Fallback: solo dataLayer
+                    window.dataLayer.push({
+                        'event': 'product_details_view',
+                        'product_name': vino.nome,
+                        'product_type': vino.tono,
+                        'product_region': vino.regione,
+                        'product_price': vino.prezzo
+                    });
                 }
             } catch (e) {
                 console.error('Errore nell\'invio evento GA4:', e);
