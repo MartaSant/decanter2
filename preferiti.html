@@ -234,33 +234,6 @@
             I tuoi vini preferiti salvati. Clicca sul cuore per rimuoverli dai preferiti.
         </p>
         
-        <!-- Avviso per file:// -->
-        <div id="fileProtocolWarning" style="display: none; background: rgba(255, 201, 40, 0.15); border: 2px solid rgba(255, 201, 40, 0.5); border-radius: 1rem; padding: 1rem; margin-bottom: 1.2rem;">
-            <p style="color: #FFC928; font-weight: 600; margin-bottom: 0.5rem;">
-                ⚠️ Avviso: File locale rilevato
-            </p>
-            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem;">
-                Stai aprendo il file direttamente dal computer. Con questo metodo, i preferiti salvati in altre pagine potrebbero non essere visibili.
-            </p>
-            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem;">
-                <strong>Soluzione:</strong> Usa un server locale per far funzionare correttamente i preferiti.
-            </p>
-            <details style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.7);">
-                <summary style="cursor: pointer; color: #FFC928; margin-bottom: 0.3rem;">Come usare un server locale</summary>
-                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                    <li><strong>VS Code:</strong> Installa l'estensione "Live Server" e clicca "Go Live"</li>
-                    <li><strong>Python:</strong> Apri il terminale nella cartella e esegui: <code style="background: rgba(0,0,0,0.3); padding: 0.2rem 0.4rem; border-radius: 4px;">python -m http.server 8000</code></li>
-                    <li><strong>Node.js:</strong> Installa <code style="background: rgba(0,0,0,0.3); padding: 0.2rem 0.4rem; border-radius: 4px;">npx http-server</code></li>
-                </ul>
-            </details>
-        </div>
-        
-        <!-- Pulsante di test (rimuovere in produzione) -->
-        <div style="text-align: center; margin-bottom: 1rem;">
-            <button onclick="testFavorites()" style="padding: 0.5rem 1rem; background: rgba(255, 201, 40, 0.2); border: 1px solid rgba(255, 201, 40, 0.5); border-radius: 20px; color: #FFC928; cursor: pointer; font-family: 'Montserrat', sans-serif;">
-                🔍 Test Preferiti (Debug)
-            </button>
-        </div>
 
         <!-- Lista Vini Preferiti -->
         <section class="menu-section">
@@ -322,34 +295,21 @@
         
         function getFavorites() {
             try {
-                // Debug: mostra tutte le chiavi in localStorage
-                console.log('=== DEBUG LOCALSTORAGE ===');
-                console.log('Tutte le chiavi in localStorage:', Object.keys(localStorage));
-                console.log('Chiave cercata:', FAVORITES_KEY);
-                
                 let favorites = localStorage.getItem(FAVORITES_KEY);
-                console.log('Valore raw da localStorage:', favorites);
-                console.log('Tipo del valore:', typeof favorites);
                 
                 // Se non c'è in localStorage e si usa file://, prova sessionStorage
                 if ((!favorites || favorites === 'null' || favorites === 'undefined') && window.location.protocol === 'file:') {
-                    console.log('Nessun valore in localStorage, provo sessionStorage...');
                     const sessionFavorites = tryGetFavoritesFromSession();
                     if (sessionFavorites) {
                         favorites = JSON.stringify(sessionFavorites);
-                        console.log('Trovati in sessionStorage, uso quelli');
                     }
                 }
                 
                 if (!favorites || favorites === 'null' || favorites === 'undefined') {
-                    console.log('Nessun valore trovato o valore null/undefined');
                     return [];
                 }
                 
                 const parsed = JSON.parse(favorites);
-                console.log('Valore parsato:', parsed);
-                console.log('È array?', Array.isArray(parsed));
-                
                 return Array.isArray(parsed) ? parsed : [];
             } catch (e) {
                 console.error('Errore nel recupero dei preferiti:', e);
@@ -372,64 +332,13 @@
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
         
-        // Funzione di test manuale (da rimuovere in produzione)
-        function testFavorites() {
-            console.log('=== TEST MANUALE PREFERITI ===');
-            console.log('Origine corrente:', window.location.origin);
-            console.log('URL corrente:', window.location.href);
-            console.log('Protocollo:', window.location.protocol);
-            
-            // Mostra TUTTO il localStorage
-            console.log('=== TUTTO IL LOCALSTORAGE ===');
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                const value = localStorage.getItem(key);
-                console.log(`Chiave: "${key}"`, 'Valore:', value);
-            }
-            
-            const favorites = getFavorites();
-            console.log('Preferiti recuperati:', favorites);
-            console.log('Numero di preferiti:', favorites.length);
-            console.log('favoritesGrid elemento:', favoritesGrid);
-            console.log('emptyState elemento:', emptyState);
-            console.log('Display di favoritesGrid:', favoritesGrid ? window.getComputedStyle(favoritesGrid).display : 'N/A');
-            console.log('Display di emptyState:', emptyState ? window.getComputedStyle(emptyState).display : 'N/A');
-            console.log('Numero di figli in favoritesGrid:', favoritesGrid ? favoritesGrid.children.length : 'N/A');
-            
-            // Prova a cercare con chiavi alternative
-            console.log('=== RICERCA CHIAVI ALTERNATIVE ===');
-            const alternativeKeys = [
-                'decanter_favorites',
-                'favorites',
-                'preferiti',
-                'wine_favorites'
-            ];
-            alternativeKeys.forEach(key => {
-                const value = localStorage.getItem(key);
-                if (value) {
-                    console.log(`Trovato con chiave "${key}":`, value);
-                }
-            });
-            
-            // Forza il rendering
-            console.log('Forzo renderFavorites()...');
-            renderFavorites();
-            
-            alert('Controlla la console per i dettagli del test!');
-        }
-        
-        // Esponi la funzione globalmente per test dalla console
-        window.testFavorites = testFavorites;
         
         function renderFavorites() {
             if (!favoritesGrid || !emptyState) {
-                console.warn('Elementi DOM non trovati in renderFavorites');
                 return;
             }
             
             const favorites = getFavorites();
-            console.log('Preferiti recuperati in renderFavorites:', favorites);
-            console.log('Tipo:', typeof favorites, 'È array?', Array.isArray(favorites), 'Lunghezza:', favorites ? favorites.length : 'N/A');
             
             if (!Array.isArray(favorites) || favorites.length === 0) {
                 favoritesGrid.style.display = 'none';
@@ -441,22 +350,11 @@
             emptyState.style.display = 'none';
             favoritesGrid.innerHTML = '';
             
-            console.log('Inizio rendering di', favorites.length, 'preferiti');
-            
-            favorites.forEach((vino, index) => {
+            favorites.forEach((vino) => {
                 // Verifica che il vino abbia tutte le proprietà necessarie
                 if (!vino || !vino.nome) {
-                    console.warn('Vino non valido trovato:', vino);
                     return;
                 }
-                
-                // Verifica che tutte le proprietà necessarie siano presenti
-                if (!vino.tono || !vino.regione || !vino.prezzo) {
-                    console.warn('Vino con proprietà mancanti:', vino);
-                    console.warn('Proprietà presenti:', Object.keys(vino));
-                }
-                
-                console.log(`Rendering vino ${index + 1}:`, vino);
                 
                 const wineItem = document.createElement('div');
                 wineItem.className = 'wine-item menu-item';
@@ -488,7 +386,6 @@
                     </div>
                 `;
                 favoritesGrid.appendChild(wineItem);
-                console.log('Vino aggiunto al DOM:', vino.nome);
                 
                 // Aggiungi event listener al pulsante preferiti
                 const favoriteBtn = wineItem.querySelector('.favorite-btn');
@@ -498,21 +395,8 @@
                         removeFromFavorites(vinoNome);
                         renderFavorites(); // Ricarica la lista
                     });
-                } else {
-                    console.warn('Pulsante preferiti non trovato per:', vinoNome);
                 }
             });
-            
-            console.log('Rendering completato. Elementi nel DOM:', favoritesGrid.children.length);
-            console.log('Display style di favoritesGrid:', favoritesGrid.style.display);
-            console.log('Computed display:', window.getComputedStyle(favoritesGrid).display);
-            console.log('Display style di emptyState:', emptyState.style.display);
-            
-            // Forza il display a flex se necessario
-            if (favoritesGrid.children.length > 0 && favoritesGrid.style.display === 'none') {
-                console.warn('favoritesGrid ha display:none ma contiene elementi! Correggo...');
-                favoritesGrid.style.display = 'flex';
-            }
         }
         
         // Scroll to top button
@@ -680,39 +564,24 @@
             }
         }
         
-        // Controlla se si sta usando file://
-        function checkFileProtocol() {
-            if (window.location.protocol === 'file:') {
-                const warning = document.getElementById('fileProtocolWarning');
-                if (warning) {
-                    warning.style.display = 'block';
-                }
-                console.warn('⚠️ File protocol rilevato - localStorage potrebbe non essere condiviso tra file diversi');
-                return true;
-            }
-            return false;
-        }
-        
-        // Prova a recuperare i dati da sessionStorage come fallback
+        // Prova a recuperare i dati da sessionStorage come fallback (solo per file://)
         function tryGetFavoritesFromSession() {
             try {
                 const sessionData = sessionStorage.getItem(FAVORITES_KEY);
                 if (sessionData) {
                     const parsed = JSON.parse(sessionData);
                     if (Array.isArray(parsed) && parsed.length > 0) {
-                        console.log('Trovati preferiti in sessionStorage:', parsed);
                         // Copia in localStorage se possibile
                         try {
                             localStorage.setItem(FAVORITES_KEY, sessionData);
-                            console.log('Preferiti copiati da sessionStorage a localStorage');
                         } catch (e) {
-                            console.warn('Impossibile copiare in localStorage:', e);
+                            // Ignora errori
                         }
                         return parsed;
                     }
                 }
             } catch (e) {
-                console.warn('Errore nel recupero da sessionStorage:', e);
+                // Ignora errori
             }
             return null;
         }

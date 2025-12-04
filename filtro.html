@@ -459,31 +459,19 @@
         
         function saveFavorites(favorites) {
             try {
-                console.log('=== SALVATAGGIO PREFERITI ===');
-                console.log('Chiave usata:', FAVORITES_KEY);
-                console.log('Dati da salvare:', favorites);
-                console.log('JSON stringificato:', JSON.stringify(favorites));
-                
                 const jsonData = JSON.stringify(favorites);
                 
                 // Salva in localStorage
                 localStorage.setItem(FAVORITES_KEY, jsonData);
                 
                 // Se si usa file://, salva anche in sessionStorage come fallback
-                // (sessionStorage è condiviso tra tab della stessa origine)
                 if (window.location.protocol === 'file:') {
                     try {
                         sessionStorage.setItem(FAVORITES_KEY, jsonData);
-                        console.log('Preferiti salvati anche in sessionStorage (fallback per file://)');
                     } catch (e) {
-                        console.warn('Impossibile salvare in sessionStorage:', e);
+                        // Ignora errori
                     }
                 }
-                
-                // Verifica che sia stato salvato
-                const verificato = localStorage.getItem(FAVORITES_KEY);
-                console.log('Verifica salvataggio - valore recuperato:', verificato);
-                console.log('Tutte le chiavi in localStorage:', Object.keys(localStorage));
             } catch (e) {
                 console.error('Errore nel salvataggio dei preferiti:', e);
             }
@@ -499,8 +487,6 @@
             if (!isFavorite(vino.nome)) {
                 favorites.push(vino);
                 saveFavorites(favorites);
-                console.log('Vino aggiunto ai preferiti:', vino);
-                console.log('Tutti i preferiti ora:', favorites);
                 return true;
             }
             return false;
