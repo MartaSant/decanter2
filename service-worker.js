@@ -111,7 +111,9 @@ self.addEventListener('fetch', (event) => {
     if (url.origin !== origin && 
         !url.href.includes('fonts.googleapis.com') &&
         !url.href.includes('fonts.gstatic.com') &&
-        !url.href.includes('cdnjs.cloudflare.com')) {
+        !url.href.includes('cdnjs.cloudflare.com') &&
+        !url.href.includes('googletagmanager.com') &&
+        !url.href.includes('google-analytics.com')) {
       return;
     }
   } catch (e) {
