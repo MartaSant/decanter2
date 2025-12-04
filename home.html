@@ -51,10 +51,10 @@
     <!-- Stile inline critico per evitare layout rotto durante il caricamento -->
     <style>
         html {
-            visibility: hidden;
+            display: none;
         }
         html.css-loaded {
-            visibility: visible;
+            display: block;
         }
         body {
             background-color: #000000;
@@ -66,8 +66,8 @@
     </style>
     
     <!-- CSS principale - caricamento bloccante -->
-    <link rel="stylesheet" href="style.css" onload="document.documentElement.classList.add('css-loaded')" onerror="document.documentElement.classList.add('css-loaded')">
-    <noscript><style>html{visibility:visible;}</style></noscript>
+    <link rel="stylesheet" href="style.css" onload="(function(){var html=document.documentElement;html.classList.add('css-loaded');html.style.display='block';})()" onerror="(function(){var html=document.documentElement;html.classList.add('css-loaded');html.style.display='block';})()">
+    <noscript><style>html{display:block !important;}</style></noscript>
     
     <!-- Google Fonts con font-display: swap per evitare FOUC -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
@@ -409,7 +409,9 @@
         // Funzione per mostrare la pagina quando CSS è caricato
         // Timeout di sicurezza per mostrare la pagina anche se onload del CSS fallisce
         setTimeout(function() {
-            document.documentElement.classList.add('css-loaded');
+            var html = document.documentElement;
+            html.classList.add('css-loaded');
+            html.style.display = 'block';
         }, 1000);
         
         // Attendi che tutto sia caricato (DOM + CSS + Font)
