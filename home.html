@@ -66,7 +66,7 @@
     </style>
     
     <!-- CSS principale - caricamento bloccante -->
-    <link rel="stylesheet" href="style.css" onload="(function(){var html=document.documentElement;html.classList.add('css-loaded');html.style.display='block';})()" onerror="(function(){var html=document.documentElement;html.classList.add('css-loaded');html.style.display='block';})()">
+    <link rel="stylesheet" href="style.css" id="main-stylesheet" onload="(function(){setTimeout(function(){var html=document.documentElement;var sheet=document.getElementById('main-stylesheet');if(sheet.sheet&&sheet.sheet.cssRules&&sheet.sheet.cssRules.length>0){html.classList.add('css-loaded');html.style.display='block';}else{html.classList.add('css-loaded');html.style.display='block';}},50);})()" onerror="(function(){var html=document.documentElement;html.classList.add('css-loaded');html.style.display='block';})()">
     <noscript><style>html{display:block !important;}</style></noscript>
     
     <!-- Google Fonts con font-display: swap per evitare FOUC -->
@@ -407,12 +407,50 @@
         }
         
         // Funzione per mostrare la pagina quando CSS è caricato
-        // Timeout di sicurezza per mostrare la pagina anche se onload del CSS fallisce
-        setTimeout(function() {
+        // Funzione per verificare che il CSS sia caricato e processato
+        function checkCSSLoaded() {
             var html = document.documentElement;
-            html.classList.add('css-loaded');
-            html.style.display = 'block';
-        }, 1000);
+            var sheet = document.getElementById('main-stylesheet');
+            
+            // Verifica se il CSS è caricato e processato
+            var cssReady = false;
+            try {
+                if (sheet && sheet.sheet) {
+                    // Se possiamo accedere alle regole CSS, è caricato
+                    if (sheet.sheet.cssRules && sheet.sheet.cssRules.length > 0) {
+                        cssReady = true;
+                    }
+                }
+            } catch (e) {
+                // Se c'è un errore CORS, il CSS è comunque caricato
+                cssReady = true;
+            }
+            
+            if (cssReady || document.styleSheets.length > 0) {
+                html.classList.add('css-loaded');
+                html.style.display = 'block';
+                return true;
+            }
+            return false;
+        }
+        
+        // Verifica immediata (per cache del Service Worker)
+        if (!checkCSSLoaded()) {
+            // Se non è pronto, verifica periodicamente
+            var checkInterval = setInterval(function() {
+                if (checkCSSLoaded()) {
+                    clearInterval(checkInterval);
+                }
+            }, 10);
+            
+            // Timeout di sicurezza (max 1 secondo)
+            setTimeout(function() {
+                clearInterval(checkInterval);
+                var html = document.documentElement;
+                html.classList.add('css-loaded');
+                html.style.display = 'block';
+            }, 1000);
+        }
         
         // Attendi che tutto sia caricato (DOM + CSS + Font)
         if (document.readyState === 'loading') {
