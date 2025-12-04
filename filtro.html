@@ -25,7 +25,10 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-2KB68FNNQ8');
+      gtag('config', 'G-2KB68FNNQ8', {
+        'cookie_domain': 'auto',
+        'cookie_flags': 'SameSite=None;Secure'
+      });
     </script>
     
     <link rel="stylesheet" href="style.css">
@@ -769,15 +772,34 @@
             const details = getWineDetails(vino);
             
             // Google Analytics 4: traccia l'apertura del banner dettagli prodotto
-            if (typeof gtag === 'function') {
-                gtag('event', 'product_details_view', {
-                    'product_name': vino.nome,
-                    'product_type': vino.tono,
-                    'product_region': vino.regione,
-                    'product_price': vino.prezzo,
-                    'event_category': 'Product Interaction',
-                    'event_label': vino.nome
-                });
+            try {
+                if (typeof window.gtag === 'function') {
+                    window.gtag('event', 'product_details_view', {
+                        'product_name': vino.nome,
+                        'product_type': vino.tono,
+                        'product_region': vino.regione,
+                        'product_price': vino.prezzo,
+                        'event_category': 'Product Interaction',
+                        'event_label': vino.nome
+                    });
+                    console.log('Evento GA4 inviato:', 'product_details_view', vino.nome);
+                } else if (window.dataLayer) {
+                    // Fallback: usa dataLayer direttamente
+                    window.dataLayer.push({
+                        'event': 'product_details_view',
+                        'product_name': vino.nome,
+                        'product_type': vino.tono,
+                        'product_region': vino.regione,
+                        'product_price': vino.prezzo,
+                        'event_category': 'Product Interaction',
+                        'event_label': vino.nome
+                    });
+                    console.log('Evento GA4 inviato via dataLayer:', 'product_details_view', vino.nome);
+                } else {
+                    console.warn('Google Analytics non disponibile');
+                }
+            } catch (e) {
+                console.error('Errore nell\'invio evento GA4:', e);
             }
             
             // Crea o aggiorna il banner
