@@ -1,0 +1,21 @@
+Falanghina IGP Campania 13% bianco campania
+Pinot Grigio DOC Friuli 12,5% bianco veneto
+Vermentino DOCG Sardegna 13% bianco sicilia
+Gavi DOCG Piemonte 12,5% bianco piemonte
+Greco di Tufo DOCG Campania 13% bianco campania
+Aglianico IGP Campania 14% rosso campania
+Chianti Classico DOCG Toscana 13,5% rosso toscana
+Barolo DOCG Piemonte 14% rosso piemonte
+Montepulciano d'Abruzzo DOC 13% rosso toscana
+Nero d'Avola Sicilia DOC 13,5% rosso sicilia
+Brunello di Montalcino DOCG 14,5% rosso toscana
+Barbaresco DOCG Piemonte 14% rosso piemonte
+Amarone della Valpolicella DOCG 15% rosso veneto
+Prosecco DOCG Veneto 11,5% prosecco veneto
+Prosecco Superiore DOCG 12% prosecco veneto
+Champagne Brut 12% champagne veneto
+Champagne Rosé 12,5% champagne toscana
+Rosè di Toscana IGT 12% rosè toscana
+Cerasuolo d'Abruzzo DOC 13% rosè campania
+Rosè Sicilia DOC 12,5% rosè sicilia
+

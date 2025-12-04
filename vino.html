@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vino rosso con bordo ondulato (SVG trasparente)</title>
+  <style>
+    :root{
+      --wine1:#7b1020;
+      --wine2:#4c0612;
+      --wine3:#2a0208;
+      --shine: rgba(255,255,255,.18);
+      --shade: rgba(0,0,0,.22);
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      display:grid;
+      place-items:center;
+      background: transparent;
+    }
+
+    svg{
+      width:min(320px, 90vw);
+      height:auto;
+      display:block;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      animate { display:none; } /* ferma l’onda */
+    }
+  </style>
+</head>
+<body>
+
+<svg viewBox="0 0 220 300" role="img" aria-label="Vino rosso 2D con cima ondulata (trasparente)">
+  <defs>
+    <linearGradient id="wineGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="var(--wine1)"/>
+      <stop offset=".55" stop-color="var(--wine2)"/>
+      <stop offset="1"   stop-color="var(--wine3)"/>
+    </linearGradient>
+
+    <!-- Clip animato: è lui che rende ondulata la cima -->
+    <clipPath id="wineWaveClip">
+      <path>
+        <!-- stato A -->
+        <animate attributeName="d" dur="2.6s" repeatCount="indefinite"
+          values="
+          M64 246 L64 90
+          C82 84, 100 96, 110 90
+          C120 84, 138 96, 156 90
+          L156 246 Z;
+
+          M64 246 L64 90
+          C82 96, 100 84, 110 90
+          C120 96, 138 84, 156 90
+          L156 246 Z;
+
+          M64 246 L64 90
+          C82 84, 100 96, 110 90
+          C120 84, 138 96, 156 90
+          L156 246 Z
+          " />
+      </path>
+    </clipPath>
+  </defs>
+
+  <!-- Vino (rettangolo “pieno” + clip ondulato sopra) -->
+  <g clip-path="url(#wineWaveClip)">
+    <rect x="64" y="84" width="92" height="162" fill="url(#wineGrad)"/>
+
+    <!-- riflesso -->
+    <path d="M78 98 C88 128, 80 190, 96 236"
+          fill="none" stroke="var(--shine)" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- ombra interna -->
+    <path d="M148 96 C138 140, 146 196, 140 236"
+          fill="none" stroke="var(--shade)" stroke-width="10" stroke-linecap="round"/>
+  </g>
+</svg>
+
+</body>
+</html>

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>I Miei Preferiti · Decanter Wine & More</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="I tuoi vini preferiti - Decanter Wine & More">
+    
+    <!-- Meta tag iOS (PWA/Home Screen) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Decanter">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8B4513">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="logo.ico">
+    
+    <link rel="stylesheet" href="style.css">
+    <!-- Preload font critico Montserrat -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" as="style">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        .wine-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+        
+        .wine-item {
+            padding: 0.65rem 0.55rem;
+            border-radius: 0.7rem;
+            background: rgba(17, 17, 17, 0.96);
+            border: 1px solid rgba(255, 201, 40, 0.22);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            position: relative;
+        }
+        
+        .wine-item-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.4rem;
+        }
+        
+        .wine-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #111111;
+        }
+        
+        /* Colori per tono */
+        .wine-tag--tono-bianco {
+            background-color: #F5E6D3;
+        }
+        
+        .wine-tag--tono-rosso {
+            background-color: #7b1020;
+            color: #ffffff;
+        }
+        
+        .wine-tag--tono-rosè {
+            background-color: #E8B4B8;
+        }
+        
+        .wine-tag--tono-prosecco {
+            background-color: #D4E8D4;
+        }
+        
+        .wine-tag--tono-champagne {
+            background-color: #FFE5B4;
+        }
+        
+        /* Colori per regione */
+        .wine-tag--regione-toscana {
+            background-color: #8B4513;
+            color: #ffffff;
+        }
+        
+        .wine-tag--regione-piemonte {
+            background-color: #A0522D;
+            color: #ffffff;
+        }
+        
+        .wine-tag--regione-veneto {
+            background-color: #722F37;
+            color: #ffffff;
+        }
+        
+        .wine-tag--regione-campania {
+            background-color: #D4AF37;
+        }
+        
+        .wine-tag--regione-sicilia {
+            background-color: #CD853F;
+            color: #ffffff;
+        }
+        
+        /* Pulsante preferiti */
+        .favorite-btn {
+            position: absolute;
+            top: 0.65rem;
+            right: 0.55rem;
+            background: transparent;
+            border: none;
+            color: #FFC928;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.3rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .favorite-btn:hover {
+            color: #D4AF37;
+            transform: scale(1.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: rgba(255, 201, 40, 0.3);
+        }
+        
+        .empty-state-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .empty-state-text {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-state-link {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 201, 40, 0.2);
+            border: 2px solid rgba(255, 201, 40, 0.5);
+            border-radius: 30px;
+            color: #FFC928;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .empty-state-link:hover {
+            background: rgba(255, 201, 40, 0.3);
+            border-color: #FFC928;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="menu-body">
+    <!-- Sfondo SVG animato del vino -->
+    <div class="wine-background">
+        <svg viewBox="0 0 220 300" role="img" aria-label="Vino rosso 2D con cima ondulata (trasparente)" class="wine-svg">
+            <defs>
+                <linearGradient id="wineGrad-preferiti" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#7b1020"/>
+                    <stop offset=".55" stop-color="#4c0612"/>
+                    <stop offset="1" stop-color="#2a0208"/>
+                </linearGradient>
+                <clipPath id="wineWaveClip-preferiti">
+                    <path>
+                        <animate attributeName="d" dur="2.6s" repeatCount="indefinite"
+                            values="
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 96, 100 84, 110 90
+                            C120 96, 138 84, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z
+                            " />
+                    </path>
+                </clipPath>
+            </defs>
+            <g clip-path="url(#wineWaveClip-preferiti)">
+                <rect x="64" y="84" width="92" height="162" fill="url(#wineGrad-preferiti)"/>
+                <path d="M78 98 C88 128, 80 190, 96 236"
+                    fill="none" stroke="rgba(255,255,255,.18)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M148 96 C138 140, 146 196, 140 236"
+                    fill="none" stroke="rgba(0,0,0,.22)" stroke-width="10" stroke-linecap="round"/>
+            </g>
+        </svg>
+    </div>
+    <div class="menu-page">
+        <header class="menu-header">
+            <div class="menu-header-left">
+                <div class="menu-logo">
+                    <img src="logo.png" alt="Decanter Wine & More">
+                </div>
+                <div class="menu-title-block">
+                    <span class="menu-eyebrow">Decanter Wine &amp; More</span>
+                    <h1 class="menu-title">I Miei Preferiti</h1>
+                </div>
+            </div>
+            <a href="home.html" class="menu-close">
+                <span>&larr;</span>
+                <span>Home</span>
+            </a>
+        </header>
+
+        <p class="menu-intro">
+            I tuoi vini preferiti salvati. Clicca sul cuore per rimuoverli dai preferiti.
+        </p>
+        
+        <!-- Avviso per file:// -->
+        <div id="fileProtocolWarning" style="display: none; background: rgba(255, 201, 40, 0.15); border: 2px solid rgba(255, 201, 40, 0.5); border-radius: 1rem; padding: 1rem; margin-bottom: 1.2rem;">
+            <p style="color: #FFC928; font-weight: 600; margin-bottom: 0.5rem;">
+                ⚠️ Avviso: File locale rilevato
+            </p>
+            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem;">
+                Stai aprendo il file direttamente dal computer. Con questo metodo, i preferiti salvati in altre pagine potrebbero non essere visibili.
+            </p>
+            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem;">
+                <strong>Soluzione:</strong> Usa un server locale per far funzionare correttamente i preferiti.
+            </p>
+            <details style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.7);">
+                <summary style="cursor: pointer; color: #FFC928; margin-bottom: 0.3rem;">Come usare un server locale</summary>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li><strong>VS Code:</strong> Installa l'estensione "Live Server" e clicca "Go Live"</li>
+                    <li><strong>Python:</strong> Apri il terminale nella cartella e esegui: <code style="background: rgba(0,0,0,0.3); padding: 0.2rem 0.4rem; border-radius: 4px;">python -m http.server 8000</code></li>
+                    <li><strong>Node.js:</strong> Installa <code style="background: rgba(0,0,0,0.3); padding: 0.2rem 0.4rem; border-radius: 4px;">npx http-server</code></li>
+                </ul>
+            </details>
+        </div>
+        
+        <!-- Pulsante di test (rimuovere in produzione) -->
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <button onclick="testFavorites()" style="padding: 0.5rem 1rem; background: rgba(255, 201, 40, 0.2); border: 1px solid rgba(255, 201, 40, 0.5); border-radius: 20px; color: #FFC928; cursor: pointer; font-family: 'Montserrat', sans-serif;">
+                🔍 Test Preferiti (Debug)
+            </button>
+        </div>
+
+        <!-- Lista Vini Preferiti -->
+        <section class="menu-section">
+            <h2 class="menu-section-title">Vini Preferiti</h2>
+            <div class="wine-grid" id="favoritesGrid">
+                <!-- I vini preferiti verranno caricati dinamicamente -->
+            </div>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">
+                    <i class="far fa-heart"></i>
+                </div>
+                <div class="empty-state-title">Nessun vino preferito</div>
+                <div class="empty-state-text">
+                    Non hai ancora salvato nessun vino nei preferiti.<br>
+                    Vai alla pagina dei vini per iniziare a salvare i tuoi preferiti!
+                </div>
+                <a href="filtro.html" class="empty-state-link">
+                    <i class="fas fa-wine-glass"></i> Esplora i vini
+                </a>
+            </div>
+        </section>
+
+        <p class="menu-footer">
+            I tuoi preferiti vengono salvati localmente nel browser.
+        </p>
+        <p class="menu-footer menu-footer-designed">
+            Designed by <a href="autore.html" class="footer-author-link">MeStesso</a>
+        </p>
+        <p class="menu-footer menu-footer-designed" style="margin-top: 0.3rem;">
+            <a href="policy.html" class="footer-author-link">Policy</a>
+        </p>
+    </div>
+
+    <!-- Barra fissa in basso -->
+    <div class="bottom-bar">
+        <a href="https://wa.me/393713674624" class="bottom-bar-btn bottom-bar-btn--wa" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp</span>
+        </a>
+        <a href="https://www.instagram.com/decanterwineand/" class="bottom-bar-btn bottom-bar-btn--ig" target="_blank" rel="noopener">
+            <i class="fab fa-instagram"></i>
+            <span>Instagram</span>
+        </a>
+        <a href="tel:+393713674624" class="bottom-bar-btn bottom-bar-btn--call">
+            <i class="fas fa-phone"></i>
+            <span>Chiama</span>
+        </a>
+    </div>
+
+    <button class="scroll-top" aria-label="Torna all'inizio">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // Gestione preferiti con localStorage
+        const FAVORITES_KEY = 'decanter_favorites';
+        const favoritesGrid = document.getElementById('favoritesGrid');
+        const emptyState = document.getElementById('emptyState');
+        
+        function getFavorites() {
+            try {
+                // Debug: mostra tutte le chiavi in localStorage
+                console.log('=== DEBUG LOCALSTORAGE ===');
+                console.log('Tutte le chiavi in localStorage:', Object.keys(localStorage));
+                console.log('Chiave cercata:', FAVORITES_KEY);
+                
+                let favorites = localStorage.getItem(FAVORITES_KEY);
+                console.log('Valore raw da localStorage:', favorites);
+                console.log('Tipo del valore:', typeof favorites);
+                
+                // Se non c'è in localStorage e si usa file://, prova sessionStorage
+                if ((!favorites || favorites === 'null' || favorites === 'undefined') && window.location.protocol === 'file:') {
+                    console.log('Nessun valore in localStorage, provo sessionStorage...');
+                    const sessionFavorites = tryGetFavoritesFromSession();
+                    if (sessionFavorites) {
+                        favorites = JSON.stringify(sessionFavorites);
+                        console.log('Trovati in sessionStorage, uso quelli');
+                    }
+                }
+                
+                if (!favorites || favorites === 'null' || favorites === 'undefined') {
+                    console.log('Nessun valore trovato o valore null/undefined');
+                    return [];
+                }
+                
+                const parsed = JSON.parse(favorites);
+                console.log('Valore parsato:', parsed);
+                console.log('È array?', Array.isArray(parsed));
+                
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.error('Errore nel recupero dei preferiti:', e);
+                return [];
+            }
+        }
+        
+        function saveFavorites(favorites) {
+            localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+        }
+        
+        function removeFromFavorites(wineName) {
+            const favorites = getFavorites();
+            const filtered = favorites.filter(fav => fav.nome !== wineName);
+            saveFavorites(filtered);
+            return filtered;
+        }
+        
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        // Funzione di test manuale (da rimuovere in produzione)
+        function testFavorites() {
+            console.log('=== TEST MANUALE PREFERITI ===');
+            console.log('Origine corrente:', window.location.origin);
+            console.log('URL corrente:', window.location.href);
+            console.log('Protocollo:', window.location.protocol);
+            
+            // Mostra TUTTO il localStorage
+            console.log('=== TUTTO IL LOCALSTORAGE ===');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                console.log(`Chiave: "${key}"`, 'Valore:', value);
+            }
+            
+            const favorites = getFavorites();
+            console.log('Preferiti recuperati:', favorites);
+            console.log('Numero di preferiti:', favorites.length);
+            console.log('favoritesGrid elemento:', favoritesGrid);
+            console.log('emptyState elemento:', emptyState);
+            console.log('Display di favoritesGrid:', favoritesGrid ? window.getComputedStyle(favoritesGrid).display : 'N/A');
+            console.log('Display di emptyState:', emptyState ? window.getComputedStyle(emptyState).display : 'N/A');
+            console.log('Numero di figli in favoritesGrid:', favoritesGrid ? favoritesGrid.children.length : 'N/A');
+            
+            // Prova a cercare con chiavi alternative
+            console.log('=== RICERCA CHIAVI ALTERNATIVE ===');
+            const alternativeKeys = [
+                'decanter_favorites',
+                'favorites',
+                'preferiti',
+                'wine_favorites'
+            ];
+            alternativeKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    console.log(`Trovato con chiave "${key}":`, value);
+                }
+            });
+            
+            // Forza il rendering
+            console.log('Forzo renderFavorites()...');
+            renderFavorites();
+            
+            alert('Controlla la console per i dettagli del test!');
+        }
+        
+        // Esponi la funzione globalmente per test dalla console
+        window.testFavorites = testFavorites;
+        
+        function renderFavorites() {
+            if (!favoritesGrid || !emptyState) {
+                console.warn('Elementi DOM non trovati in renderFavorites');
+                return;
+            }
+            
+            const favorites = getFavorites();
+            console.log('Preferiti recuperati in renderFavorites:', favorites);
+            console.log('Tipo:', typeof favorites, 'È array?', Array.isArray(favorites), 'Lunghezza:', favorites ? favorites.length : 'N/A');
+            
+            if (!Array.isArray(favorites) || favorites.length === 0) {
+                favoritesGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            favoritesGrid.style.display = 'flex';
+            emptyState.style.display = 'none';
+            favoritesGrid.innerHTML = '';
+            
+            console.log('Inizio rendering di', favorites.length, 'preferiti');
+            
+            favorites.forEach((vino, index) => {
+                // Verifica che il vino abbia tutte le proprietà necessarie
+                if (!vino || !vino.nome) {
+                    console.warn('Vino non valido trovato:', vino);
+                    return;
+                }
+                
+                // Verifica che tutte le proprietà necessarie siano presenti
+                if (!vino.tono || !vino.regione || !vino.prezzo) {
+                    console.warn('Vino con proprietà mancanti:', vino);
+                    console.warn('Proprietà presenti:', Object.keys(vino));
+                }
+                
+                console.log(`Rendering vino ${index + 1}:`, vino);
+                
+                const wineItem = document.createElement('div');
+                wineItem.className = 'wine-item menu-item';
+                wineItem.setAttribute('data-tono', vino.tono || '');
+                wineItem.setAttribute('data-regione', vino.regione || '');
+                
+                // Assicurati che tutte le proprietà siano definite
+                const vinoNome = vino.nome || 'Nome non disponibile';
+                const vinoTono = vino.tono || 'sconosciuto';
+                const vinoRegione = vino.regione || 'sconosciuta';
+                const vinoPrezzo = vino.prezzo || '0,00';
+                
+                wineItem.innerHTML = `
+                    <button class="favorite-btn active" 
+                            aria-label="Rimuovi dai preferiti"
+                            data-wine-name="${vino.nome}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">${vinoNome}</span>
+                        <span class="menu-item-price">${vinoPrezzo}&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        ${capitalize(vinoTono)} - ${capitalize(vinoRegione)}
+                    </p>
+                    <div class="wine-item-tags">
+                        <span class="wine-tag wine-tag--tono-${vinoTono}">${capitalize(vinoTono)}</span>
+                        <span class="wine-tag wine-tag--regione-${vinoRegione}">${capitalize(vinoRegione)}</span>
+                    </div>
+                `;
+                favoritesGrid.appendChild(wineItem);
+                console.log('Vino aggiunto al DOM:', vino.nome);
+                
+                // Aggiungi event listener al pulsante preferiti
+                const favoriteBtn = wineItem.querySelector('.favorite-btn');
+                if (favoriteBtn) {
+                    favoriteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        removeFromFavorites(vinoNome);
+                        renderFavorites(); // Ricarica la lista
+                    });
+                } else {
+                    console.warn('Pulsante preferiti non trovato per:', vinoNome);
+                }
+            });
+            
+            console.log('Rendering completato. Elementi nel DOM:', favoritesGrid.children.length);
+            console.log('Display style di favoritesGrid:', favoritesGrid.style.display);
+            console.log('Computed display:', window.getComputedStyle(favoritesGrid).display);
+            console.log('Display style di emptyState:', emptyState.style.display);
+            
+            // Forza il display a flex se necessario
+            if (favoritesGrid.children.length > 0 && favoritesGrid.style.display === 'none') {
+                console.warn('favoritesGrid ha display:none ma contiene elementi! Correggo...');
+                favoritesGrid.style.display = 'flex';
+            }
+        }
+        
+        // Scroll to top button
+        (function() {
+            const btn = document.querySelector('.scroll-top');
+            if (!btn) return;
+            
+            btn.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            const scrollThreshold = 200;
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > scrollThreshold) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            });
+        })();
+        
+        // Registrazione Service Worker (solo se non si usa file://)
+        if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registrato con successo:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Registrazione Service Worker fallita:', error);
+                    });
+            });
+        }
+        
+        // Animazione dello sfondo vino basata sullo scroll
+        (function() {
+            const wineBg = document.querySelector('.wine-background');
+            if (!wineBg) return;
+            
+            const wavePath = wineBg.querySelector('clipPath path');
+            const animateElement = wineBg.querySelector('animate');
+            
+            const flatWavePath = 'M64 246 L64 90 L156 90 L156 246 Z';
+            
+            const animationValues = `
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 96, 100 84, 110 90
+                            C120 96, 138 84, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z
+                            `;
+            
+            if (wavePath && animateElement) {
+                animateElement.remove();
+                wavePath.setAttribute('d', flatWavePath);
+            }
+            
+            let scrollTimeout;
+            
+            function updateWinePosition() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const documentHeight = document.documentElement.scrollHeight;
+                const viewportHeight = window.innerHeight;
+                const maxScroll = documentHeight - viewportHeight;
+                
+                if (maxScroll <= 0) {
+                    wineBg.style.top = '50%';
+                    wineBg.style.transform = 'translate(-50%, -50%) scale(3.0)';
+                    return;
+                }
+                
+                const scrollPercent = scrollTop / maxScroll;
+                const topPosition = 100 - (scrollPercent * 100);
+                
+                wineBg.style.top = topPosition + 'vh';
+                wineBg.style.transform = 'translate(-50%, 0) scale(3.0)';
+            }
+            
+            function startScrollAnimation() {
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (!existingAnimate) {
+                        wavePath.removeAttribute('d');
+                        
+                        const newAnimate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                        newAnimate.setAttribute('attributeName', 'd');
+                        newAnimate.setAttribute('dur', '2.6s');
+                        newAnimate.setAttribute('repeatCount', 'indefinite');
+                        newAnimate.setAttribute('values', animationValues.trim());
+                        wavePath.appendChild(newAnimate);
+                    }
+                }
+                
+                clearTimeout(scrollTimeout);
+            }
+            
+            function stopScrollAnimation() {
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (existingAnimate) {
+                        const intermediatePath = 'M64 246 L64 90 C82 90, 100 90, 110 90 C120 90, 138 90, 156 90 L156 246 Z';
+                        
+                        existingAnimate.remove();
+                        wavePath.setAttribute('d', intermediatePath);
+                        
+                        requestAnimationFrame(function() {
+                            requestAnimationFrame(function() {
+                                wavePath.setAttribute('d', flatWavePath);
+                            });
+                        });
+                    }
+                }
+            }
+            
+            updateWinePosition();
+            
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                startScrollAnimation();
+                
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateWinePosition();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+                
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(stopScrollAnimation, 500);
+            }, { passive: true });
+            
+            window.addEventListener('resize', function() {
+                updateWinePosition();
+            });
+        })();
+        
+        // Test rapido per verificare che localStorage funzioni
+        function testLocalStorage() {
+            try {
+                const testKey = 'decanter_test';
+                localStorage.setItem(testKey, 'test');
+                const testValue = localStorage.getItem(testKey);
+                localStorage.removeItem(testKey);
+                if (testValue === 'test') {
+                    console.log('✓ localStorage funziona correttamente');
+                    return true;
+                } else {
+                    console.error('✗ localStorage non funziona correttamente');
+                    return false;
+                }
+            } catch (e) {
+                console.error('✗ Errore nel test localStorage:', e);
+                return false;
+            }
+        }
+        
+        // Controlla se si sta usando file://
+        function checkFileProtocol() {
+            if (window.location.protocol === 'file:') {
+                const warning = document.getElementById('fileProtocolWarning');
+                if (warning) {
+                    warning.style.display = 'block';
+                }
+                console.warn('⚠️ File protocol rilevato - localStorage potrebbe non essere condiviso tra file diversi');
+                return true;
+            }
+            return false;
+        }
+        
+        // Prova a recuperare i dati da sessionStorage come fallback
+        function tryGetFavoritesFromSession() {
+            try {
+                const sessionData = sessionStorage.getItem(FAVORITES_KEY);
+                if (sessionData) {
+                    const parsed = JSON.parse(sessionData);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        console.log('Trovati preferiti in sessionStorage:', parsed);
+                        // Copia in localStorage se possibile
+                        try {
+                            localStorage.setItem(FAVORITES_KEY, sessionData);
+                            console.log('Preferiti copiati da sessionStorage a localStorage');
+                        } catch (e) {
+                            console.warn('Impossibile copiare in localStorage:', e);
+                        }
+                        return parsed;
+                    }
+                }
+            } catch (e) {
+                console.warn('Errore nel recupero da sessionStorage:', e);
+            }
+            return null;
+        }
+        
+        // Inizializza la pagina quando il DOM è pronto
+        function initPage() {
+            console.log('=== INIZIALIZZAZIONE PAGINA PREFERITI ===');
+            console.log('readyState:', document.readyState);
+            console.log('Protocollo:', window.location.protocol);
+            console.log('favoritesGrid:', favoritesGrid);
+            console.log('emptyState:', emptyState);
+            
+            // Controlla se si usa file://
+            const isFileProtocol = checkFileProtocol();
+            
+            // Test localStorage
+            if (!testLocalStorage()) {
+                alert('localStorage non è disponibile. I preferiti potrebbero non funzionare correttamente.');
+            }
+            
+            if (!favoritesGrid || !emptyState) {
+                console.error('Elementi DOM non trovati, riprovo tra 100ms...');
+                setTimeout(initPage, 100);
+                return;
+            }
+            
+            console.log('DOM pronto, chiamo renderFavorites');
+            
+            // Se si usa file://, prova a recuperare da sessionStorage
+            if (isFileProtocol) {
+                const sessionFavorites = tryGetFavoritesFromSession();
+                if (sessionFavorites) {
+                    console.log('Usando preferiti da sessionStorage');
+                }
+            }
+            
+            // Verifica immediata dei preferiti
+            const testFavorites = getFavorites();
+            console.log('Test immediato - Preferiti trovati:', testFavorites);
+            console.log('Test immediato - Numero:', testFavorites ? testFavorites.length : 0);
+            
+            renderFavorites();
+        }
+        
+        // Chiama initPage quando il DOM è pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOMContentLoaded event fired');
+                initPage();
+            });
+        } else {
+            // DOM già caricato
+            console.log('DOM già caricato, chiamo initPage immediatamente');
+            // Usa setTimeout per assicurarsi che tutti gli script siano caricati
+            setTimeout(initPage, 0);
+        }
+        
+        // Ascolta i cambiamenti nel localStorage da altre pagine
+        window.addEventListener('storage', function(e) {
+            if (e.key === FAVORITES_KEY) {
+                renderFavorites();
+            }
+        });
+        
+        // Aggiorna anche quando la pagina diventa visibile (nel caso in cui l'utente torni indietro)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                renderFavorites();
+            }
+        });
+        
+        // Forza un aggiornamento anche al focus della pagina
+        window.addEventListener('focus', function() {
+            renderFavorites();
+        });
+    </script>
+</body>
+</html>
+

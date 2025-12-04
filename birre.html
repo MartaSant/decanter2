@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Birre · Decanter Wine & More</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="Birre Decanter Wine & More: birre artigianali e internazionali in bottiglia e alla spina.">
+    
+    <!-- Meta tag iOS (PWA/Home Screen) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Decanter">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8B4513">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="logo.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://decanterwinemore.github.io/birre.html">
+    
+    <!-- Preconnect per CDN esterni (performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://decanterwinemore.github.io/birre.html">
+    <meta property="og:title" content="Birre · Decanter Wine & More">
+    <meta property="og:description" content="Birre Decanter Wine & More: birre artigianali e internazionali in bottiglia e alla spina.">
+    <meta property="og:image" content="https://decanterwinemore.github.io/logo.png">
+    <meta property="og:locale" content="it_IT">
+    <meta property="og:site_name" content="Decanter Wine & More">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://decanterwinemore.github.io/birre.html">
+    <meta name="twitter:title" content="Birre · Decanter Wine & More">
+    <meta name="twitter:description" content="Birre Decanter Wine & More: birre artigianali e internazionali in bottiglia e alla spina.">
+    <meta name="twitter:image" content="https://decanterwinemore.github.io/logo.png">
+    
+    <!-- Meta tag per disabilitare la cache del browser -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="style.css">
+    <!-- Preload font critico Montserrat -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" as="style">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="menu-body">
+    <!-- Sfondo SVG animato del vino -->
+    <div class="wine-background">
+        <svg viewBox="0 0 220 300" role="img" aria-label="Vino rosso 2D con cima ondulata (trasparente)" class="wine-svg">
+            <defs>
+                <linearGradient id="wineGrad-birre" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#7b1020"/>
+                    <stop offset=".55" stop-color="#4c0612"/>
+                    <stop offset="1" stop-color="#2a0208"/>
+                </linearGradient>
+                <clipPath id="wineWaveClip-birre">
+                    <path>
+                        <animate attributeName="d" dur="2.6s" repeatCount="indefinite"
+                            values="
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 96, 100 84, 110 90
+                            C120 96, 138 84, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z
+                            " />
+                    </path>
+                </clipPath>
+            </defs>
+            <g clip-path="url(#wineWaveClip-birre)">
+                <rect x="64" y="84" width="92" height="162" fill="url(#wineGrad-birre)"/>
+                <path d="M78 98 C88 128, 80 190, 96 236"
+                    fill="none" stroke="rgba(255,255,255,.18)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M148 96 C138 140, 146 196, 140 236"
+                    fill="none" stroke="rgba(0,0,0,.22)" stroke-width="10" stroke-linecap="round"/>
+            </g>
+        </svg>
+    </div>
+    <div class="menu-page">
+        <header class="menu-header">
+            <div class="menu-header-left">
+                <div class="menu-logo">
+                    <img src="logo.png" alt="Decanter Wine & More">
+                </div>
+                <div class="menu-title-block">
+                    <span class="menu-eyebrow">Decanter Wine &amp; More</span>
+                    <h1 class="menu-title">Birre</h1>
+                </div>
+            </div>
+            <a href="home.html" class="menu-close">
+                <span>&larr;</span>
+                <span>Home</span>
+            </a>
+        </header>
+
+        <p class="menu-intro">
+            Selezione di birre artigianali e internazionali. Disponibili in bottiglia e alla spina
+            per accompagnare i nostri taglieri.
+        </p>
+
+        <section class="menu-section">
+            <h2 class="menu-section-title">Birre alla spina</h2>
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Birra chiara 0,3L</span>
+                        <span class="menu-item-price">4,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Birra chiara alla spina
+                    </p>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Birra chiara 0,5L</span>
+                        <span class="menu-item-price">6,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Birra chiara alla spina
+                    </p>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Birra rossa 0,3L</span>
+                        <span class="menu-item-price">4,50&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Birra rossa alla spina
+                    </p>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Birra IPA 0,3L</span>
+                        <span class="menu-item-price">5,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        India Pale Ale artigianale
+                    </p>
+                </li>
+            </ul>
+        </section>
+
+        <section class="menu-section" style="margin-top: 1.2rem;">
+            <h2 class="menu-section-title">Birre in bottiglia</h2>
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Birra artigianale locale 0,33L</span>
+                        <span class="menu-item-price">5,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Birra artigianale prodotta localmente
+                    </p>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Peroni 0,33L</span>
+                        <span class="menu-item-price">4,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Birra italiana classica
+                    </p>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Heineken 0,33L</span>
+                        <span class="menu-item-price">4,50&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Birra olandese
+                    </p>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Corona Extra 0,33L</span>
+                        <span class="menu-item-price">5,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Birra messicana
+                    </p>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Guinness 0,44L</span>
+                        <span class="menu-item-price">6,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Stout irlandese
+                    </p>
+                </li>
+            </ul>
+        </section>
+
+        <p class="menu-footer">
+            La selezione di birre pu&ograve; variare in base alla disponibilit&agrave;
+            e alle proposte stagionali.
+        </p>
+        <p class="menu-footer menu-footer-designed">
+            Designed by <a href="autore.html" class="footer-author-link">MeStesso</a>
+        </p>
+        <p class="menu-footer menu-footer-designed" style="margin-top: 0.3rem;">
+            <a href="policy.html" class="footer-author-link">Policy</a>
+        </p>
+    </div>
+
+    <!-- Barra fissa in basso -->
+    <div class="bottom-bar">
+        <a href="https://wa.me/393713674624" class="bottom-bar-btn bottom-bar-btn--wa" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp</span>
+        </a>
+        <a href="https://www.instagram.com/decanterwineand/" class="bottom-bar-btn bottom-bar-btn--ig" target="_blank" rel="noopener">
+            <i class="fab fa-instagram"></i>
+            <span>Instagram</span>
+        </a>
+        <a href="tel:+393713674624" class="bottom-bar-btn bottom-bar-btn--call">
+            <i class="fas fa-phone"></i>
+            <span>Chiama</span>
+        </a>
+    </div>
+
+    <button class="scroll-top" aria-label="Torna all'inizio">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // scroll to top button
+        (function() {
+            const btn = document.querySelector('.scroll-top');
+            if (!btn) return;
+            
+            btn.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            const scrollThreshold = 200;
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > scrollThreshold) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            });
+        })();
+
+        // Registrazione Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registrato con successo:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Registrazione Service Worker fallita:', error);
+                    });
+            });
+        }
+    </script>
+    
+    <script>
+        // Animazione dello sfondo vino basata sullo scroll
+        (function() {
+            const wineBg = document.querySelector('.wine-background');
+            if (!wineBg) return;
+            const wineSvg = wineBg.querySelector('svg');
+            const wavePath = wineBg.querySelector('clipPath path');
+            const animateElement = wineBg.querySelector('animate');
+            const flatWavePath = 'M64 246 L64 90 L156 90 L156 246 Z';
+            const animationValues = `M64 246 L64 90 C82 84, 100 96, 110 90 C120 84, 138 96, 156 90 L156 246 Z; M64 246 L64 90 C82 96, 100 84, 110 90 C120 96, 138 84, 156 90 L156 246 Z; M64 246 L64 90 C82 84, 100 96, 110 90 C120 84, 138 96, 156 90 L156 246 Z`;
+            if (wavePath && animateElement) { animateElement.remove(); wavePath.setAttribute('d', flatWavePath); }
+            let scrollTimeout;
+            function updateWinePosition() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const documentHeight = document.documentElement.scrollHeight;
+                const viewportHeight = window.innerHeight;
+                const maxScroll = documentHeight - viewportHeight;
+                if (maxScroll <= 0) { wineBg.style.top = '50%'; wineBg.style.transform = 'translate(-50%, -50%) scale(3.0)'; return; }
+                const scrollPercent = scrollTop / maxScroll;
+                const topPosition = 100 - (scrollPercent * 100);
+                wineBg.style.top = topPosition + 'vh';
+                wineBg.style.transform = 'translate(-50%, 0) scale(3.0)';
+            }
+            function startScrollAnimation() {
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (!existingAnimate) {
+                        wavePath.removeAttribute('d');
+                        const newAnimate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                        newAnimate.setAttribute('attributeName', 'd');
+                        newAnimate.setAttribute('dur', '2.6s');
+                        newAnimate.setAttribute('repeatCount', 'indefinite');
+                        newAnimate.setAttribute('values', animationValues);
+                        wavePath.appendChild(newAnimate);
+                    }
+                }
+                clearTimeout(scrollTimeout);
+            }
+            function stopScrollAnimation() {
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (existingAnimate) {
+                        // Stato intermedio che rappresenta una media degli stati dell'animazione
+                        const intermediatePath = 'M64 246 L64 90 C82 90, 100 90, 110 90 C120 90, 138 90, 156 90 L156 246 Z';
+                        
+                        // Rimuove l'animazione - il browser manterrà lo stato visivo corrente
+                        existingAnimate.remove();
+                        
+                        // Imposta immediatamente uno stato intermedio per evitare scatti
+                        wavePath.setAttribute('d', intermediatePath);
+                        
+                        // Usa un piccolo delay per permettere al browser di processare il cambio
+                        requestAnimationFrame(function() {
+                            requestAnimationFrame(function() {
+                                wavePath.setAttribute('d', flatWavePath);
+                            });
+                        });
+                    }
+                }
+            }
+            updateWinePosition();
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                startScrollAnimation();
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateWinePosition();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(stopScrollAnimation, 500);
+            }, { passive: true });
+            window.addEventListener('resize', function() { updateWinePosition(); });
+        })();
+    </script>
+</body>
+</html>

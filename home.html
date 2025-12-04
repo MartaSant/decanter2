@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Decanter Wine & More · Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="Decanter Wine & More – Vineria a Napoli. Vini in bottiglia, calici e taglieri.">
+    
+    <!-- Meta tag iOS (PWA/Home Screen) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Decanter">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8B4513">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="logo.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://decanterwinemore.github.io/home.html">
+    
+    <!-- Preconnect per CDN esterni (performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://decanterwinemore.github.io/home.html">
+    <meta property="og:title" content="Decanter Wine & More">
+    <meta property="og:description" content="Vineria a Napoli. Vini in bottiglia, calici e taglieri. Via Carlo De Cesare 46, 80132 Napoli (NA)">
+    <meta property="og:image" content="https://decanterwinemore.github.io/logo.png">
+    <meta property="og:locale" content="it_IT">
+    <meta property="og:site_name" content="Decanter Wine & More">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://decanterwinemore.github.io/home.html">
+    <meta name="twitter:title" content="Decanter Wine & More">
+    <meta name="twitter:description" content="Vineria a Napoli. Vini in bottiglia, calici e taglieri. Via Carlo De Cesare 46, 80132 Napoli (NA)">
+    <meta name="twitter:image" content="https://decanterwinemore.github.io/logo.png">
+    
+    <!-- Meta tag per disabilitare la cache del browser -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="style.css">
+    <!-- Preload font critico Montserrat -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" as="style">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome per le icone social -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="home-body">
+    <!-- Sfondo SVG animato del vino -->
+    <div class="wine-background">
+        <svg viewBox="0 0 220 300" role="img" aria-label="Vino rosso 2D con cima ondulata (trasparente)" class="wine-svg">
+            <defs>
+                <linearGradient id="wineGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#7b1020"/>
+                    <stop offset=".55" stop-color="#4c0612"/>
+                    <stop offset="1" stop-color="#2a0208"/>
+                </linearGradient>
+                <clipPath id="wineWaveClip">
+                    <path>
+                        <animate attributeName="d" dur="2.6s" repeatCount="indefinite"
+                            values="
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 96, 100 84, 110 90
+                            C120 96, 138 84, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z
+                            " />
+                    </path>
+                </clipPath>
+            </defs>
+            <g clip-path="url(#wineWaveClip)">
+                <rect x="64" y="84" width="92" height="162" fill="url(#wineGrad)"/>
+                <path d="M78 98 C88 128, 80 190, 96 236"
+                    fill="none" stroke="rgba(255,255,255,.18)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M148 96 C138 140, 146 196, 140 236"
+                    fill="none" stroke="rgba(0,0,0,.22)" stroke-width="10" stroke-linecap="round"/>
+            </g>
+        </svg>
+    </div>
+    <div class="page">
+        <header class="hero">
+            <div class="hero-top">
+                <img src="logo.png" alt="Decanter Wine & More" class="logo">
+            </div>
+            <div class="hero-text">
+                <p class="hero-welcome">BENVENUTI A</p>
+                <p class="hero-name">DECANTER</p>
+                <p class="hero-subtitle">Wine &amp; More</p>
+            </div>
+        </header>
+
+        <main class="content">
+            <section class="cards">
+                <!-- Taglieri -->
+                <a href="taglieri.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">Taglieri</h2>
+                            <p class="card-subtitle">Taglieri di salumi e formaggi per accompagnare i nostri vini.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Vini rossi -->
+                <a href="vini-rossi.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">Vini rossi</h2>
+                            <p class="card-subtitle">Selezione di vini rossi italiani e internazionali in bottiglia.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Vini bianchi -->
+                <a href="vini-bianchi.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">Vini bianchi</h2>
+                            <p class="card-subtitle">Selezione di vini bianchi italiani e internazionali in bottiglia.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Bollicine -->
+                <a href="bollicine.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">Bollicine</h2>
+                            <p class="card-subtitle">Champagne, Prosecco e spumanti per ogni occasione.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Filtro Vini -->
+                <a href="filtro.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">Filtro Vini</h2>
+                            <p class="card-subtitle">Filtra i vini per tono e regione per trovare quello perfetto.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Preferiti -->
+                <a href="preferiti.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">I Miei Preferiti</h2>
+                            <p class="card-subtitle">Visualizza i tuoi vini preferiti salvati.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Al calice -->
+                <a href="al-calice.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">Al calice</h2>
+                            <p class="card-subtitle">Vini disponibili al calice. Chiedi al banco le etichette del giorno.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Birre -->
+                <a href="birre.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">Birre</h2>
+                            <p class="card-subtitle">Birre artigianali e internazionali in bottiglia e alla spina.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Altre bevande -->
+                <a href="altre-bevande.html" class="card card--food">
+                    <div class="card-inner">
+                        <div class="card-text-block">
+                            <h2 class="card-title">Altre bevande</h2>
+                            <p class="card-subtitle">Cocktail, analcolici, succhi e bevande per tutti i gusti.</p>
+                        </div>
+                        <div class="card-arrow">
+                            <span>&#8594;</span>
+                        </div>
+                    </div>
+                </a>
+            </section>
+
+            <section class="info-block contact-block">
+                <h2 class="contact-title">Dove siamo e orari</h2>
+                <p class="contact-address">
+                    Decanter Wine &amp; More<br>
+                    Via Carlo De Cesare 46, 80132 Napoli (NA)
+                </p>
+                <div class="contact-grid">
+                    <div class="contact-col">
+                        <p class="contact-label">Orari</p>
+                        <p class="contact-value">
+                            Lunedì: Chiuso<br>
+                            Martedì: 17:00–00:00<br>
+                            Mercoledì: 17:00–00:00<br>
+                            Giovedì: 17:00–00:00<br>
+                            Venerdì: 17:00–00:00<br>
+                            Sabato: 17:00–01:00<br>
+                            Domenica: 17:00–00:00
+                        </p>
+                    </div>
+                    <div class="contact-col">
+                        <p class="contact-label">Dove</p>
+                        <p class="contact-value">
+                            Via Carlo De Cesare 46, 80132 Napoli (NA)
+                        </p>
+                        <a class="contact-map-link" href="https://www.google.com/maps/search/?api=1&query=Via%20Carlo%20De%20Cesare%2046%2080132%20Napoli%20NA" target="_blank" rel="noopener">
+                            <i class="fas fa-location-dot"></i>
+                            Apri su Google Maps
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="site-footer">
+                <div class="footer-bottom">
+                    <p>&copy; <span id="year"></span> Decanter Wine &amp; More. Tutti i diritti riservati.</p>
+                    <p class="footer-designed">
+                        Designed by <a href="autore.html" class="footer-author-link">MeStesso</a>
+                    </p>
+                    <p class="footer-designed" style="margin-top: 0.3rem;">
+                        <a href="policy.html" class="footer-author-link">Policy</a>
+                    </p>
+                </div>
+            </footer>
+            <!-- Barra fissa in basso -->
+            <div class="bottom-bar">
+                <a href="https://wa.me/393713674624" class="bottom-bar-btn bottom-bar-btn--wa" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </a>
+                <a href="https://www.instagram.com/decanterwineand/" class="bottom-bar-btn bottom-bar-btn--ig" target="_blank" rel="noopener">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+                <a href="tel:+393713674624" class="bottom-bar-btn bottom-bar-btn--call">
+                    <i class="fas fa-phone"></i>
+                    <span>Chiama</span>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+    
+        <button class="scroll-top" aria-label="Torna all'inizio">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+
+</div>
+
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WineShop",
+        "name": "Decanter Wine & More",
+        "image": "https://decanterwinemore.github.io/logo.png",
+        "description": "Vineria a Napoli. Vini in bottiglia, calici e taglieri",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Via Carlo De Cesare 46",
+            "addressLocality": "Napoli",
+            "postalCode": "80132",
+            "addressRegion": "NA",
+            "addressCountry": "IT"
+        },
+        "telephone": "+393713674624",
+        "url": "https://decanterwinemore.github.io/",
+        "priceRange": "€€",
+        "openingHoursSpecification": [
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Sunday"],
+                "opens": "17:00",
+                "closes": "00:00"
+            },
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": "Saturday",
+                "opens": "17:00",
+                "closes": "01:00"
+            }
+        ],
+        "sameAs": [
+            "https://www.instagram.com/decanterwineand/",
+            "https://wa.me/393713674624"
+        ]
+    }
+    </script>
+
+        <script>
+        // aggiorna anno nel footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // scroll to top button
+        (function() {
+            const btn = document.querySelector('.scroll-top');
+            if (!btn) return;
+            
+            // click handler
+            btn.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // mostra/nascondi bottone in base allo scroll
+            const scrollThreshold = 200; // pixel di scroll prima di mostrare il bottone
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > scrollThreshold) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            });
+        })();
+
+        // Effetto fade-out al testo hero quando si scrolla
+        (function() {
+            const heroText = document.querySelector('.hero-text');
+            if (!heroText) return;
+
+            let lastScrollTop = 0;
+            const scrollThreshold = 50; // pixel di scroll prima di attivare l'effetto
+
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > scrollThreshold) {
+                    heroText.classList.add('fade-out');
+                } else {
+                    heroText.classList.remove('fade-out');
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+        })();
+
+        // Registrazione Service Worker (solo se non si usa file://)
+        if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
+            window.addEventListener('load', function() {
+                const swPath = '/service-worker.js';
+                navigator.serviceWorker.register(swPath)
+                    .then(function(registration) {
+                        console.log('Service Worker registrato con successo:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Registrazione Service Worker fallita:', error);
+                        // Prova con percorso relativo come fallback
+                        navigator.serviceWorker.register('./service-worker.js')
+                            .then(function(registration) {
+                                console.log('Service Worker registrato con percorso relativo:', registration.scope);
+                            })
+                            .catch(function(error2) {
+                                console.log('Registrazione Service Worker fallita anche con percorso relativo:', error2);
+                            });
+                    });
+            });
+        }
+    </script>
+    
+    <script>
+        // Animazione dello sfondo vino basata sullo scroll
+        (function() {
+            const wineBg = document.querySelector('.wine-background');
+            if (!wineBg) return;
+            
+            const wineSvg = wineBg.querySelector('svg');
+            const wavePath = wineBg.querySelector('clipPath path');
+            const animateElement = wineBg.querySelector('animate');
+            
+            // Forma piatta dell'onda (linea retta orizzontale)
+            const flatWavePath = 'M64 246 L64 90 L156 90 L156 246 Z';
+            
+            // Valori dell'animazione per ricrearla quando necessario
+            const animationValues = `
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 96, 100 84, 110 90
+                            C120 96, 138 84, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z
+                            `;
+            
+            // Imposta forma piatta di default
+            if (wavePath && animateElement) {
+                animateElement.remove();
+                wavePath.setAttribute('d', flatWavePath);
+            }
+            
+            let scrollTimeout;
+            
+            function updateWinePosition() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const documentHeight = document.documentElement.scrollHeight;
+                const viewportHeight = window.innerHeight;
+                const maxScroll = documentHeight - viewportHeight;
+                
+                if (maxScroll <= 0) {
+                    // Nessuno scroll disponibile, centra lo sfondo
+                    wineBg.style.top = '50%';
+                    wineBg.style.transform = 'translate(-50%, -50%) scale(3.0)';
+                    return;
+                }
+                
+                // Calcola la percentuale di scroll (0 = top, 1 = bottom)
+                const scrollPercent = scrollTop / maxScroll;
+                
+                // Quando scrollPercent = 0 (top pagina): top = 100vh (bottom)
+                // Quando scrollPercent = 1 (bottom pagina): top = 0vh (top)
+                const topPosition = 100 - (scrollPercent * 100);
+                
+                // Applica la nuova posizione
+                wineBg.style.top = topPosition + 'vh';
+                wineBg.style.transform = 'translate(-50%, 0) scale(3.0)';
+            }
+            
+            function startScrollAnimation() {
+                // Rimuove il path statico e ricrea l'elemento animate
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (!existingAnimate) {
+                        // Rimuove il path statico
+                        wavePath.removeAttribute('d');
+                        
+                        // Ricrea l'elemento animate
+                        const newAnimate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                        newAnimate.setAttribute('attributeName', 'd');
+                        newAnimate.setAttribute('dur', '2.6s');
+                        newAnimate.setAttribute('repeatCount', 'indefinite');
+                        newAnimate.setAttribute('values', animationValues.trim());
+                        wavePath.appendChild(newAnimate);
+                    }
+                }
+                
+                // Reset del timeout
+                clearTimeout(scrollTimeout);
+            }
+            
+            function stopScrollAnimation() {
+                // Rimuove l'elemento animate e imposta la forma piatta con transizione smooth
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (existingAnimate) {
+                        // Stato intermedio che rappresenta una media degli stati dell'animazione
+                        // Questo è più vicino allo stato che potrebbe avere durante l'animazione
+                        const intermediatePath = 'M64 246 L64 90 C82 90, 100 90, 110 90 C120 90, 138 90, 156 90 L156 246 Z';
+                        
+                        // Rimuove l'animazione - il browser manterrà lo stato visivo corrente
+                        existingAnimate.remove();
+                        
+                        // Imposta immediatamente uno stato intermedio per evitare scatti
+                        // Questo stato è una media tra gli stati dell'animazione
+                        wavePath.setAttribute('d', intermediatePath);
+                        
+                        // Usa un piccolo delay per permettere al browser di processare il cambio
+                        // e poi transiziona al path piatto
+                        requestAnimationFrame(function() {
+                            requestAnimationFrame(function() {
+                                // Imposta la forma piatta - la transizione CSS farà il resto
+                                wavePath.setAttribute('d', flatWavePath);
+                            });
+                        });
+                    }
+                }
+            }
+            
+            // Aggiorna la posizione all'avvio
+            updateWinePosition();
+            
+            // Aggiorna la posizione durante lo scroll con throttling per performance
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                startScrollAnimation();
+                
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateWinePosition();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+                
+                // Ferma l'animazione dopo che lo scroll si ferma (delay aumentato per transizione più smooth)
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(stopScrollAnimation, 500);
+            }, { passive: true });
+            
+            // Aggiorna anche quando la finestra viene ridimensionata
+            window.addEventListener('resize', function() {
+                updateWinePosition();
+            });
+        })();
+    </script>
+</body>
+</html>

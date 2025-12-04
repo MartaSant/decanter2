@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Filtro Vini · Decanter Wine & More</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="Filtra i vini per tono e regione - Decanter Wine & More">
+    
+    <!-- Meta tag iOS (PWA/Home Screen) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Decanter">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8B4513">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="logo.ico">
+    
+    <link rel="stylesheet" href="style.css">
+    <!-- Preload font critico Montserrat -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" as="style">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        /* Stili per i filtri */
+        .filter-section {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 201, 40, 0.55);
+            padding: 0.9rem 0.95rem 1rem;
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
+            margin-bottom: 1.2rem;
+        }
+        
+        .filter-section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #D4AF37;
+            margin-bottom: 0.8rem;
+        }
+        
+        .category-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            background: transparent;
+            border: 2px solid rgba(255, 201, 40, 0.5);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFC928, #D4AF37);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+        
+        .filter-btn:hover::before,
+        .filter-btn.active::before {
+            left: 0;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: #8B4513;
+            color: #111111;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+        
+        .wine-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+        
+        .wine-item {
+            padding: 0.65rem 0.55rem;
+            border-radius: 0.7rem;
+            background: rgba(17, 17, 17, 0.96);
+            border: 1px solid rgba(255, 201, 40, 0.22);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .wine-item.hidden {
+            display: none;
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+        }
+        
+        .wine-item.showing {
+            animation: fadeInScale 0.5s ease forwards;
+        }
+        
+        .wine-item.hiding {
+            animation: fadeOut 0.3s ease forwards;
+        }
+        
+        /* Pill colorate per categorie */
+        .wine-item-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.4rem;
+        }
+        
+        /* Pulsante preferiti */
+        .wine-item {
+            position: relative;
+        }
+        
+        .favorite-btn {
+            position: absolute;
+            top: 0.65rem;
+            right: 0.55rem;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.3rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .favorite-btn:hover {
+            color: #FFC928;
+            transform: scale(1.1);
+        }
+        
+        .favorite-btn.active {
+            color: #FFC928;
+        }
+        
+        .favorite-btn.active:hover {
+            color: #D4AF37;
+        }
+        
+        .wine-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #111111;
+        }
+        
+        /* Colori per tono */
+        .wine-tag--tono-bianco {
+            background-color: #F5E6D3;
+        }
+        
+        .wine-tag--tono-rosso {
+            background-color: #7b1020;
+            color: #ffffff;
+        }
+        
+        .wine-tag--tono-rosè {
+            background-color: #E8B4B8;
+        }
+        
+        .wine-tag--tono-prosecco {
+            background-color: #D4E8D4;
+        }
+        
+        .wine-tag--tono-champagne {
+            background-color: #FFE5B4;
+        }
+        
+        /* Colori per regione */
+        .wine-tag--regione-toscana {
+            background-color: #8B4513;
+            color: #ffffff;
+        }
+        
+        .wine-tag--regione-piemonte {
+            background-color: #A0522D;
+            color: #ffffff;
+        }
+        
+        .wine-tag--regione-veneto {
+            background-color: #722F37;
+            color: #ffffff;
+        }
+        
+        .wine-tag--regione-campania {
+            background-color: #D4AF37;
+        }
+        
+        .wine-tag--regione-sicilia {
+            background-color: #CD853F;
+            color: #ffffff;
+        }
+        
+        /* Stili per la barra di ricerca */
+        .search-section {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 201, 40, 0.55);
+            padding: 0.9rem 0.95rem 1rem;
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
+            margin-bottom: 1.2rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 2px solid rgba(255, 201, 40, 0.5);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-family: 'Montserrat', sans-serif;
+            background: rgba(17, 17, 17, 0.96);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #8B4513;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="menu-body">
+    <!-- Sfondo SVG animato del vino -->
+    <div class="wine-background">
+        <svg viewBox="0 0 220 300" role="img" aria-label="Vino rosso 2D con cima ondulata (trasparente)" class="wine-svg">
+            <defs>
+                <linearGradient id="wineGrad-filtro" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#7b1020"/>
+                    <stop offset=".55" stop-color="#4c0612"/>
+                    <stop offset="1" stop-color="#2a0208"/>
+                </linearGradient>
+                <clipPath id="wineWaveClip-filtro">
+                    <path>
+                        <animate attributeName="d" dur="2.6s" repeatCount="indefinite"
+                            values="
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 96, 100 84, 110 90
+                            C120 96, 138 84, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z
+                            " />
+                    </path>
+                </clipPath>
+            </defs>
+            <g clip-path="url(#wineWaveClip-filtro)">
+                <rect x="64" y="84" width="92" height="162" fill="url(#wineGrad-filtro)"/>
+                <path d="M78 98 C88 128, 80 190, 96 236"
+                    fill="none" stroke="rgba(255,255,255,.18)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M148 96 C138 140, 146 196, 140 236"
+                    fill="none" stroke="rgba(0,0,0,.22)" stroke-width="10" stroke-linecap="round"/>
+            </g>
+        </svg>
+    </div>
+    <div class="menu-page">
+        <header class="menu-header">
+            <div class="menu-header-left">
+                <div class="menu-logo">
+                    <img src="logo.png" alt="Decanter Wine & More">
+                </div>
+                <div class="menu-title-block">
+                    <span class="menu-eyebrow">Decanter Wine &amp; More</span>
+                    <h1 class="menu-title">Filtro Vini</h1>
+                </div>
+            </div>
+            <a href="home.html" class="menu-close">
+                <span>&larr;</span>
+                <span>Home</span>
+            </a>
+        </header>
+
+        <p class="menu-intro">
+            Seleziona le categorie per filtrare i vini disponibili. Puoi selezionare più opzioni per ogni sezione.
+        </p>
+
+        <!-- Barra di ricerca -->
+        <div class="search-section">
+            <input type="text" 
+                   class="search-input" 
+                   placeholder="Cerca vini per nome o descrizione..." 
+                   id="menuSearchInput">
+        </div>
+
+        <!-- Filtro Tono -->
+        <div class="filter-section">
+            <h2 class="filter-section-title">Tono</h2>
+            <div class="category-filter">
+                <button class="filter-btn active" data-filter-type="tono" data-category="all">Tutto</button>
+                <button class="filter-btn" data-filter-type="tono" data-category="bianco">Bianco</button>
+                <button class="filter-btn" data-filter-type="tono" data-category="rosso">Rosso</button>
+                <button class="filter-btn" data-filter-type="tono" data-category="rosè">Rosè</button>
+                <button class="filter-btn" data-filter-type="tono" data-category="prosecco">Prosecco</button>
+                <button class="filter-btn" data-filter-type="tono" data-category="champagne">Champagne</button>
+            </div>
+        </div>
+
+        <!-- Filtro Regione -->
+        <div class="filter-section">
+            <h2 class="filter-section-title">Regione</h2>
+            <div class="category-filter">
+                <button class="filter-btn active" data-filter-type="regione" data-category="all">Tutto</button>
+                <button class="filter-btn" data-filter-type="regione" data-category="toscana">Toscana</button>
+                <button class="filter-btn" data-filter-type="regione" data-category="piemonte">Piemonte</button>
+                <button class="filter-btn" data-filter-type="regione" data-category="veneto">Veneto</button>
+                <button class="filter-btn" data-filter-type="regione" data-category="campania">Campania</button>
+                <button class="filter-btn" data-filter-type="regione" data-category="sicilia">Sicilia</button>
+            </div>
+        </div>
+
+        <!-- Lista Vini -->
+        <section class="menu-section">
+            <h2 class="menu-section-title">Vini Disponibili</h2>
+            <div class="wine-grid" id="wineGrid">
+                <!-- I vini verranno caricati dinamicamente -->
+            </div>
+        </section>
+
+        <p class="menu-footer">
+            La carta dei vini può variare in base alla disponibilità e alle proposte stagionali.
+        </p>
+        <p class="menu-footer menu-footer-designed">
+            Designed by <a href="autore.html" class="footer-author-link">MeStesso</a>
+        </p>
+        <p class="menu-footer menu-footer-designed" style="margin-top: 0.3rem;">
+            <a href="policy.html" class="footer-author-link">Policy</a>
+        </p>
+    </div>
+
+    <!-- Barra fissa in basso -->
+    <div class="bottom-bar">
+        <a href="https://wa.me/393713674624" class="bottom-bar-btn bottom-bar-btn--wa" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp</span>
+        </a>
+        <a href="https://www.instagram.com/decanterwineand/" class="bottom-bar-btn bottom-bar-btn--ig" target="_blank" rel="noopener">
+            <i class="fab fa-instagram"></i>
+            <span>Instagram</span>
+        </a>
+        <a href="tel:+393713674624" class="bottom-bar-btn bottom-bar-btn--call">
+            <i class="fas fa-phone"></i>
+            <span>Chiama</span>
+        </a>
+    </div>
+
+    <button class="scroll-top" aria-label="Torna all'inizio">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // Dati dei vini (verranno caricati da vini.txt o definiti qui)
+        const vini = [
+            { nome: "Falanghina IGP Campania 13%", tono: "bianco", regione: "campania", prezzo: "18,00" },
+            { nome: "Pinot Grigio DOC Friuli 12,5%", tono: "bianco", regione: "veneto", prezzo: "20,00" },
+            { nome: "Vermentino DOCG Sardegna 13%", tono: "bianco", regione: "sicilia", prezzo: "22,00" },
+            { nome: "Gavi DOCG Piemonte 12,5%", tono: "bianco", regione: "piemonte", prezzo: "25,00" },
+            { nome: "Greco di Tufo DOCG Campania 13%", tono: "bianco", regione: "campania", prezzo: "28,00" },
+            { nome: "Aglianico IGP Campania 14%", tono: "rosso", regione: "campania", prezzo: "18,00" },
+            { nome: "Chianti Classico DOCG Toscana 13,5%", tono: "rosso", regione: "toscana", prezzo: "25,00" },
+            { nome: "Barolo DOCG Piemonte 14%", tono: "rosso", regione: "piemonte", prezzo: "45,00" },
+            { nome: "Montepulciano d'Abruzzo DOC 13%", tono: "rosso", regione: "toscana", prezzo: "15,00" },
+            { nome: "Nero d'Avola Sicilia DOC 13,5%", tono: "rosso", regione: "sicilia", prezzo: "20,00" },
+            { nome: "Brunello di Montalcino DOCG 14,5%", tono: "rosso", regione: "toscana", prezzo: "55,00" },
+            { nome: "Barbaresco DOCG Piemonte 14%", tono: "rosso", regione: "piemonte", prezzo: "48,00" },
+            { nome: "Amarone della Valpolicella DOCG 15%", tono: "rosso", regione: "veneto", prezzo: "42,00" },
+            { nome: "Prosecco DOCG Veneto 11,5%", tono: "prosecco", regione: "veneto", prezzo: "16,00" },
+            { nome: "Prosecco Superiore DOCG 12%", tono: "prosecco", regione: "veneto", prezzo: "22,00" },
+            { nome: "Champagne Brut 12%", tono: "champagne", regione: "veneto", prezzo: "35,00" },
+            { nome: "Champagne Rosé 12,5%", tono: "champagne", regione: "toscana", prezzo: "38,00" },
+            { nome: "Rosè di Toscana IGT 12%", tono: "rosè", regione: "toscana", prezzo: "18,00" },
+            { nome: "Cerasuolo d'Abruzzo DOC 13%", tono: "rosè", regione: "campania", prezzo: "16,00" },
+            { nome: "Rosè Sicilia DOC 12,5%", tono: "rosè", regione: "sicilia", prezzo: "17,00" }
+        ];
+
+        // Variabili globali
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const wineGrid = document.getElementById('wineGrid');
+        const searchInput = document.getElementById('menuSearchInput');
+        let selectedTono = new Set(['all']);
+        let selectedRegione = new Set(['all']);
+        let searchTerms = [];
+        
+        // Gestione preferiti con localStorage
+        const FAVORITES_KEY = 'decanter_favorites';
+        
+        function getFavorites() {
+            try {
+                const favorites = localStorage.getItem(FAVORITES_KEY);
+                if (!favorites || favorites === 'null' || favorites === 'undefined') {
+                    return [];
+                }
+                const parsed = JSON.parse(favorites);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.error('Errore nel recupero dei preferiti:', e);
+                return [];
+            }
+        }
+        
+        function saveFavorites(favorites) {
+            try {
+                console.log('=== SALVATAGGIO PREFERITI ===');
+                console.log('Chiave usata:', FAVORITES_KEY);
+                console.log('Dati da salvare:', favorites);
+                console.log('JSON stringificato:', JSON.stringify(favorites));
+                
+                const jsonData = JSON.stringify(favorites);
+                
+                // Salva in localStorage
+                localStorage.setItem(FAVORITES_KEY, jsonData);
+                
+                // Se si usa file://, salva anche in sessionStorage come fallback
+                // (sessionStorage è condiviso tra tab della stessa origine)
+                if (window.location.protocol === 'file:') {
+                    try {
+                        sessionStorage.setItem(FAVORITES_KEY, jsonData);
+                        console.log('Preferiti salvati anche in sessionStorage (fallback per file://)');
+                    } catch (e) {
+                        console.warn('Impossibile salvare in sessionStorage:', e);
+                    }
+                }
+                
+                // Verifica che sia stato salvato
+                const verificato = localStorage.getItem(FAVORITES_KEY);
+                console.log('Verifica salvataggio - valore recuperato:', verificato);
+                console.log('Tutte le chiavi in localStorage:', Object.keys(localStorage));
+            } catch (e) {
+                console.error('Errore nel salvataggio dei preferiti:', e);
+            }
+        }
+        
+        function isFavorite(wineName) {
+            const favorites = getFavorites();
+            return favorites.some(fav => fav.nome === wineName);
+        }
+        
+        function addToFavorites(vino) {
+            const favorites = getFavorites();
+            if (!isFavorite(vino.nome)) {
+                favorites.push(vino);
+                saveFavorites(favorites);
+                console.log('Vino aggiunto ai preferiti:', vino);
+                console.log('Tutti i preferiti ora:', favorites);
+                return true;
+            }
+            return false;
+        }
+        
+        function removeFromFavorites(wineName) {
+            const favorites = getFavorites();
+            const filtered = favorites.filter(fav => fav.nome !== wineName);
+            saveFavorites(filtered);
+            return filtered.length < favorites.length;
+        }
+        
+        function toggleFavorite(vino, button) {
+            if (isFavorite(vino.nome)) {
+                removeFromFavorites(vino.nome);
+                button.classList.remove('active');
+                button.setAttribute('aria-label', 'Aggiungi ai preferiti');
+            } else {
+                addToFavorites(vino);
+                button.classList.add('active');
+                button.setAttribute('aria-label', 'Rimuovi dai preferiti');
+            }
+        }
+
+        // Funzione helper per capitalizzare
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Inizializza la griglia dei vini
+        function initWineGrid() {
+            wineGrid.innerHTML = '';
+            vini.forEach((vino, index) => {
+                const wineItem = document.createElement('div');
+                wineItem.className = 'wine-item menu-item';
+                wineItem.setAttribute('data-tono', vino.tono);
+                wineItem.setAttribute('data-regione', vino.regione);
+                const isFav = isFavorite(vino.nome);
+                wineItem.innerHTML = `
+                    <button class="favorite-btn ${isFav ? 'active' : ''}" 
+                            aria-label="${isFav ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
+                            data-wine-name="${vino.nome}">
+                        <i class="${isFav ? 'fas fa-heart' : 'far fa-heart'}"></i>
+                    </button>
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">${vino.nome}</span>
+                        <span class="menu-item-price">${vino.prezzo}&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        ${capitalize(vino.tono)} - ${capitalize(vino.regione)}
+                    </p>
+                    <div class="wine-item-tags">
+                        <span class="wine-tag wine-tag--tono-${vino.tono}">${capitalize(vino.tono)}</span>
+                        <span class="wine-tag wine-tag--regione-${vino.regione}">${capitalize(vino.regione)}</span>
+                    </div>
+                `;
+                wineGrid.appendChild(wineItem);
+                
+                // Aggiungi event listener al pulsante preferiti
+                const favoriteBtn = wineItem.querySelector('.favorite-btn');
+                favoriteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(vino, favoriteBtn);
+                    // Aggiorna l'icona
+                    const icon = favoriteBtn.querySelector('i');
+                    if (favoriteBtn.classList.contains('active')) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+                });
+            });
+        }
+
+        // Parsing termini di ricerca (logica AND)
+        function parseSearchTerms(searchText) {
+            return searchText
+                .toLowerCase()
+                .trim()
+                .split(/\s+/)
+                .filter(term => term.length > 0);
+        }
+
+        // Verifica match ricerca (logica AND: tutti i termini devono essere presenti)
+        function matchesSearchTerms(item, terms) {
+            if (terms.length === 0) return true;
+            
+            const nameEl = item.querySelector('.menu-item-name');
+            const descEl = item.querySelector('.menu-item-desc');
+            const name = nameEl ? nameEl.textContent.toLowerCase() : '';
+            const description = descEl ? descEl.textContent.toLowerCase() : '';
+            
+            // AND: tutti i termini devono essere presenti
+            // Un termine può essere nel nome O nella descrizione (OR interno)
+            // Ma TUTTI i termini devono essere trovati (AND tra termini)
+            return terms.every(term => {
+                return name.includes(term) || description.includes(term);
+            });
+        }
+
+        // Funzione per applicare i filtri combinati
+        function applyFilters() {
+            const wineItems = document.querySelectorAll('.wine-item');
+            
+            wineItems.forEach(item => {
+                const itemTono = item.getAttribute('data-tono');
+                const itemRegione = item.getAttribute('data-regione');
+                
+                // Logica OR per tono: mostra se "all" è selezionato O se il tono dell'item è selezionato
+                const tonoMatch = selectedTono.has('all') || selectedTono.has(itemTono);
+                
+                // Logica OR per regione: mostra se "all" è selezionato O se la regione dell'item è selezionata
+                const regioneMatch = selectedRegione.has('all') || selectedRegione.has(itemRegione);
+                
+                // Combinazione AND tra filtri categoria
+                const categoryMatch = tonoMatch && regioneMatch;
+                
+                // Verifica ricerca testuale (AND)
+                const searchMatch = matchesSearchTerms(item, searchTerms);
+                
+                // COMBINAZIONE FINALE: entrambi i filtri devono essere veri (AND)
+                const shouldShow = categoryMatch && searchMatch;
+                
+                if (shouldShow) {
+                    item.classList.remove('hidden', 'hiding');
+                    item.classList.add('showing');
+                    item.style.display = 'block';
+                } else {
+                    item.classList.remove('showing');
+                    item.classList.add('hiding');
+                    setTimeout(() => {
+                        item.classList.add('hidden');
+                        item.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+
+        // Gestione click sui pulsanti filtro
+        filterButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const filterType = button.getAttribute('data-filter-type');
+                const category = button.getAttribute('data-category');
+                const filterSet = filterType === 'tono' ? selectedTono : selectedRegione;
+                const buttons = Array.from(filterButtons).filter(btn => 
+                    btn.getAttribute('data-filter-type') === filterType
+                );
+                
+                if (category === 'all') {
+                    // Se clicco "Tutto", deseleziono tutto e seleziono solo "all"
+                    filterSet.clear();
+                    filterSet.add('all');
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                } else {
+                    // Rimuovo "all" se presente
+                    filterSet.delete('all');
+                    
+                    // Toggle della categoria
+                    if (filterSet.has(category)) {
+                        filterSet.delete(category);
+                        button.classList.remove('active');
+                    } else {
+                        filterSet.add(category);
+                        button.classList.add('active');
+                    }
+                    
+                    // Se nessuna categoria è selezionata, seleziono "all" di default
+                    if (filterSet.size === 0) {
+                        filterSet.add('all');
+                        const allButton = buttons.find(btn => btn.getAttribute('data-category') === 'all');
+                        if (allButton) allButton.classList.add('active');
+                    } else {
+                        // Rimuovo active da "Tutto" se altre categorie sono selezionate
+                        const allButton = buttons.find(btn => btn.getAttribute('data-category') === 'all');
+                        if (allButton) allButton.classList.remove('active');
+                    }
+                }
+                
+                // Applica il filtro
+                applyFilters();
+            });
+        });
+
+        // Event listener per la barra di ricerca
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchText = e.target.value;
+                searchTerms = parseSearchTerms(searchText);
+                applyFilters();
+            });
+            
+            // Stili focus
+            searchInput.addEventListener('focus', function() {
+                this.style.borderColor = '#8B4513';
+                this.style.boxShadow = '0 0 0 3px rgba(212, 175, 55, 0.1)';
+            });
+            
+            searchInput.addEventListener('blur', function() {
+                this.style.borderColor = 'rgba(255, 201, 40, 0.5)';
+                this.style.boxShadow = 'none';
+            });
+        }
+
+        // Scroll to top button
+        (function() {
+            const btn = document.querySelector('.scroll-top');
+            if (!btn) return;
+            
+            btn.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            const scrollThreshold = 200;
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > scrollThreshold) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            });
+        })();
+
+        // Registrazione Service Worker (solo se non si usa file://)
+        if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registrato con successo:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Registrazione Service Worker fallita:', error);
+                    });
+            });
+        }
+
+        // Animazione dello sfondo vino basata sullo scroll
+        (function() {
+            const wineBg = document.querySelector('.wine-background');
+            if (!wineBg) return;
+            
+            const wavePath = wineBg.querySelector('clipPath path');
+            const animateElement = wineBg.querySelector('animate');
+            
+            const flatWavePath = 'M64 246 L64 90 L156 90 L156 246 Z';
+            
+            const animationValues = `
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 96, 100 84, 110 90
+                            C120 96, 138 84, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z
+                            `;
+            
+            if (wavePath && animateElement) {
+                animateElement.remove();
+                wavePath.setAttribute('d', flatWavePath);
+            }
+            
+            let scrollTimeout;
+            
+            function updateWinePosition() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const documentHeight = document.documentElement.scrollHeight;
+                const viewportHeight = window.innerHeight;
+                const maxScroll = documentHeight - viewportHeight;
+                
+                if (maxScroll <= 0) {
+                    wineBg.style.top = '50%';
+                    wineBg.style.transform = 'translate(-50%, -50%) scale(3.0)';
+                    return;
+                }
+                
+                const scrollPercent = scrollTop / maxScroll;
+                const topPosition = 100 - (scrollPercent * 100);
+                
+                wineBg.style.top = topPosition + 'vh';
+                wineBg.style.transform = 'translate(-50%, 0) scale(3.0)';
+            }
+            
+            function startScrollAnimation() {
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (!existingAnimate) {
+                        wavePath.removeAttribute('d');
+                        
+                        const newAnimate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                        newAnimate.setAttribute('attributeName', 'd');
+                        newAnimate.setAttribute('dur', '2.6s');
+                        newAnimate.setAttribute('repeatCount', 'indefinite');
+                        newAnimate.setAttribute('values', animationValues.trim());
+                        wavePath.appendChild(newAnimate);
+                    }
+                }
+                
+                clearTimeout(scrollTimeout);
+            }
+            
+            function stopScrollAnimation() {
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (existingAnimate) {
+                        const intermediatePath = 'M64 246 L64 90 C82 90, 100 90, 110 90 C120 90, 138 90, 156 90 L156 246 Z';
+                        
+                        existingAnimate.remove();
+                        wavePath.setAttribute('d', intermediatePath);
+                        
+                        requestAnimationFrame(function() {
+                            requestAnimationFrame(function() {
+                                wavePath.setAttribute('d', flatWavePath);
+                            });
+                        });
+                    }
+                }
+            }
+            
+            updateWinePosition();
+            
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                startScrollAnimation();
+                
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateWinePosition();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+                
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(stopScrollAnimation, 500);
+            }, { passive: true });
+            
+            window.addEventListener('resize', function() {
+                updateWinePosition();
+            });
+        })();
+
+        // Inizializza la griglia quando il DOM è pronto
+        document.addEventListener('DOMContentLoaded', function() {
+            initWineGrid();
+            applyFilters();
+        });
+    </script>
+</body>
+</html>
+

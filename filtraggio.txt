@@ -1,0 +1,759 @@
+================================================================================
+REPORT ARCHITETTURA SISTEMA DI FILTRAGGIO MENU RISTORANTE
+================================================================================
+
+Data creazione: 2024
+Scopo: Documentazione completa per ricostruire il sistema di filtraggio
+       del menu ristorante con logica OR per categorie e AND per ricerca testuale
+
+================================================================================
+1. PANORAMICA GENERALE
+================================================================================
+
+Il sistema di filtraggio è composto da DUE componenti principali che operano
+in modo combinato:
+
+A) FILTRO PER CATEGORIE (Logica OR)
+   - Permette di selezionare una o più categorie
+   - Un piatto viene mostrato se appartiene ad ALMENO UNA delle categorie selezionate
+   - Se nessuna categoria è selezionata, vengono mostrati tutti i piatti
+
+B) RICERCA TESTUALE (Logica AND)
+   - Barra di ricerca che analizza nome e descrizione dei piatti
+   - TUTTI i termini di ricerca devono essere presenti nel piatto
+   - I termini possono essere nel nome O nella descrizione (OR interno)
+   - Ma TUTTI i termini devono essere trovati (AND tra termini)
+
+C) COMBINAZIONE DEI DUE FILTRI
+   - I due filtri operano in AND tra loro
+   - Un piatto viene mostrato solo se:
+     * Appartiene ad almeno una categoria selezionata (OR categorie)
+     * E contiene tutti i termini di ricerca (AND termini)
+
+================================================================================
+2. STRUTTURA HTML
+================================================================================
+
+2.1 CONTENITORE FILTRI CATEGORIE
+---------------------------------
+Posizione: Dentro <section id="menu">, prima del menu-grid
+
+HTML:
+<div class="category-filter">
+    <button class="filter-btn active" data-category="all">Tutto</button>
+    <button class="filter-btn" data-category="antipasti">Antipasti</button>
+    <button class="filter-btn" data-category="primi">Primi Piatti</button>
+    <button class="filter-btn" data-category="secondi">Secondi Piatti</button>
+    <button class="filter-btn" data-category="dolci">Dolci</button>
+    <button class="filter-btn" data-category="bevande">Bevande</button>
+</div>
+
+Note:
+- Il pulsante "Tutto" ha data-category="all" e classe "active" di default
+- Ogni pulsante ha un attributo data-category univoco
+- La classe "active" indica la categoria selezionata
+
+2.2 BARRA DI RICERCA
+---------------------
+Posizione: Dentro <div class="section-header">, dopo il titolo
+
+HTML:
+<input type="text" 
+       class="search-input" 
+       placeholder="Cerca nel menu..."
+       id="menuSearchInput">
+
+Note:
+- La barra viene creata dinamicamente via JavaScript
+- Oppure può essere inserita direttamente nell'HTML
+
+2.3 GRIGLIA MENU ITEMS
+----------------------
+Posizione: Dentro <section id="menu">
+
+HTML:
+<div class="menu-grid" id="menuGrid">
+    <div class="menu-item" data-category="antipasti">
+        <div class="item-image">...</div>
+        <div class="item-content">
+            <div class="item-header">
+                <h3 class="item-name">Nome Piatto</h3>
+                <span class="item-price">€XX</span>
+            </div>
+            <p class="item-description">Descrizione del piatto...</p>
+            <div class="item-tags">...</div>
+        </div>
+    </div>
+    <!-- Altri menu-item... -->
+</div>
+
+Struttura chiave:
+- Ogni .menu-item ha un attributo data-category che indica la categoria
+- La classe .item-name contiene il nome del piatto
+- La classe .item-description contiene la descrizione
+- Questi elementi sono usati per la ricerca testuale
+
+================================================================================
+3. LOGICA JAVASCRIPT - FILTRO CATEGORIE (OR)
+================================================================================
+
+3.1 INIZIALIZZAZIONE
+---------------------
+Variabili globali necessarie:
+
+const filterButtons = document.querySelectorAll('.filter-btn');
+const menuItems = document.querySelectorAll('.menu-item');
+let selectedCategories = new Set(['all']); // Set per supportare selezione multipla
+
+3.2 GESTIONE SELEZIONE MULTIPLA CATEGORIE (LOGICA OR)
+-----------------------------------------------------
+IMPLEMENTAZIONE CORRETTA per logica OR:
+
+filterButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        const category = button.getAttribute('data-category');
+        
+        // Gestione pulsante "Tutto"
+        if (category === 'all') {
+            // Se clicco "Tutto", deseleziono tutto e seleziono solo "all"
+            selectedCategories.clear();
+            selectedCategories.add('all');
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        } else {
+            // Rimuovo "all" se presente (non può essere combinato con altre categorie)
+            selectedCategories.delete('all');
+            
+            // Toggle della categoria (clic per selezionare/deselezionare)
+            if (selectedCategories.has(category)) {
+                selectedCategories.delete(category);
+                button.classList.remove('active');
+            } else {
+                selectedCategories.add(category);
+                button.classList.add('active');
+            }
+            
+            // Se nessuna categoria è selezionata, seleziono "all" di default
+            if (selectedCategories.size === 0) {
+                selectedCategories.add('all');
+                const allButton = document.querySelector('[data-category="all"]');
+                if (allButton) allButton.classList.add('active');
+            } else {
+                // Rimuovo active da "Tutto" se altre categorie sono selezionate
+                const allButton = document.querySelector('[data-category="all"]');
+                if (allButton) allButton.classList.remove('active');
+            }
+        }
+        
+        // Applica il filtro
+        applyCategoryFilter();
+    });
+});
+
+3.3 FUNZIONE APPLICAZIONE FILTRO CATEGORIE
+-------------------------------------------
+function applyCategoryFilter() {
+    menuItems.forEach(item => {
+        const itemCategory = item.getAttribute('data-category');
+        
+        // Logica OR: mostra se categoria è "all" O se la categoria dell'item
+        // è presente nel set delle categorie selezionate
+        const shouldShow = selectedCategories.has('all') || 
+                          selectedCategories.has(itemCategory);
+        
+        if (shouldShow) {
+            item.style.display = 'block';
+            item.style.animation = 'fadeInScale 0.5s ease forwards';
+        } else {
+            item.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => {
+                item.style.display = 'none';
+            }, 300);
+        }
+    });
+}
+
+3.4 ANIMAZIONI CSS NECESSARIE
+------------------------------
+Aggiungere al CSS o via JavaScript:
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+================================================================================
+4. LOGICA JAVASCRIPT - RICERCA TESTUALE (AND)
+================================================================================
+
+4.1 INIZIALIZZAZIONE RICERCA
+-----------------------------
+Variabili globali:
+
+let searchTerms = []; // Array di termini di ricerca
+const searchInput = document.getElementById('menuSearchInput') || 
+                    document.querySelector('.search-input');
+
+4.2 FUNZIONE PARSING TERMINI (LOGICA AND)
+------------------------------------------
+function parseSearchTerms(searchText) {
+    // Converte il testo in array di termini (separati da spazi)
+    // Rimuove spazi multipli e converte in lowercase
+    return searchText
+        .toLowerCase()
+        .trim()
+        .split(/\s+/)
+        .filter(term => term.length > 0); // Rimuove stringhe vuote
+}
+
+Esempio:
+Input: "pasta pomodoro"
+Output: ["pasta", "pomodoro"]
+
+4.3 FUNZIONE VERIFICA MATCH (LOGICA AND)
+-----------------------------------------
+function matchesSearchTerms(item, terms) {
+    if (terms.length === 0) {
+        return true; // Nessun termine = mostra tutto
+    }
+    
+    // Estrai testo da nome e descrizione
+    const name = item.querySelector('.item-name').textContent.toLowerCase();
+    const description = item.querySelector('.item-description').textContent.toLowerCase();
+    const fullText = name + ' ' + description;
+    
+    // LOGICA AND: TUTTI i termini devono essere presenti
+    // Un termine può essere nel nome O nella descrizione (OR interno)
+    // Ma TUTTI i termini devono essere trovati (AND tra termini)
+    return terms.every(term => {
+        return name.includes(term) || description.includes(term);
+    });
+}
+
+Spiegazione logica:
+- terms.every() verifica che TUTTI i termini soddisfino la condizione
+- Per ogni termine, verifica se è presente nel nome O nella descrizione
+- Se anche un solo termine non è trovato, la funzione ritorna false
+
+Esempio:
+Termini: ["pasta", "pomodoro"]
+Piatto 1: nome="Spaghetti", descrizione="pasta con pomodoro" → MATCH (entrambi presenti)
+Piatto 2: nome="Pasta", descrizione="con formaggio" → NO MATCH (manca "pomodoro")
+Piatto 3: nome="Risotto", descrizione="pomodoro e basilico" → NO MATCH (manca "pasta")
+
+4.4 FUNZIONE APPLICAZIONE RICERCA
+-----------------------------------
+function applyTextSearch() {
+    const searchText = searchInput.value;
+    searchTerms = parseSearchTerms(searchText);
+    
+    menuItems.forEach(item => {
+        const matches = matchesSearchTerms(item, searchTerms);
+        
+        if (matches) {
+            item.style.display = 'block';
+            item.style.animation = 'fadeInScale 0.5s ease forwards';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+4.5 EVENT LISTENER RICERCA
+---------------------------
+searchInput.addEventListener('input', (e) => {
+    applyTextSearch();
+    // Se la ricerca è vuota, riapplica il filtro categorie
+    if (e.target.value.trim() === '') {
+        applyCategoryFilter();
+    } else {
+        // Applica entrambi i filtri combinati
+        applyCombinedFilter();
+    }
+});
+
+================================================================================
+5. LOGICA JAVASCRIPT - COMBINAZIONE FILTRI (AND TRA CATEGORIE E RICERCA)
+================================================================================
+
+5.1 FUNZIONE FILTRO COMBINATO
+------------------------------
+function applyCombinedFilter() {
+    menuItems.forEach(item => {
+        const itemCategory = item.getAttribute('data-category');
+        
+        // Verifica filtro categorie (OR)
+        const categoryMatch = selectedCategories.has('all') || 
+                             selectedCategories.has(itemCategory);
+        
+        // Verifica ricerca testuale (AND)
+        const searchMatch = matchesSearchTerms(item, searchTerms);
+        
+        // COMBINAZIONE: entrambi devono essere veri (AND)
+        const shouldShow = categoryMatch && searchMatch;
+        
+        if (shouldShow) {
+            item.style.display = 'block';
+            item.style.animation = 'fadeInScale 0.5s ease forwards';
+        } else {
+            item.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => {
+                item.style.display = 'none';
+            }, 300);
+        }
+    });
+}
+
+5.2 AGGIORNAMENTO EVENT LISTENERS
+----------------------------------
+Modificare i listener esistenti per usare applyCombinedFilter:
+
+// Nel click dei pulsanti categoria:
+filterButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        // ... logica selezione categorie ...
+        
+        // Applica filtro combinato invece di solo categoria
+        if (searchInput.value.trim() === '') {
+            applyCategoryFilter();
+        } else {
+            applyCombinedFilter();
+        }
+    });
+});
+
+// Nel search input:
+searchInput.addEventListener('input', (e) => {
+    if (e.target.value.trim() === '') {
+        applyCategoryFilter();
+    } else {
+        applyCombinedFilter();
+    }
+});
+
+================================================================================
+6. STILI CSS PER FILTRI
+================================================================================
+
+6.1 PULSANTI CATEGORIA
+----------------------
+.filter-btn {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-gold);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.filter-btn:hover::before,
+.filter-btn.active::before {
+    left: 0;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    border-color: var(--primary-color);
+    color: var(--text-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+6.2 BARRA DI RICERCA
+--------------------
+.search-input {
+    width: 100%;
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 1rem 1.5rem;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    font-size: 1rem;
+    display: block;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+6.3 MENU ITEMS (STATI VISIBILITÀ)
+----------------------------------
+.menu-item {
+    background: var(--bg-light);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    opacity: 1;
+    transform: scale(1);
+}
+
+.menu-item[style*="display: none"] {
+    display: none !important;
+}
+
+================================================================================
+7. IMPLEMENTAZIONE COMPLETA - CODICE JAVASCRIPT UNIFICATO
+================================================================================
+
+// ===== VARIABILI GLOBALI =====
+const filterButtons = document.querySelectorAll('.filter-btn');
+const menuItems = document.querySelectorAll('.menu-item');
+const searchInput = document.getElementById('menuSearchInput') || 
+                    document.querySelector('.search-input') ||
+                    createSearchInput();
+
+let selectedCategories = new Set(['all']);
+let searchTerms = [];
+
+// ===== CREAZIONE DINAMICA SEARCH INPUT (se non esiste) =====
+function createSearchInput() {
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Cerca nel menu...';
+    searchInput.className = 'search-input';
+    searchInput.id = 'menuSearchInput';
+    
+    const sectionHeader = document.querySelector('.section-header');
+    if (sectionHeader) {
+        sectionHeader.appendChild(searchInput);
+    }
+    
+    return searchInput;
+}
+
+// ===== PARSING TERMINI RICERCA =====
+function parseSearchTerms(searchText) {
+    return searchText
+        .toLowerCase()
+        .trim()
+        .split(/\s+/)
+        .filter(term => term.length > 0);
+}
+
+// ===== VERIFICA MATCH RICERCA (LOGICA AND) =====
+function matchesSearchTerms(item, terms) {
+    if (terms.length === 0) return true;
+    
+    const name = item.querySelector('.item-name')?.textContent.toLowerCase() || '';
+    const description = item.querySelector('.item-description')?.textContent.toLowerCase() || '';
+    
+    // AND: tutti i termini devono essere presenti
+    return terms.every(term => {
+        return name.includes(term) || description.includes(term);
+    });
+}
+
+// ===== FILTRO CATEGORIE (LOGICA OR) =====
+function applyCategoryFilter() {
+    menuItems.forEach(item => {
+        const itemCategory = item.getAttribute('data-category');
+        const categoryMatch = selectedCategories.has('all') || 
+                             selectedCategories.has(itemCategory);
+        
+        if (categoryMatch) {
+            item.style.display = 'block';
+            item.style.animation = 'fadeInScale 0.5s ease forwards';
+        } else {
+            item.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => {
+                item.style.display = 'none';
+            }, 300);
+        }
+    });
+}
+
+// ===== FILTRO COMBINATO (CATEGORIE OR + RICERCA AND) =====
+function applyCombinedFilter() {
+    menuItems.forEach(item => {
+        const itemCategory = item.getAttribute('data-category');
+        
+        // Filtro categorie: OR
+        const categoryMatch = selectedCategories.has('all') || 
+                             selectedCategories.has(itemCategory);
+        
+        // Filtro ricerca: AND
+        const searchMatch = matchesSearchTerms(item, searchTerms);
+        
+        // Combinazione: AND tra i due filtri
+        const shouldShow = categoryMatch && searchMatch;
+        
+        if (shouldShow) {
+            item.style.display = 'block';
+            item.style.animation = 'fadeInScale 0.5s ease forwards';
+        } else {
+            item.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => {
+                item.style.display = 'none';
+            }, 300);
+        }
+    });
+}
+
+// ===== EVENT LISTENERS CATEGORIE =====
+filterButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        const category = button.getAttribute('data-category');
+        
+        if (category === 'all') {
+            selectedCategories.clear();
+            selectedCategories.add('all');
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        } else {
+            selectedCategories.delete('all');
+            
+            if (selectedCategories.has(category)) {
+                selectedCategories.delete(category);
+                button.classList.remove('active');
+            } else {
+                selectedCategories.add(category);
+                button.classList.add('active');
+            }
+            
+            if (selectedCategories.size === 0) {
+                selectedCategories.add('all');
+                const allButton = document.querySelector('[data-category="all"]');
+                if (allButton) allButton.classList.add('active');
+            } else {
+                const allButton = document.querySelector('[data-category="all"]');
+                if (allButton) allButton.classList.remove('active');
+            }
+        }
+        
+        // Applica filtro appropriato
+        if (searchInput.value.trim() === '') {
+            applyCategoryFilter();
+        } else {
+            applyCombinedFilter();
+        }
+    });
+});
+
+// ===== EVENT LISTENER RICERCA =====
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        const searchText = e.target.value;
+        searchTerms = parseSearchTerms(searchText);
+        
+        if (searchText.trim() === '') {
+            applyCategoryFilter();
+        } else {
+            applyCombinedFilter();
+        }
+    });
+    
+    // Stili focus
+    searchInput.addEventListener('focus', function() {
+        this.style.borderColor = '#d4af37';
+        this.style.boxShadow = '0 0 0 3px rgba(212, 175, 55, 0.1)';
+    });
+    
+    searchInput.addEventListener('blur', function() {
+        this.style.borderColor = '#ddd';
+        this.style.boxShadow = 'none';
+    });
+}
+
+// ===== AGGIUNTA ANIMAZIONI CSS DINAMICHE =====
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+    }
+`;
+document.head.appendChild(style);
+
+================================================================================
+8. DIAGRAMMA LOGICO DEL FILTRAGGIO
+================================================================================
+
+                    [INPUT UTENTE]
+                         |
+                         |
+            +------------+------------+
+            |                        |
+    [Categorie Selezionate]    [Testo Ricerca]
+            |                        |
+            |                        |
+    [Logica OR]              [Logica AND]
+    (almeno una)             (tutti i termini)
+            |                        |
+            +------------+------------+
+                         |
+                         |
+                  [AND Combinato]
+                         |
+                         |
+              [Piatti Visualizzati]
+
+ESEMPIO PRATICO:
+----------------
+Categorie selezionate: ["antipasti", "primi"] (OR)
+Ricerca: "pasta pomodoro" → termini: ["pasta", "pomodoro"] (AND)
+
+Risultato:
+- Mostra piatti che:
+  1. Appartengono a "antipasti" O "primi" (OR)
+  2. E contengono "pasta" E "pomodoro" (AND)
+
+Piatto 1: categoria="antipasti", nome="Bruschetta", descrizione="pomodoro"
+  → NO (manca "pasta")
+
+Piatto 2: categoria="primi", nome="Spaghetti", descrizione="pasta pomodoro"
+  → SÌ (categoria OK, entrambi i termini presenti)
+
+Piatto 3: categoria="secondi", nome="Pasta", descrizione="pomodoro basilico"
+  → NO (categoria non selezionata)
+
+================================================================================
+9. CASI EDGE E GESTIONE ERRORI
+================================================================================
+
+9.1 RICERCA VUOTA
+-----------------
+Se searchText.trim() === '':
+    - searchTerms = []
+    - matchesSearchTerms() ritorna true
+    - Applica solo filtro categorie
+
+9.2 NESSUNA CATEGORIA SELEZIONATA
+----------------------------------
+Se selectedCategories.size === 0:
+    - Seleziona automaticamente "all"
+    - Mostra tutti i piatti (rispetto alla ricerca)
+
+9.3 ELEMENTI MANCANTI
+---------------------
+Verificare esistenza prima di querySelector:
+    const nameEl = item.querySelector('.item-name');
+    const name = nameEl ? nameEl.textContent.toLowerCase() : '';
+
+9.4 PERFORMANCE
+---------------
+Per menu molto grandi (>100 items):
+    - Considerare debouncing sulla ricerca
+    - Usare requestAnimationFrame per animazioni
+    - Virtual scrolling per DOM molto grande
+
+================================================================================
+10. TESTING E VALIDAZIONE
+================================================================================
+
+CASI DI TEST:
+
+1. Filtro categorie solo:
+   - Seleziona "antipasti" → mostra solo antipasti
+   - Seleziona "antipasti" + "primi" → mostra antipasti E primi
+   - Clicca "Tutto" → mostra tutto
+
+2. Ricerca solo:
+   - Cerca "pasta" → mostra piatti con "pasta" in nome o descrizione
+   - Cerca "pasta pomodoro" → mostra solo piatti con ENTRAMBI i termini
+   - Cerca "xyz123" → nessun risultato
+
+3. Combinazione:
+   - Categorie: ["primi"] + Ricerca: "pasta" → primi piatti con "pasta"
+   - Categorie: ["antipasti", "primi"] + Ricerca: "pomodoro" 
+     → antipasti o primi che contengono "pomodoro"
+
+4. Reset:
+   - Pulisci ricerca → riapplica solo filtro categorie
+   - Deseleziona tutte le categorie → seleziona "all" automaticamente
+
+================================================================================
+11. NOTE FINALI PER RICOSTRUZIONE
+================================================================================
+
+PRIORITÀ IMPLEMENTAZIONE:
+1. Struttura HTML (sezioni 2.1, 2.2, 2.3)
+2. Stili CSS base (sezione 6)
+3. Variabili globali e funzioni helper (sezione 7, inizio)
+4. Logica filtro categorie OR (sezione 3)
+5. Logica ricerca AND (sezione 4)
+6. Combinazione filtri (sezione 5)
+7. Event listeners (sezione 7, fine)
+8. Animazioni CSS (sezione 3.4)
+9. Testing (sezione 10)
+
+ORDINE DI ESECUZIONE:
+- Le funzioni helper devono essere definite PRIMA degli event listeners
+- Gli event listeners devono essere attaccati DOPO che il DOM è caricato
+- Usare DOMContentLoaded se necessario
+
+VARIABILI CHIAVE:
+- selectedCategories: Set<string> - categorie selezionate (OR)
+- searchTerms: string[] - termini di ricerca (AND)
+- filterButtons: NodeList - pulsanti categoria
+- menuItems: NodeList - elementi menu
+- searchInput: HTMLInputElement - input ricerca
+
+LOGICA CHIAVE:
+- OR categorie: selectedCategories.has(category)
+- AND ricerca: terms.every(term => match)
+- AND combinato: categoryMatch && searchMatch
+
+================================================================================
+FINE REPORT
+================================================================================
+

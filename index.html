@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Decanter Wine & More</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="Decanter Wine & More – Vineria a Napoli. Vini in bottiglia, calici e taglieri.">
+    
+    <!-- Meta tag iOS (PWA/Home Screen) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Decanter">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8B4513">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="logo.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://decanterwinemore.github.io/">
+    
+    <!-- Preconnect per CDN esterni (performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://decanterwinemore.github.io/">
+    <meta property="og:title" content="Decanter Wine & More">
+    <meta property="og:description" content="Vineria a Napoli. Vini in bottiglia, calici e taglieri. Via Carlo De Cesare 46, 80132 Napoli (NA)">
+    <meta property="og:image" content="https://decanterwinemore.github.io/logo.png">
+    <meta property="og:locale" content="it_IT">
+    <meta property="og:site_name" content="Decanter Wine & More">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://decanterwinemore.github.io/">
+    <meta name="twitter:title" content="Decanter Wine & More">
+    <meta name="twitter:description" content="Vineria a Napoli. Vini in bottiglia, calici e taglieri. Via Carlo De Cesare 46, 80132 Napoli (NA)">
+    <meta name="twitter:image" content="https://decanterwinemore.github.io/logo.png">
+    
+    <!-- Meta tag per disabilitare la cache del browser -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="shell-body">
+    <div class="desktop-wrapper">
+        <div class="device-frame">
+            <iframe
+                src="home.html"
+                title="Decanter Wine &amp; More"
+                class="device-iframe"
+            ></iframe>
+        </div>
+    </div>
+    <script>
+        // Registrazione Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Prova prima con percorso assoluto, poi con percorso relativo
+                const swPath = '/service-worker.js';
+                navigator.serviceWorker.register(swPath)
+                    .then(function(registration) {
+                        console.log('Service Worker registrato con successo:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Registrazione Service Worker fallita con percorso assoluto, provo con percorso relativo:', error);
+                        // Prova con percorso relativo
+                        navigator.serviceWorker.register('./service-worker.js')
+                            .then(function(registration) {
+                                console.log('Service Worker registrato con successo (percorso relativo):', registration.scope);
+                            })
+                            .catch(function(error2) {
+                                console.log('Registrazione Service Worker fallita anche con percorso relativo:', error2);
+                            });
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

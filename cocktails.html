@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Cocktail · Flègo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="Cocktail del Flègo: classici e analcolici. Menu completo con prezzi e descrizioni.">
+    
+    <!-- Meta tag iOS (PWA/Home Screen) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Flègo">
+    <link rel="apple-touch-icon" href="logomini.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFC928">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="logo.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://flegopub.github.io/cocktails.html">
+    
+    <!-- Preconnect per CDN esterni (performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://flegopub.github.io/cocktails.html">
+    <meta property="og:title" content="Cocktail · Flègo">
+    <meta property="og:description" content="Cocktail del Flègo: classici e analcolici. Menu completo con prezzi e descrizioni.">
+    <meta property="og:image" content="https://flegopub.github.io/logo.png">
+    <meta property="og:locale" content="it_IT">
+    <meta property="og:site_name" content="Flègo · Sorsi & Morsi">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://flegopub.github.io/cocktails.html">
+    <meta name="twitter:title" content="Cocktail · Flègo">
+    <meta name="twitter:description" content="Cocktail del Flègo: classici e analcolici. Menu completo con prezzi e descrizioni.">
+    <meta name="twitter:image" content="https://flegopub.github.io/logo.png">
+    
+    <!-- Meta tag per disabilitare la cache del browser -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="style.css">
+    <!-- Preload font critico Montserrat -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" as="style">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="menu-body">
+    <!-- Sfondo SVG animato del vino -->
+    <div class="wine-background">
+        <svg viewBox="0 0 220 300" role="img" aria-label="Vino rosso 2D con cima ondulata (trasparente)" class="wine-svg">
+            <defs>
+                <linearGradient id="wineGrad-cocktails" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#7b1020"/>
+                    <stop offset=".55" stop-color="#4c0612"/>
+                    <stop offset="1" stop-color="#2a0208"/>
+                </linearGradient>
+                <clipPath id="wineWaveClip-cocktails">
+                    <path>
+                        <animate attributeName="d" dur="2.6s" repeatCount="indefinite"
+                            values="
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 96, 100 84, 110 90
+                            C120 96, 138 84, 156 90
+                            L156 246 Z;
+                            M64 246 L64 90
+                            C82 84, 100 96, 110 90
+                            C120 84, 138 96, 156 90
+                            L156 246 Z
+                            " />
+                    </path>
+                </clipPath>
+            </defs>
+            <g clip-path="url(#wineWaveClip-cocktails)">
+                <rect x="64" y="84" width="92" height="162" fill="url(#wineGrad-cocktails)"/>
+                <path d="M78 98 C88 128, 80 190, 96 236"
+                    fill="none" stroke="rgba(255,255,255,.18)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M148 96 C138 140, 146 196, 140 236"
+                    fill="none" stroke="rgba(0,0,0,.22)" stroke-width="10" stroke-linecap="round"/>
+            </g>
+        </svg>
+    </div>
+    <div class="menu-page">
+        <header class="menu-header">
+            <div class="menu-header-left">
+                <div class="menu-logo">
+                    <img src="logomini.png" alt="Flègo">
+                </div>
+                <div class="menu-title-block">
+                    <span class="menu-eyebrow">Flègo · Sorsi e Morsi</span>
+                    <h1 class="menu-title">Cocktail</h1>
+                </div>
+            </div>
+            <a href="home.html" class="menu-close">
+                <span>&larr;</span>
+                <span>Home</span>
+            </a>
+        </header>
+
+        <p class="menu-intro">
+            Dai grandi classici ai drink signature, fino alle versioni analcoliche:
+            ecco la drink list di Fl&egrave;go. Le proposte possono cambiare in base
+            alla stagione e alle idee del bancone.
+        </p>
+
+        <section class="menu-section">
+            <h2 class="menu-section-title">Cocktail</h2>
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Spritz</span>
+                        <span class="menu-item-price">6,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Aperol, prosecco, soda.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Campari Spritz</span>
+                        <span class="menu-item-price">6,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Campari, prosecco, soda.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Aperitas</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Aperol e Tassoni.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Hugo Spritz</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Prosecco, sciroppo ai fiori di sambuco, menta e soda.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Negroni</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Gin, vermouth rosso e Campari.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Negroni Sbagliato</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Prosecco, vermouth rosso e Campari.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Negroni Mezcal</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Mezcal, vermouth rosso e Campari.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Americano</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Soda, vermouth rosso e Campari.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Old Fashioned</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Bourbon whiskey, zolletta di zucchero e angostura.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Boulevardier</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Bourbon whiskey, vermouth rosso e Campari.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Whiskey Sour</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Bourbon whiskey, succo di limone fresco.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">New York Sour</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Rye whiskey, succo di limone fresco e vino rosso.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Amaretto Sour</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Amaretto di Saronno e succo di limone fresco.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Gin Lemon / Tonic</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Gin Premium Lemon / Tonic</span>
+                        <span class="menu-item-price">10,00&nbsp;&euro;</span>
+                    </div>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Last Word</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Gin, Chartreuse verde, maraschino e succo di lime fresco.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Gin Basil Smash</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Gin, succo di limone fresco e basilico.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Southside</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Gin, succo di limone fresco e menta.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Vodka Lemon / Tonic</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Vodka Premium Lemon / Tonic</span>
+                        <span class="menu-item-price">10,00&nbsp;&euro;</span>
+                    </div>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Moscow Mule</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Vodka, ginger beer e succo di lime fresco.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Mojito</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Rum, succo di lime fresco, menta, soda e zucchero di canna bianco.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Cuba Libre</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Rum, cola e succo di lime fresco.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Long Island</span>
+                        <span class="menu-item-price">10,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Rum, vodka, gin, triple sec, succo di limone fresco e cola.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Paloma</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Tequila, succo di lime fresco, soda al pompelmo e un pizzico di sale.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Margarita</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Tequila, succo di lime fresco e triple sec.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Tonys Margarita</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Tequila, succo di lime fresco e sciroppo di agave.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Mexican Mule</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Tequila, ginger beer e succo di lime fresco.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Naked and Famous</span>
+                        <span class="menu-item-price">8,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Mezcal, Chartreuse gialla, Aperol e succo di lime fresco.
+                    </p>
+                </li>
+            </ul>
+        </section>
+
+        <section class="menu-section" style="margin-top: 1.2rem;">
+            <h2 class="menu-section-title">Cocktail analcolici</h2>
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Virgin Paloma</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Succo di lime, succo di pompelmo, sciroppo di agave e soda.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Virgin Mojito</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Zucchero di canna, menta, succo di lime e ginger beer.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Virgin Moscow Mule</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Succo di lime, menta e ginger beer.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Spritz analcolico</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                    <p class="menu-item-desc">
+                        Bitter rosso, succo di arancia e soda.
+                    </p>
+                </li>
+
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Gin Tanqueray 0.0 Lemon / Tonic</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <section class="menu-section" style="margin-top: 1.2rem;">
+            <h2 class="menu-section-title">Amari, caff&egrave; e porzioni</h2>
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Shot</span>
+                        <span class="menu-item-price">2,50&nbsp;&euro;</span>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Shot Premium</span>
+                        <span class="menu-item-price">3,50&nbsp;&euro;</span>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Porzione amaro / whiskey / rum</span>
+                        <span class="menu-item-price">5,00&nbsp;&euro;</span>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <div class="menu-item-header">
+                        <span class="menu-item-name">Porzione amaro / whiskey / rum Premium</span>
+                        <span class="menu-item-price">7,00&nbsp;&euro;</span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <p class="menu-footer">
+            Servizio e coperto 10%. I cocktail potrebbero variare in base alle stagioni
+            o alle proposte del bancone.
+        </p>
+        <p class="menu-footer menu-footer-designed">
+            Designed by <a href="autore.html" class="footer-author-link">MeStesso</a>
+        </p>
+        <p class="menu-footer menu-footer-designed" style="margin-top: 0.3rem;">
+            <a href="policy.html" class="footer-author-link">Policy</a> • P.I. 07797121212
+        </p>
+
+
+
+
+    </div>
+
+    <!-- Barra fissa in basso -->
+    <div class="bottom-bar">
+        <a href="https://wa.me/393207682949" class="bottom-bar-btn bottom-bar-btn--wa" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp</span>
+        </a>
+        <a href="https://www.instagram.com/flego_official/" class="bottom-bar-btn bottom-bar-btn--ig" target="_blank" rel="noopener">
+            <i class="fab fa-instagram"></i>
+            <span>Instagram</span>
+        </a>
+        <a href="tel:+393207682949" class="bottom-bar-btn bottom-bar-btn--call">
+            <i class="fas fa-phone"></i>
+            <span>Chiama</span>
+        </a>
+    </div>
+
+    <button class="scroll-top" aria-label="Torna all'inizio">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // scroll to top button
+        (function() {
+            const btn = document.querySelector('.scroll-top');
+            if (!btn) return;
+            
+            // click handler
+            btn.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // mostra/nascondi bottone in base allo scroll
+            const scrollThreshold = 200; // pixel di scroll prima di mostrare il bottone
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > scrollThreshold) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            });
+        })();
+
+        // Registrazione Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registrato con successo:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Registrazione Service Worker fallita:', error);
+                    });
+            });
+        }
+    </script>
+    
+    <script>
+        // Animazione dello sfondo vino basata sullo scroll
+        (function() {
+            const wineBg = document.querySelector('.wine-background');
+            if (!wineBg) return;
+            const wineSvg = wineBg.querySelector('svg');
+            const wavePath = wineBg.querySelector('clipPath path');
+            const animateElement = wineBg.querySelector('animate');
+            const flatWavePath = 'M64 246 L64 90 L156 90 L156 246 Z';
+            const animationValues = `M64 246 L64 90 C82 84, 100 96, 110 90 C120 84, 138 96, 156 90 L156 246 Z; M64 246 L64 90 C82 96, 100 84, 110 90 C120 96, 138 84, 156 90 L156 246 Z; M64 246 L64 90 C82 84, 100 96, 110 90 C120 84, 138 96, 156 90 L156 246 Z`;
+            if (wavePath && animateElement) { animateElement.remove(); wavePath.setAttribute('d', flatWavePath); }
+            let scrollTimeout;
+            function updateWinePosition() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const documentHeight = document.documentElement.scrollHeight;
+                const viewportHeight = window.innerHeight;
+                const maxScroll = documentHeight - viewportHeight;
+                if (maxScroll <= 0) { wineBg.style.top = '50%'; wineBg.style.transform = 'translate(-50%, -50%) scale(3.0)'; return; }
+                const scrollPercent = scrollTop / maxScroll;
+                const topPosition = 100 - (scrollPercent * 100);
+                wineBg.style.top = topPosition + 'vh';
+                wineBg.style.transform = 'translate(-50%, 0) scale(3.0)';
+            }
+            function startScrollAnimation() {
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (!existingAnimate) {
+                        wavePath.removeAttribute('d');
+                        const newAnimate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                        newAnimate.setAttribute('attributeName', 'd');
+                        newAnimate.setAttribute('dur', '2.6s');
+                        newAnimate.setAttribute('repeatCount', 'indefinite');
+                        newAnimate.setAttribute('values', animationValues);
+                        wavePath.appendChild(newAnimate);
+                    }
+                }
+                clearTimeout(scrollTimeout);
+            }
+            function stopScrollAnimation() {
+                if (wavePath) {
+                    const existingAnimate = wavePath.querySelector('animate');
+                    if (existingAnimate) {
+                        // Stato intermedio che rappresenta una media degli stati dell'animazione
+                        const intermediatePath = 'M64 246 L64 90 C82 90, 100 90, 110 90 C120 90, 138 90, 156 90 L156 246 Z';
+                        
+                        // Rimuove l'animazione - il browser manterrà lo stato visivo corrente
+                        existingAnimate.remove();
+                        
+                        // Imposta immediatamente uno stato intermedio per evitare scatti
+                        wavePath.setAttribute('d', intermediatePath);
+                        
+                        // Usa un piccolo delay per permettere al browser di processare il cambio
+                        requestAnimationFrame(function() {
+                            requestAnimationFrame(function() {
+                                wavePath.setAttribute('d', flatWavePath);
+                            });
+                        });
+                    }
+                }
+            }
+            updateWinePosition();
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                startScrollAnimation();
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateWinePosition();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(stopScrollAnimation, 500);
+            }, { passive: true });
+            window.addEventListener('resize', function() { updateWinePosition(); });
+        })();
+    </script>
+</body>
+</html>
+
+
+
+
