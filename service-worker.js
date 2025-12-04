@@ -1,7 +1,7 @@
 // Service Worker per Decanter Wine & More - Strategia Network First
 // Cache name con versione per facilitare aggiornamenti
-const CACHE_NAME = 'decanterwinemore-v1';
-const RUNTIME_CACHE = 'decanterwinemore-runtime-v1';
+const CACHE_NAME = 'decanterwinemore-v2';
+const RUNTIME_CACHE = 'decanterwinemore-runtime-v2';
 
 // File da mettere in cache all'installazione
 const PRECACHE_FILES = [
@@ -27,11 +27,9 @@ const PRECACHE_FILES = [
 
 // Installazione: precache dei file principali
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installazione...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[Service Worker] Precaching file...');
         // Usa addAll con gestione errori - se un file fallisce, continua con gli altri
         return Promise.allSettled(
           PRECACHE_FILES.map(url => {
@@ -40,23 +38,19 @@ self.addEventListener('install', (event) => {
                 if (response.ok) {
                   return cache.put(url, response);
                 } else {
-                  console.warn('[Service Worker] File non trovato:', url);
                   return Promise.resolve(); // Continua anche se il file non esiste
                 }
               })
-              .catch(error => {
-                console.warn('[Service Worker] Errore nel precaching di', url, ':', error);
+              .catch(() => {
                 return Promise.resolve(); // Continua anche se c'è un errore
               });
           })
         );
       })
       .then(() => {
-        console.log('[Service Worker] Precaching completato');
         return self.skipWaiting(); // Attiva immediatamente il nuovo service worker
       })
-      .catch(error => {
-        console.error('[Service Worker] Errore durante l\'installazione:', error);
+      .catch(() => {
         // Anche in caso di errore, attiva il service worker
         return self.skipWaiting();
       })
@@ -65,13 +59,11 @@ self.addEventListener('install', (event) => {
 
 // Attivazione: pulizia cache vecchie
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Attivazione...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
-            console.log('[Service Worker] Rimozione cache vecchia:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -100,7 +92,6 @@ self.addEventListener('fetch', (event) => {
     }
   } catch (e) {
     // Se c'è un errore nel parsing dell'URL, ignora la richiesta
-    console.warn('[Service Worker] Errore nel parsing URL:', e);
     return;
   }
 
@@ -122,7 +113,6 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(() => {
         // Se la rete fallisce, prova la cache
-        console.log('[Service Worker] Rete non disponibile, uso cache per:', event.request.url);
         return caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;

@@ -544,26 +544,6 @@
             });
         })();
         
-        // Test rapido per verificare che localStorage funzioni
-        function testLocalStorage() {
-            try {
-                const testKey = 'decanter_test';
-                localStorage.setItem(testKey, 'test');
-                const testValue = localStorage.getItem(testKey);
-                localStorage.removeItem(testKey);
-                if (testValue === 'test') {
-                    console.log('✓ localStorage funziona correttamente');
-                    return true;
-                } else {
-                    console.error('✗ localStorage non funziona correttamente');
-                    return false;
-                }
-            } catch (e) {
-                console.error('✗ Errore nel test localStorage:', e);
-                return false;
-            }
-        }
-        
         // Prova a recuperare i dati da sessionStorage come fallback (solo per file://)
         function tryGetFavoritesFromSession() {
             try {
@@ -588,54 +568,23 @@
         
         // Inizializza la pagina quando il DOM è pronto
         function initPage() {
-            console.log('=== INIZIALIZZAZIONE PAGINA PREFERITI ===');
-            console.log('readyState:', document.readyState);
-            console.log('Protocollo:', window.location.protocol);
-            console.log('favoritesGrid:', favoritesGrid);
-            console.log('emptyState:', emptyState);
-            
-            // Controlla se si usa file://
-            const isFileProtocol = checkFileProtocol();
-            
-            // Test localStorage
-            if (!testLocalStorage()) {
-                alert('localStorage non è disponibile. I preferiti potrebbero non funzionare correttamente.');
-            }
-            
             if (!favoritesGrid || !emptyState) {
-                console.error('Elementi DOM non trovati, riprovo tra 100ms...');
                 setTimeout(initPage, 100);
                 return;
             }
             
-            console.log('DOM pronto, chiamo renderFavorites');
-            
             // Se si usa file://, prova a recuperare da sessionStorage
-            if (isFileProtocol) {
-                const sessionFavorites = tryGetFavoritesFromSession();
-                if (sessionFavorites) {
-                    console.log('Usando preferiti da sessionStorage');
-                }
+            if (window.location.protocol === 'file:') {
+                tryGetFavoritesFromSession();
             }
-            
-            // Verifica immediata dei preferiti
-            const testFavorites = getFavorites();
-            console.log('Test immediato - Preferiti trovati:', testFavorites);
-            console.log('Test immediato - Numero:', testFavorites ? testFavorites.length : 0);
             
             renderFavorites();
         }
         
         // Chiama initPage quando il DOM è pronto
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOMContentLoaded event fired');
-                initPage();
-            });
+            document.addEventListener('DOMContentLoaded', initPage);
         } else {
-            // DOM già caricato
-            console.log('DOM già caricato, chiamo initPage immediatamente');
-            // Usa setTimeout per assicurarsi che tutti gli script siano caricati
             setTimeout(initPage, 0);
         }
         
