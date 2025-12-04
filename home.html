@@ -408,21 +408,15 @@
         // Registrazione Service Worker (solo se non si usa file://)
         if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
             window.addEventListener('load', function() {
-                const swPath = '/service-worker.js';
+                // Usa percorso relativo per compatibilità con GitHub Pages (repository non in root)
+                const swPath = './service-worker.js';
                 navigator.serviceWorker.register(swPath)
                     .then(function(registration) {
-                        console.log('Service Worker registrato con successo:', registration.scope);
+                        // Service Worker registrato con successo (silenzioso)
                     })
                     .catch(function(error) {
-                        console.log('Registrazione Service Worker fallita:', error);
-                        // Prova con percorso relativo come fallback
-                        navigator.serviceWorker.register('./service-worker.js')
-                            .then(function(registration) {
-                                console.log('Service Worker registrato con percorso relativo:', registration.scope);
-                            })
-                            .catch(function(error2) {
-                                console.log('Registrazione Service Worker fallita anche con percorso relativo:', error2);
-                            });
+                        // Solo log in caso di errore reale
+                        console.warn('Registrazione Service Worker fallita:', error);
                     });
             });
         }

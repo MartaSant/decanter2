@@ -3,26 +3,41 @@
 const CACHE_NAME = 'decanterwinemore-v2';
 const RUNTIME_CACHE = 'decanterwinemore-runtime-v2';
 
+// Determina il percorso base dal percorso del Service Worker stesso
+// Funziona sia per root (/) che per sottocartelle (/decanter2/)
+const getBasePath = () => {
+  try {
+    // Il percorso del Service Worker stesso (es. /decanter2/service-worker.js)
+    const swPath = self.location.pathname;
+    // Rimuovi il nome del file e ottieni la directory
+    const basePath = swPath.substring(0, swPath.lastIndexOf('/') + 1);
+    return basePath || '/';
+  } catch (e) {
+    // Fallback: assume root se non può determinare
+    return '/';
+  }
+};
+
 // File da mettere in cache all'installazione
-const PRECACHE_FILES = [
-  '/',
-  '/index.html',
-  '/home.html',
-  '/style.css',
-  '/manifest.json',
-  '/logo.png',
-  '/taglieri.html',
-  '/vini-rossi.html',
-  '/vini-bianchi.html',
-  '/bollicine.html',
-  '/al-calice.html',
-  '/birre.html',
-  '/altre-bevande.html',
-  '/filtro.html',
-  '/preferiti.html',
-  '/autore.html',
-  '/policy.html',
-  '/404.html'
+// I percorsi vengono risolti relativamente al base path durante l'installazione
+const PRECACHE_FILES_RELATIVE = [
+  'index.html',
+  'home.html',
+  'style.css',
+  'manifest.json',
+  'logo.png',
+  'taglieri.html',
+  'vini-rossi.html',
+  'vini-bianchi.html',
+  'bollicine.html',
+  'al-calice.html',
+  'birre.html',
+  'altre-bevande.html',
+  'filtro.html',
+  'preferiti.html',
+  'autore.html',
+  'policy.html',
+  '404.html'
 ];
 
 // Installazione: precache dei file principali
@@ -30,9 +45,18 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
+        // Determina il percorso base
+        const basePath = getBasePath();
+        
+        // Costruisci i percorsi completi
+        const precacheFiles = [
+          basePath, // Root
+          ...PRECACHE_FILES_RELATIVE.map(file => basePath + file)
+        ];
+        
         // Usa addAll con gestione errori - se un file fallisce, continua con gli altri
         return Promise.allSettled(
-          PRECACHE_FILES.map(url => {
+          precacheFiles.map(url => {
             return fetch(url, { cache: 'reload' })
               .then(response => {
                 if (response.ok) {

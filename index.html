@@ -61,25 +61,15 @@
         </div>
     </div>
     <script>
-        // Registrazione Service Worker
-        if ('serviceWorker' in navigator) {
+        // Registrazione Service Worker (solo se non si usa file://)
+        if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
             window.addEventListener('load', function() {
-                // Prova prima con percorso assoluto, poi con percorso relativo
-                const swPath = '/service-worker.js';
+                // Usa percorso relativo per compatibilità con GitHub Pages (repository non in root)
+                const swPath = './service-worker.js';
                 navigator.serviceWorker.register(swPath)
-                    .then(function(registration) {
-                        console.log('Service Worker registrato con successo:', registration.scope);
-                    })
                     .catch(function(error) {
-                        console.log('Registrazione Service Worker fallita con percorso assoluto, provo con percorso relativo:', error);
-                        // Prova con percorso relativo
-                        navigator.serviceWorker.register('./service-worker.js')
-                            .then(function(registration) {
-                                console.log('Service Worker registrato con successo (percorso relativo):', registration.scope);
-                            })
-                            .catch(function(error2) {
-                                console.log('Registrazione Service Worker fallita anche con percorso relativo:', error2);
-                            });
+                        // Solo log in caso di errore reale
+                        console.warn('Registrazione Service Worker fallita:', error);
                     });
             });
         }
