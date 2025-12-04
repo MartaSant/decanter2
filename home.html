@@ -48,9 +48,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <link rel="stylesheet" href="style.css">
-    <!-- Preload font critico Montserrat -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" as="style">
-    <!-- Google Fonts -->
+    <!-- Google Fonts con font-display: swap per evitare FOUC -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome per le icone social -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -337,53 +335,75 @@
     </script>
 
         <script>
-        // aggiorna anno nel footer
-        document.getElementById('year').textContent = new Date().getFullYear();
+        // Attendi che DOM e CSS siano completamente caricati
+        function initPage() {
+            // aggiorna anno nel footer
+            const yearEl = document.getElementById('year');
+            if (yearEl) {
+                yearEl.textContent = new Date().getFullYear();
+            }
 
-        // scroll to top button
-        (function() {
+            // scroll to top button
             const btn = document.querySelector('.scroll-top');
-            if (!btn) return;
-            
-            // click handler
-            btn.addEventListener('click', function () {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-            
-            // mostra/nascondi bottone in base allo scroll
-            const scrollThreshold = 200; // pixel di scroll prima di mostrare il bottone
-            
-            window.addEventListener('scroll', function() {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (btn) {
+                // click handler
+                btn.addEventListener('click', function () {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
                 
-                if (scrollTop > scrollThreshold) {
-                    btn.classList.add('visible');
-                } else {
-                    btn.classList.remove('visible');
-                }
-            });
-        })();
+                // mostra/nascondi bottone in base allo scroll
+                const scrollThreshold = 200; // pixel di scroll prima di mostrare il bottone
+                
+                window.addEventListener('scroll', function() {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    if (scrollTop > scrollThreshold) {
+                        btn.classList.add('visible');
+                    } else {
+                        btn.classList.remove('visible');
+                    }
+                });
+            }
 
-        // Effetto fade-out al testo hero quando si scrolla
-        (function() {
+            // Effetto fade-out al testo hero quando si scrolla
             const heroText = document.querySelector('.hero-text');
-            if (!heroText) return;
+            if (heroText) {
+                let lastScrollTop = 0;
+                const scrollThreshold = 50; // pixel di scroll prima di attivare l'effetto
 
-            let lastScrollTop = 0;
-            const scrollThreshold = 50; // pixel di scroll prima di attivare l'effetto
-
-            window.addEventListener('scroll', function() {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                
-                if (scrollTop > scrollThreshold) {
-                    heroText.classList.add('fade-out');
+                window.addEventListener('scroll', function() {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    if (scrollTop > scrollThreshold) {
+                        heroText.classList.add('fade-out');
+                    } else {
+                        heroText.classList.remove('fade-out');
+                    }
+                    
+                    lastScrollTop = scrollTop;
+                });
+            }
+        }
+        
+        // Attendi che tutto sia caricato (DOM + CSS + Font)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                // Attendi anche che i font siano caricati
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(initPage);
                 } else {
-                    heroText.classList.remove('fade-out');
+                    // Fallback se document.fonts non è supportato
+                    window.addEventListener('load', initPage);
                 }
-                
-                lastScrollTop = scrollTop;
             });
-        })();
+        } else {
+            // DOM già caricato
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(initPage);
+            } else {
+                window.addEventListener('load', initPage);
+            }
+        }
 
         // Registrazione Service Worker (solo se non si usa file://)
         if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
@@ -411,12 +431,13 @@
     <script>
         // Animazione dello sfondo vino basata sullo scroll
         (function() {
-            const wineBg = document.querySelector('.wine-background');
-            if (!wineBg) return;
-            
-            const wineSvg = wineBg.querySelector('svg');
-            const wavePath = wineBg.querySelector('clipPath path');
-            const animateElement = wineBg.querySelector('animate');
+            function initWineAnimation() {
+                const wineBg = document.querySelector('.wine-background');
+                if (!wineBg) return;
+                
+                const wineSvg = wineBg.querySelector('svg');
+                const wavePath = wineBg.querySelector('clipPath path');
+                const animateElement = wineBg.querySelector('animate');
             
             // Forma piatta dell'onda (linea retta orizzontale)
             const flatWavePath = 'M64 246 L64 90 L156 90 L156 246 Z';
@@ -520,31 +541,39 @@
                 }
             }
             
-            // Aggiorna la posizione all'avvio
-            updateWinePosition();
-            
-            // Aggiorna la posizione durante lo scroll con throttling per performance
-            let ticking = false;
-            window.addEventListener('scroll', function() {
-                startScrollAnimation();
-                
-                if (!ticking) {
-                    window.requestAnimationFrame(function() {
-                        updateWinePosition();
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-                
-                // Ferma l'animazione dopo che lo scroll si ferma (delay aumentato per transizione più smooth)
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(stopScrollAnimation, 500);
-            }, { passive: true });
-            
-            // Aggiorna anche quando la finestra viene ridimensionata
-            window.addEventListener('resize', function() {
+                // Aggiorna la posizione all'avvio
                 updateWinePosition();
-            });
+                
+                // Aggiorna la posizione durante lo scroll con throttling per performance
+                let ticking = false;
+                window.addEventListener('scroll', function() {
+                    startScrollAnimation();
+                    
+                    if (!ticking) {
+                        window.requestAnimationFrame(function() {
+                            updateWinePosition();
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                    
+                    // Ferma l'animazione dopo che lo scroll si ferma (delay aumentato per transizione più smooth)
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(stopScrollAnimation, 500);
+                }, { passive: true });
+                
+                // Aggiorna anche quando la finestra viene ridimensionata
+                window.addEventListener('resize', function() {
+                    updateWinePosition();
+                });
+            }
+            
+            // Inizializza quando il DOM è pronto
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initWineAnimation);
+            } else {
+                initWineAnimation();
+            }
         })();
     </script>
 </body>
