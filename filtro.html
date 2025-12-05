@@ -669,6 +669,8 @@
                             'product_region': vino.regione,
                             'product_price': vino.prezzo
                         });
+                        
+                        console.log('GA4 Event sent: favorite_removed', vino.nome);
                     } else if (window.dataLayer) {
                         window.dataLayer.push({
                             'event': 'favorite_removed',
@@ -677,6 +679,7 @@
                             'product_region': vino.regione,
                             'product_price': vino.prezzo
                         });
+                        console.log('GA4 Event sent (dataLayer): favorite_removed', vino.nome);
                     }
                 } catch (e) {
                     console.error('Errore nell\'invio evento GA4 favorite_removed:', e);
@@ -704,6 +707,8 @@
                             'product_region': vino.regione,
                             'product_price': vino.prezzo
                         });
+                        
+                        console.log('GA4 Event sent: favorite_added', vino.nome);
                     } else if (window.dataLayer) {
                         window.dataLayer.push({
                             'event': 'favorite_added',
@@ -712,6 +717,7 @@
                             'product_region': vino.regione,
                             'product_price': vino.prezzo
                         });
+                        console.log('GA4 Event sent (dataLayer): favorite_added', vino.nome);
                     }
                 } catch (e) {
                     console.error('Errore nell\'invio evento GA4 favorite_added:', e);
