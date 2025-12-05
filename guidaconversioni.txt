@@ -1,0 +1,264 @@
+================================================================================
+GUIDA DETTAGLIATA: COME CONTRASSEGNARE EVENTI COME CONVERSIONI IN GA4
+================================================================================
+
+Questa guida ti spiega passo passo come contrassegnare gli eventi come
+conversioni in Google Analytics 4, così da poter misurare i risultati e
+l'efficacia del tuo sito.
+
+================================================================================
+COSA SONO LE CONVERSIONI
+================================================================================
+
+Le conversioni sono azioni importanti che vuoi misurare come "successi".
+Nel tuo caso, potresti considerare conversioni:
+- Quando un utente apre i dettagli di un vino (interesse)
+- Quando un utente salva un vino nei preferiti (intenzione di acquisto)
+
+================================================================================
+PASSO 1: ACCEDI A GOOGLE ANALYTICS
+================================================================================
+
+1. Apri il browser e vai su: https://analytics.google.com
+2. Effettua il login con il tuo account Google (se non sei già loggato)
+3. Seleziona la proprietà "Decanter Wine & More" (ID: G-2KB68FNNQ8)
+   - Se vedi più proprietà, clicca sul menu a tendina in alto e seleziona quella corretta
+
+================================================================================
+PASSO 2: VAI IN ADMIN
+================================================================================
+
+1. Guarda la barra laterale sinistra
+2. In basso, clicca sull'icona dell'INGRANAGGIO (⚙️) chiamata "Admin"
+3. Ti si aprirà una pagina con 3 colonne:
+   - Account (sinistra)
+   - Property (centro) ← QUI DEVI ANDARE
+   - View (destra)
+
+================================================================================
+PASSO 3: APRI LA SEZIONE EVENTS
+================================================================================
+
+1. Nella colonna centrale "Property", scorri verso il basso
+2. Cerca la sezione "Data collection and modification"
+3. Clicca su "Events"
+4. Ti si aprirà una lista di tutti gli eventi tracciati
+
+================================================================================
+PASSO 4: CONTRASSEGNA "product_details_view" COME CONVERSIONE
+================================================================================
+
+1. Nella lista degli eventi, cerca "product_details_view"
+   (Se non lo vedi, potrebbe essere perché non ci sono ancora eventi registrati.
+    In tal caso, attendi qualche ora o visita il sito e clicca sul bottone "+" di un vino)
+
+2. Una volta trovato "product_details_view", guarda la colonna a destra
+   chiamata "Mark as conversion"
+
+3. Clicca sul TOGGLE (interruttore) per attivarlo
+   ┌─────────────────────────────────────────────┐
+   │ Event name        │ Mark as conversion      │
+   ├─────────────────────────────────────────────┤
+   │ product_details_ │  [OFF] ────● [ON]      │
+   │ view             │                         │
+   └─────────────────────────────────────────────┘
+   (Il toggle passerà da grigio a blu quando attivo)
+
+4. Dovresti vedere una conferma che l'evento è stato contrassegnato come conversione
+
+================================================================================
+PASSO 5: CONTRASSEGNA "favorite_added" COME CONVERSIONE
+================================================================================
+
+1. Nella stessa lista degli eventi, cerca "favorite_added"
+
+2. Clicca sul TOGGLE "Mark as conversion" per attivarlo
+   ┌─────────────────────────────────────────────┐
+   │ Event name        │ Mark as conversion      │
+   ├─────────────────────────────────────────────┤
+   │ favorite_added    │  [OFF] ────● [ON]      │
+   └─────────────────────────────────────────────┘
+
+3. Dovresti vedere una conferma
+
+================================================================================
+PASSO 6: VERIFICA LE CONVERSIONI ATTIVE
+================================================================================
+
+1. Torna in Admin (icona ingranaggio)
+2. Nella colonna "Property", scorri fino a "Data display"
+3. Clicca su "Conversions"
+4. Dovresti vedere una lista con:
+   ✓ product_details_view
+   ✓ favorite_added
+
+Se le vedi entrambe, hai completato la configurazione!
+
+================================================================================
+ALTERNATIVA: CREARE CONVERSIONI MANUALMENTE
+================================================================================
+
+Se gli eventi non appaiono ancora nella lista (perché non ci sono ancora dati),
+puoi crearli manualmente:
+
+1. Vai in Admin → Conversions (sotto "Data display")
+2. Clicca su "New conversion event" (in alto a destra)
+3. Inserisci il nome esatto dell'evento:
+   - product_details_view
+   - favorite_added
+4. Clicca "Save"
+5. Ripeti per ogni evento che vuoi contrassegnare
+
+================================================================================
+IMPORTANTE: TEMPI DI ATTIVAZIONE
+================================================================================
+
+⚠️ ATTENZIONE: Le conversioni iniziano a essere tracciate SOLO DOPO che le
+   hai contrassegnate. Gli eventi registrati PRIMA non verranno conteggiati
+   come conversioni.
+
+✅ Le conversioni future verranno tracciate immediatamente.
+
+================================================================================
+COME VEDERE LE CONVERSIONI DOPO LA CONFIGURAZIONE
+================================================================================
+
+METODO 1: REPORT CONVERSIONI (Consigliato)
+--------------------------------------------
+1. Vai su "Reports" nel menu laterale sinistro
+2. Clicca su "Engagement"
+3. Clicca su "Conversions"
+4. Vedi:
+   - Total conversions (conversioni totali)
+   - Conversion rate (tasso di conversione)
+   - Conversions per event (quante conversioni per ogni evento)
+
+METODO 2: REPORT PRINCIPALE
+----------------------------
+1. Vai su "Reports" → "Reports snapshot" (home)
+2. Nella sezione "Conversions", vedi le conversioni totali
+3. Clicca per vedere i dettagli
+
+METODO 3: EXPLORER PERSONALIZZATO
+----------------------------------
+1. Vai su "Explore" → "Blank"
+2. Aggiungi metrica: "Conversions"
+3. Aggiungi dimensione: "Event name"
+4. Vedi quali eventi generano più conversioni
+
+METODO 4: REALTIME
+-------------------
+1. Vai su "Reports" → "Realtime"
+2. Scorri fino a "Conversions"
+3. Vedi le conversioni in tempo reale
+
+================================================================================
+COSA SIGNIFICANO LE METRICHE
+================================================================================
+
+TOTAL CONVERSIONS:
+- Numero totale di conversioni in un periodo
+- Esempio: "Oggi: 25 conversioni"
+
+CONVERSION RATE:
+- Percentuale di sessioni che hanno generato almeno una conversione
+- Esempio: "12% delle sessioni hanno generato una conversione"
+
+CONVERSIONS PER USER:
+- Media di conversioni per utente
+- Esempio: "Ogni utente genera in media 1.5 conversioni"
+
+================================================================================
+QUALE EVENTO CONTRASSEGNARE COME CONVERSIONE?
+================================================================================
+
+✅ CONSIGLIATI (Contrassegna questi):
+---------------------------------------
+1. product_details_view
+   → Misura l'interesse per i prodotti
+   → Utile per capire quali vini attirano più attenzione
+
+2. favorite_added
+   → Misura l'intenzione di acquisto
+   → Utile per capire quali vini gli utenti vogliono salvare
+
+❌ NON CONSIGLIATI (Non contrassegnare):
+------------------------------------------
+1. favorite_removed
+   → Non è un obiettivo positivo
+   → Non misura un successo
+
+2. page_view
+   → Troppo generico
+   → Tutte le visite genererebbero conversioni (non utile)
+
+3. scroll
+   → Troppo comune
+   → Non misura un interesse specifico
+
+4. user_engagement
+   → Troppo generico
+   → Non misura un'azione specifica
+
+================================================================================
+ESEMPIO PRATICO: COSA VEDRAI
+================================================================================
+
+Dopo aver contrassegnato le conversioni, potresti vedere:
+
+REPORT CONVERSIONI:
+┌─────────────────────────────────────────────────┐
+│ Total conversions: 45                           │
+│ Conversion rate: 15.2%                          │
+│                                                 │
+│ Conversions by event:                          │
+│ - product_details_view: 30                     │
+│ - favorite_added: 15                            │
+└─────────────────────────────────────────────────┘
+
+Questo significa:
+- 45 conversioni totali
+- Il 15.2% delle sessioni ha generato almeno una conversione
+- 30 utenti hanno aperto i dettagli di un vino
+- 15 utenti hanno salvato un vino nei preferiti
+
+================================================================================
+VANTAGGI DELLE CONVERSIONI
+================================================================================
+
+1. MISURARE I RISULTATI
+   → Capisci quali azioni portano valore al tuo business
+
+2. OTTIMIZZARE IL SITO
+   → Vedi cosa funziona meglio e cosa migliorare
+
+3. REPORT DEDICATI
+   → Hai report specifici per le conversioni
+
+4. OBIETTIVI CHIARI
+   → Definisci cosa conta come "successo" per il tuo sito
+
+5. ANALISI AVANZATE
+   → Puoi analizzare le conversioni per:
+      - Canale di traffico (dove arrivano gli utenti)
+      - Dispositivo (mobile vs desktop)
+      - Pagina di ingresso
+      - Etc.
+
+================================================================================
+NOTA FINALE
+================================================================================
+
+Le conversioni sono uno strumento potente per misurare il successo del tuo sito.
+Contrassegnando gli eventi giusti, puoi capire:
+- Quanti utenti mostrano interesse per i tuoi prodotti
+- Quali vini attirano più attenzione
+- Se il sito sta raggiungendo i suoi obiettivi
+
+Ricorda: le conversioni iniziano a essere tracciate SOLO DOPO che le hai
+contrassegnate. Gli eventi passati non verranno conteggiati.
+
+================================================================================
+FINE GUIDA
+================================================================================
+

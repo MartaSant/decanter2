@@ -1,0 +1,235 @@
+================================================================================
+GUIDA DETTAGLIATA: COME REGISTRARE CUSTOM DIMENSIONS IN GOOGLE ANALYTICS 4
+================================================================================
+
+Questa guida ti spiega passo passo come registrare le Custom Dimensions per
+vedere i nomi dei prodotti, tipi, regioni e prezzi nei report di Google Analytics.
+
+================================================================================
+PASSO 1: ACCEDI A GOOGLE ANALYTICS
+================================================================================
+
+1. Apri il browser e vai su: https://analytics.google.com
+2. Effettua il login con il tuo account Google (se non sei già loggato)
+3. Seleziona la proprietà "Decanter Wine & More" (ID: G-2KB68FNNQ8)
+   - Se vedi più proprietà, clicca sul menu a tendina in alto e seleziona quella corretta
+
+================================================================================
+PASSO 2: VAI IN ADMIN
+================================================================================
+
+1. Guarda la barra laterale sinistra
+2. In basso, clicca sull'icona dell'INGRANAGGIO (⚙️) chiamata "Admin"
+3. Ti si aprirà una pagina con 3 colonne:
+   - Account (sinistra)
+   - Property (centro) ← QUI DEVI ANDARE
+   - View (destra)
+
+================================================================================
+PASSO 3: APRI CUSTOM DEFINITIONS
+================================================================================
+
+1. Nella colonna centrale "Property", scorri verso il basso
+2. Cerca la sezione "Data display"
+3. Clicca su "Custom definitions"
+4. Ti si aprirà una pagina con due tab:
+   - Custom dimensions (in alto)
+   - Custom metrics (in basso)
+5. Assicurati di essere nella tab "Custom dimensions"
+
+================================================================================
+PASSO 4: CREA LA PRIMA CUSTOM DIMENSION - NOME PRODOTTO
+================================================================================
+
+1. Clicca sul pulsante blu "CREATE CUSTOM DIMENSION" (in alto a destra)
+
+2. Compila il form con questi dati:
+
+   DIMENSION NAME:
+   ┌─────────────────────────────────────┐
+   │ Nome Prodotto                       │
+   └─────────────────────────────────────┘
+
+   SCOPE:
+   ┌─────────────────────────────────────┐
+   │ Seleziona: "Event"                  │
+   └─────────────────────────────────────┘
+   (Clicca sul menu a tendina e scegli "Event")
+
+   EVENT PARAMETER:
+   ┌─────────────────────────────────────┐
+   │ product_name                         │
+   └─────────────────────────────────────┘
+   (Scrivi esattamente: product_name)
+
+   DESCRIPTION (opzionale ma consigliato):
+   ┌─────────────────────────────────────┐
+   │ Nome del vino visualizzato,         │
+   │ aggiunto o rimosso dai preferiti     │
+   └─────────────────────────────────────┘
+
+3. Clicca sul pulsante "SAVE" (in basso a destra)
+4. Attendi la conferma che la dimensione è stata creata
+
+================================================================================
+PASSO 5: CREA LA SECONDA CUSTOM DIMENSION - TIPO PRODOTTO
+================================================================================
+
+1. Clicca di nuovo su "CREATE CUSTOM DIMENSION"
+
+2. Compila il form:
+
+   DIMENSION NAME:
+   ┌─────────────────────────────────────┐
+   │ Tipo Prodotto                       │
+   └─────────────────────────────────────┘
+
+   SCOPE:
+   ┌─────────────────────────────────────┐
+   │ Seleziona: "Event"                  │
+   └─────────────────────────────────────┘
+
+   EVENT PARAMETER:
+   ┌─────────────────────────────────────┐
+   │ product_type                         │
+   └─────────────────────────────────────┘
+   (Scrivi esattamente: product_type)
+
+   DESCRIPTION:
+   ┌─────────────────────────────────────┐
+   │ Tipo di vino (bianco, rosso, rosè,  │
+   │ prosecco, champagne)                 │
+   └─────────────────────────────────────┘
+
+3. Clicca "SAVE"
+
+================================================================================
+PASSO 6: CREA LA TERZA CUSTOM DIMENSION - REGIONE PRODOTTO
+================================================================================
+
+1. Clicca su "CREATE CUSTOM DIMENSION"
+
+2. Compila il form:
+
+   DIMENSION NAME:
+   ┌─────────────────────────────────────┐
+   │ Regione Prodotto                     │
+   └─────────────────────────────────────┘
+
+   SCOPE:
+   ┌─────────────────────────────────────┐
+   │ Seleziona: "Event"                  │
+   └─────────────────────────────────────┘
+
+   EVENT PARAMETER:
+   ┌─────────────────────────────────────┐
+   │ product_region                       │
+   └─────────────────────────────────────┘
+   (Scrivi esattamente: product_region)
+
+   DESCRIPTION:
+   ┌─────────────────────────────────────┐
+   │ Regione di provenienza del vino      │
+   └─────────────────────────────────────┘
+
+3. Clicca "SAVE"
+
+================================================================================
+PASSO 7: CREA LA QUARTA CUSTOM DIMENSION - PREZZO PRODOTTO
+================================================================================
+
+1. Clicca su "CREATE CUSTOM DIMENSION"
+
+2. Compila il form:
+
+   DIMENSION NAME:
+   ┌─────────────────────────────────────┐
+   │ Prezzo Prodotto                      │
+   └─────────────────────────────────────┘
+
+   SCOPE:
+   ┌─────────────────────────────────────┐
+   │ Seleziona: "Event"                  │
+   └─────────────────────────────────────┘
+
+   EVENT PARAMETER:
+   ┌─────────────────────────────────────┐
+   │ product_price                        │
+   └─────────────────────────────────────┘
+   (Scrivi esattamente: product_price)
+
+   DESCRIPTION:
+   ┌─────────────────────────────────────┐
+   │ Prezzo del vino in euro              │
+   └─────────────────────────────────────┘
+
+3. Clicca "SAVE"
+
+================================================================================
+PASSO 8: VERIFICA LE DIMENSIONI CREATE
+================================================================================
+
+Dovresti vedere una lista con 4 Custom Dimensions:
+
+✓ Nome Prodotto (Event - product_name)
+✓ Tipo Prodotto (Event - product_type)
+✓ Regione Prodotto (Event - product_region)
+✓ Prezzo Prodotto (Event - product_price)
+
+Se le vedi tutte e 4, hai completato la registrazione!
+
+================================================================================
+IMPORTANTE: TEMPI DI ATTIVAZIONE
+================================================================================
+
+⚠️ ATTENZIONE: Le Custom Dimensions possono richiedere 24-48 ore per essere
+   completamente disponibili nei report standard.
+
+✅ Tuttavia, potrebbero essere visibili PRIMA in:
+   - Realtime reports (dopo qualche minuto)
+   - Explorer personalizzato (dopo qualche ora)
+
+================================================================================
+COME VEDERE I DATI DOPO LA REGISTRAZIONE
+================================================================================
+
+METODO 1: EXPLORER PERSONALIZZATO (Consigliato)
+------------------------------------------------
+1. Vai su "Explore" nel menu laterale sinistro
+2. Clicca su "Blank" (o crea un nuovo report)
+3. Nella sezione "Variables" (sinistra):
+   - Aggiungi dimensione: "Nome Prodotto" (o "Tipo Prodotto")
+   - Aggiungi metrica: "Event count"
+4. Nella sezione "Tab settings":
+   - Aggiungi filtro: Event name = "product_details_view"
+   - (o "favorite_added", "favorite_removed")
+5. Vedi quali prodotti sono più visualizzati/salvati
+
+METODO 2: REPORT EVENTI
+------------------------
+1. Vai su "Reports" → "Engagement" → "Events"
+2. Clicca su un evento (es. "product_details_view")
+3. Dovresti vedere i parametri con i valori dei prodotti
+
+METODO 3: REALTIME
+------------------
+1. Vai su "Reports" → "Realtime"
+2. Scorri fino a "Event count by Event name"
+3. Clicca su un evento
+4. Dovresti vedere i dettagli con i nomi dei prodotti
+
+================================================================================
+NOTA FINALE
+================================================================================
+
+Le Custom Dimensions funzionano solo per eventi FUTURI. Gli eventi già
+registrati PRIMA della creazione delle dimensioni non avranno questi parametri
+visibili nei report.
+
+Dopo aver creato le dimensioni, tutti i nuovi eventi includeranno automaticamente
+i parametri personalizzati e potrai vedere i nomi dei prodotti nei report.
+
+================================================================================
+FINE GUIDA
+================================================================================
+

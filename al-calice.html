@@ -239,6 +239,46 @@
                     });
             });
         }
+        
+        // Tracking click bottoni social
+        (function() {
+            function trackSocialClick(buttonName, buttonType) {
+                try {
+                    if (window.dataLayer && typeof window.gtag === 'function') {
+                        window.gtag('event', 'social_click', {
+                            'button_name': buttonName,
+                            'button_type': buttonType
+                        });
+                        window.dataLayer.push({
+                            'event': 'social_click',
+                            'button_name': buttonName,
+                            'button_type': buttonType
+                        });
+                    } else if (window.dataLayer) {
+                        window.dataLayer.push({
+                            'event': 'social_click',
+                            'button_name': buttonName,
+                            'button_type': buttonType
+                        });
+                    }
+                } catch (e) {}
+            }
+            function initSocialTracking() {
+                const whatsappBtn = document.querySelector('.bottom-bar-btn--wa');
+                if (whatsappBtn) whatsappBtn.addEventListener('click', function() { trackSocialClick('WhatsApp', 'whatsapp'); });
+                const instagramBtn = document.querySelector('.bottom-bar-btn--ig');
+                if (instagramBtn) instagramBtn.addEventListener('click', function() { trackSocialClick('Instagram', 'instagram'); });
+                const phoneBtn = document.querySelector('.bottom-bar-btn--call');
+                if (phoneBtn) phoneBtn.addEventListener('click', function() { trackSocialClick('Chiama', 'phone'); });
+                const mapsBtn = document.querySelector('.bottom-bar-btn--maps, .maps-btn, [href*="maps.google"], [href*="google.com/maps"]');
+                if (mapsBtn) mapsBtn.addEventListener('click', function() { trackSocialClick('Mappe', 'maps'); });
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initSocialTracking);
+            } else {
+                initSocialTracking();
+            }
+        })();
     </script>
     
     <script>
