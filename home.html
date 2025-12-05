@@ -764,6 +764,43 @@
             } else {
                 initWineAnimation();
             }
+            
+            // Reset della posizione quando la pagina viene caricata o ripristinata dal bfcache
+            function resetWinePosition() {
+                const wineBg = document.querySelector('.wine-background');
+                if (!wineBg) return;
+                
+                // Forza il reset dello scroll a 0 immediatamente (senza animazione)
+                window.scrollTo(0, 0);
+                
+                // Aggiorna la posizione dello sfondo immediatamente
+                // Usa requestAnimationFrame per assicurarsi che lo scroll sia effettivamente a 0
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        updateWinePosition();
+                    });
+                });
+            }
+            
+            // Reset quando la pagina viene caricata
+            window.addEventListener('load', function() {
+                resetWinePosition();
+            });
+            
+            // Reset quando la pagina viene ripristinata dal bfcache (back/forward)
+            window.addEventListener('pageshow', function(event) {
+                // Reset sempre, non solo se persisted (per gestire anche refresh normali)
+                resetWinePosition();
+            });
+            
+            // Reset anche quando il DOM è pronto (per casi di caricamento rapido)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    resetWinePosition();
+                });
+            } else {
+                resetWinePosition();
+            }
         })();
     </script>
 </body>
