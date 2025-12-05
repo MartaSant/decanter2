@@ -1,7 +1,7 @@
 // Service Worker per Decanter Wine & More - Strategia Network First
 // Cache name con versione per facilitare aggiornamenti
-const CACHE_NAME = 'decanterwinemore-v2';
-const RUNTIME_CACHE = 'decanterwinemore-runtime-v2';
+const CACHE_NAME = 'decanterwinemore-v3';
+const RUNTIME_CACHE = 'decanterwinemore-runtime-v3';
 
 // Determina il percorso base dal percorso del Service Worker stesso
 // Funziona sia per root (/) che per sottocartelle (/decanter2/)
