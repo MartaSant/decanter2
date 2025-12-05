@@ -791,14 +791,6 @@
                         'product_price': vino.prezzo
                     });
                     
-                    // Debug: mostra in console cosa viene inviato
-                    console.log('GA4 Event sent:', {
-                        event: 'product_details_view',
-                        product_name: vino.nome,
-                        product_type: vino.tono,
-                        product_region: vino.regione,
-                        product_price: vino.prezzo
-                    });
                 } else if (window.dataLayer) {
                     // Fallback: solo dataLayer
                     window.dataLayer.push({
