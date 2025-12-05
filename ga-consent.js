@@ -143,3 +143,43 @@ if (document.readyState === 'loading') {
     initCookieBanner();
 }
 
+// Ascolta i cambiamenti di localStorage per rilevare quando il consenso viene dato in altre pagine/iframe
+// Questo è utile per index.html che contiene un iframe con home.html
+window.addEventListener('storage', function(e) {
+    if (e.key === CONSENT_KEY && e.newValue === 'granted') {
+        // Il consenso è stato dato in un'altra pagina/iframe, carica GA4
+        if (!window.gtag || !window.dataLayer) {
+            loadGA4();
+        }
+    }
+});
+
+// Per iframe same-origin, l'evento storage potrebbe non funzionare
+// Quindi controlliamo periodicamente se il consenso è stato dato
+// Questo è importante per index.html che contiene un iframe con home.html
+if (document.getElementById('cookie-banner') === null) {
+    // Se non c'è banner in questa pagina, controlla periodicamente il consenso
+    let lastConsent = localStorage.getItem(CONSENT_KEY);
+    const checkConsent = setInterval(function() {
+        const currentConsent = localStorage.getItem(CONSENT_KEY);
+        // Se il consenso è cambiato da "non dato" a "granted", carica GA4
+        if (currentConsent === 'granted' && lastConsent !== 'granted') {
+            if (!window.gtag || !window.dataLayer) {
+                loadGA4();
+            }
+            clearInterval(checkConsent);
+        }
+        lastConsent = currentConsent;
+        
+        // Se GA4 è già caricato, ferma il controllo
+        if (window.gtag && window.dataLayer) {
+            clearInterval(checkConsent);
+        }
+    }, 300);
+    
+    // Ferma il controllo dopo 15 secondi (dopo quel tempo, l'utente avrà già accettato o rifiutato)
+    setTimeout(function() {
+        clearInterval(checkConsent);
+    }, 15000);
+}
+
