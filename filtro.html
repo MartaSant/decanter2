@@ -161,12 +161,13 @@
         
         .favorite-btn {
             position: absolute;
-            top: 0.65rem;
+            top: 50%;
             right: 0.55rem;
+            transform: translateY(-50%);
             background: transparent;
             border: none;
             color: rgba(255, 255, 255, 0.5);
-            font-size: 1.2rem;
+            font-size: 1.8rem;
             cursor: pointer;
             padding: 0.3rem;
             transition: all 0.3s ease;
@@ -175,7 +176,7 @@
         
         .favorite-btn:hover {
             color: #FFC928;
-            transform: scale(1.1);
+            transform: translateY(-50%) scale(1.1);
         }
         
         .favorite-btn.active {
@@ -186,31 +187,29 @@
             color: #D4AF37;
         }
         
-        /* Pulsante dettagli (+) */
+        /* Pulsante dettagli (INFO) */
         .details-btn {
-            position: absolute;
-            top: 0.65rem;
-            right: 2.5rem;
-            background: rgba(255, 201, 40, 0.2);
-            border: 2px solid rgba(255, 201, 40, 0.5);
-            border-radius: 50%;
-            width: 2rem;
-            height: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FFC928;
-            font-size: 1.1rem;
+            position: relative;
+            display: inline-block;
+            background: #FFC928;
+            border: none;
+            border-radius: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            color: #000000;
+            font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .details-btn:hover {
-            background: rgba(255, 201, 40, 0.3);
-            border-color: #FFC928;
-            transform: scale(1.1);
+            background: #D4AF37;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(255, 201, 40, 0.4);
         }
         
         /* Banner dettagli */
@@ -643,6 +642,9 @@
     </button>
 
     <script>
+        // Inizializza dataLayer PRIMA di qualsiasi altro codice
+        window.dataLayer = window.dataLayer || [];
+        
         // Dati dei vini (verranno caricati da vini.txt o definiti qui)
         const vini = [
             { nome: "Falanghina IGP Campania 13%", tono: "bianco", regione: "campania", prezzo: "18,00" },
@@ -743,22 +745,15 @@
                 
                 // Google Analytics 4: traccia la rimozione dai preferiti
                 try {
-                    if (window.dataLayer && typeof window.gtag === 'function') {
-                        window.gtag('event', 'favorite_removed', {
+                    if (window.sendGA4Event) {
+                        window.sendGA4Event('favorite_removed', {
                             'product_name': vino.nome,
                             'product_type': vino.tono,
                             'product_region': vino.regione,
                             'product_price': vino.prezzo
                         });
-                        
-                        window.dataLayer.push({
-                            'event': 'favorite_removed',
-                            'product_name': vino.nome,
-                            'product_type': vino.tono,
-                            'product_region': vino.regione,
-                            'product_price': vino.prezzo
-                        });
-                    } else if (window.dataLayer) {
+                    } else {
+                        window.dataLayer = window.dataLayer || [];
                         window.dataLayer.push({
                             'event': 'favorite_removed',
                             'product_name': vino.nome,
@@ -778,22 +773,17 @@
                 
                 // Google Analytics 4: traccia l'aggiunta ai preferiti
                 try {
-                    if (window.dataLayer && typeof window.gtag === 'function') {
-                        window.gtag('event', 'favorite_added', {
+                    // Usa la funzione helper che aspetta che GA4 sia pronto
+                    if (window.sendGA4Event) {
+                        window.sendGA4Event('favorite_added', {
                             'product_name': vino.nome,
                             'product_type': vino.tono,
                             'product_region': vino.regione,
                             'product_price': vino.prezzo
                         });
-                        
-                        window.dataLayer.push({
-                            'event': 'favorite_added',
-                            'product_name': vino.nome,
-                            'product_type': vino.tono,
-                            'product_region': vino.regione,
-                            'product_price': vino.prezzo
-                        });
-                    } else if (window.dataLayer) {
+                    } else {
+                        // Fallback se la funzione helper non è ancora disponibile
+                        window.dataLayer = window.dataLayer || [];
                         window.dataLayer.push({
                             'event': 'favorite_added',
                             'product_name': vino.nome,
@@ -828,11 +818,6 @@
                             data-wine-name="${vino.nome}">
                         <i class="${isFav ? 'fas fa-heart' : 'far fa-heart'}"></i>
                     </button>
-                    <button class="details-btn" 
-                            aria-label="Mostra dettagli"
-                            data-wine-index="${index}">
-                        +
-                    </button>
                     <div class="menu-item-header">
                         <span class="menu-item-name">${vino.nome}</span>
                         <span class="menu-item-price">${vino.prezzo}&nbsp;&euro;</span>
@@ -843,6 +828,11 @@
                     <div class="wine-item-tags">
                         <span class="wine-tag wine-tag--tono-${vino.tono}">${capitalize(vino.tono)}</span>
                         <span class="wine-tag wine-tag--regione-${vino.regione}">${capitalize(vino.regione)}</span>
+                        <button class="details-btn" 
+                                aria-label="Mostra dettagli"
+                                data-wine-index="${index}">
+                            INFO
+                        </button>
                     </div>
                 `;
                 wineGrid.appendChild(wineItem);
@@ -924,26 +914,17 @@
             
             // Google Analytics 4: traccia l'apertura del banner dettagli prodotto
             try {
-                if (window.dataLayer && typeof window.gtag === 'function') {
-                    // Invia evento con parametri personalizzati
-                    window.gtag('event', 'product_details_view', {
+                // Usa la funzione helper che aspetta che GA4 sia pronto
+                if (window.sendGA4Event) {
+                    window.sendGA4Event('product_details_view', {
                         'product_name': vino.nome,
                         'product_type': vino.tono,
                         'product_region': vino.regione,
                         'product_price': vino.prezzo
                     });
-                    
-                    // Invia anche tramite dataLayer per compatibilità
-                    window.dataLayer.push({
-                        'event': 'product_details_view',
-                        'product_name': vino.nome,
-                        'product_type': vino.tono,
-                        'product_region': vino.regione,
-                        'product_price': vino.prezzo
-                    });
-                    
-                } else if (window.dataLayer) {
-                    // Fallback: solo dataLayer
+                } else {
+                    // Fallback se la funzione helper non è ancora disponibile
+                    window.dataLayer = window.dataLayer || [];
                     window.dataLayer.push({
                         'event': 'product_details_view',
                         'product_name': vino.nome,
@@ -1182,18 +1163,13 @@
             
             // Traccia in GA4
             try {
-                if (window.dataLayer && typeof window.gtag === 'function') {
-                    window.gtag('event', 'search_no_results', {
+                if (window.sendGA4Event) {
+                    window.sendGA4Event('search_no_results', {
                         'search_term': trimmedSearch,
                         'search_type': 'wine_search'
                     });
-                    
-                    window.dataLayer.push({
-                        'event': 'search_no_results',
-                        'search_term': trimmedSearch,
-                        'search_type': 'wine_search'
-                    });
-                } else if (window.dataLayer) {
+                } else {
+                    window.dataLayer = window.dataLayer || [];
                     window.dataLayer.push({
                         'event': 'search_no_results',
                         'search_term': trimmedSearch,
@@ -1208,20 +1184,14 @@
         // Funzione per tracciare le ricerche (con risultati)
         function trackSearch(searchText, resultCount) {
             try {
-                if (window.dataLayer && typeof window.gtag === 'function') {
-                    window.gtag('event', 'search', {
+                if (window.sendGA4Event) {
+                    window.sendGA4Event('search', {
                         'search_term': searchText,
                         'search_results': resultCount,
                         'search_type': 'wine_search'
                     });
-                    
-                    window.dataLayer.push({
-                        'event': 'search',
-                        'search_term': searchText,
-                        'search_results': resultCount,
-                        'search_type': 'wine_search'
-                    });
-                } else if (window.dataLayer) {
+                } else {
+                    window.dataLayer = window.dataLayer || [];
                     window.dataLayer.push({
                         'event': 'search',
                         'search_term': searchText,
@@ -1237,20 +1207,14 @@
         // Funzione per tracciare i click sui filtri
         function trackFilterClick(filterType, category, isActive) {
             try {
-                if (window.dataLayer && typeof window.gtag === 'function') {
-                    window.gtag('event', 'filter_click', {
+                if (window.sendGA4Event) {
+                    window.sendGA4Event('filter_click', {
                         'filter_type': filterType,
                         'filter_category': category,
                         'filter_action': isActive ? 'activated' : 'deactivated'
                     });
-                    
-                    window.dataLayer.push({
-                        'event': 'filter_click',
-                        'filter_type': filterType,
-                        'filter_category': category,
-                        'filter_action': isActive ? 'activated' : 'deactivated'
-                    });
-                } else if (window.dataLayer) {
+                } else {
+                    window.dataLayer = window.dataLayer || [];
                     window.dataLayer.push({
                         'event': 'filter_click',
                         'filter_type': filterType,
@@ -1365,18 +1329,13 @@
             btn.addEventListener('click', function () {
                 // Tracking click su "Torna all'inizio"
                 try {
-                    if (window.dataLayer && typeof window.gtag === 'function') {
-                        window.gtag('event', 'scroll_to_top_click', {
+                    if (window.sendGA4Event) {
+                        window.sendGA4Event('scroll_to_top_click', {
                             'button_name': 'Torna all\'inizio',
                             'page_location': window.location.pathname
                         });
-                        
-                        window.dataLayer.push({
-                            'event': 'scroll_to_top_click',
-                            'button_name': 'Torna all\'inizio',
-                            'page_location': window.location.pathname
-                        });
-                    } else if (window.dataLayer) {
+                    } else {
+                        window.dataLayer = window.dataLayer || [];
                         window.dataLayer.push({
                             'event': 'scroll_to_top_click',
                             'button_name': 'Torna all\'inizio',
@@ -1422,18 +1381,13 @@
         (function() {
             function trackSocialClick(buttonName, buttonType) {
                 try {
-                    if (window.dataLayer && typeof window.gtag === 'function') {
-                        window.gtag('event', 'social_click', {
+                    if (window.sendGA4Event) {
+                        window.sendGA4Event('social_click', {
                             'button_name': buttonName,
                             'button_type': buttonType
                         });
-                        
-                        window.dataLayer.push({
-                            'event': 'social_click',
-                            'button_name': buttonName,
-                            'button_type': buttonType
-                        });
-                    } else if (window.dataLayer) {
+                    } else {
+                        window.dataLayer = window.dataLayer || [];
                         window.dataLayer.push({
                             'event': 'social_click',
                             'button_name': buttonName,
@@ -1685,6 +1639,12 @@
     
     <!-- Google Analytics Consent Management -->
     <script src="ga-consent.js"></script>
+    
+    <!-- Inizializza dataLayer anche se GA4 non è ancora caricato -->
+    <script>
+        // Assicura che dataLayer esista sempre (per eventi in coda)
+        window.dataLayer = window.dataLayer || [];
+    </script>
 </body>
 </html>
 
