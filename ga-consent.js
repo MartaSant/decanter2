@@ -53,15 +53,20 @@ function loadGA4() {
 // Gestisce il banner dei cookie
 function initCookieBanner() {
     const banner = document.getElementById('cookie-banner');
-    if (!banner) return;
-    
     const acceptBtn = document.getElementById('cookie-accept');
     const rejectBtn = document.getElementById('cookie-reject');
     
-    if (!acceptBtn || !rejectBtn) return;
-    
     // Leggi il consenso esistente
     const consent = localStorage.getItem(CONSENT_KEY);
+    
+    // Se il banner non esiste (es. index.html senza banner), 
+    // carica comunque GA4 se il consenso è già stato dato
+    if (!banner || !acceptBtn || !rejectBtn) {
+        if (consent === 'granted') {
+            loadGA4();
+        }
+        return;
+    }
     
     // Se il consenso è già stato dato o negato, nascondi il banner
     if (consent === 'granted' || consent === 'denied') {
