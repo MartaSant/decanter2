@@ -1,6 +1,8 @@
 // Google Analytics 4 Consent Management
 // Questo file gestisce il consenso per GA4 e carica GA4 solo se l'utente accetta
 
+console.log('ga-consent.js caricato');
+
 const GA_MEASUREMENT_ID = 'G-2KB68FNNQ8';
 const CONSENT_KEY = 'ga_consent';
 
@@ -64,106 +66,121 @@ function loadGA4() {
 
 // Gestisce il banner dei cookie
 function initCookieBanner() {
-    const banner = document.getElementById('cookie-banner');
-    const acceptBtn = document.getElementById('cookie-accept');
-    const rejectBtn = document.getElementById('cookie-reject');
+    console.log('initCookieBanner chiamato');
     
-    // Leggi il consenso esistente
-    const consent = localStorage.getItem(CONSENT_KEY);
-    
-    console.log('Cookie Banner Init:', {
-        banner: !!banner,
-        acceptBtn: !!acceptBtn,
-        rejectBtn: !!rejectBtn,
-        consent: consent
-    });
-    
-    // Se il banner non esiste (es. index.html senza banner), 
-    // carica comunque GA4 se il consenso è già stato dato
-    if (!banner || !acceptBtn || !rejectBtn) {
-        console.log('Banner o pulsanti non trovati, controllo consenso esistente');
-        if (consent === 'granted') {
-            console.log('Consenso già dato, carico GA4');
-            loadGA4();
+    // Aspetta un po' per assicurarsi che il DOM sia completamente caricato
+    setTimeout(function() {
+        const banner = document.getElementById('cookie-banner');
+        const acceptBtn = document.getElementById('cookie-accept');
+        const rejectBtn = document.getElementById('cookie-reject');
+        
+        // Leggi il consenso esistente
+        const consent = localStorage.getItem(CONSENT_KEY);
+        
+        console.log('Cookie Banner Init:', {
+            banner: !!banner,
+            acceptBtn: !!acceptBtn,
+            rejectBtn: !!rejectBtn,
+            consent: consent,
+            bannerElement: banner
+        });
+        
+        // Se il banner non esiste (es. index.html senza banner), 
+        // carica comunque GA4 se il consenso è già stato dato
+        if (!banner || !acceptBtn || !rejectBtn) {
+            console.log('Banner o pulsanti non trovati, controllo consenso esistente');
+            if (consent === 'granted') {
+                console.log('Consenso già dato, carico GA4');
+                loadGA4();
+            }
+            return;
         }
-        return;
-    }
-    
-    // Se il consenso è già stato dato o negato, nascondi il banner
-    if (consent === 'granted' || consent === 'denied') {
-        console.log('Consenso già presente:', consent);
-        banner.style.display = 'none';
         
-        // Se il consenso è stato dato, carica GA4
-        if (consent === 'granted') {
-            console.log('Consenso granted, carico GA4');
-            loadGA4();
-        }
-        return;
-    }
-    
-    // Mostra il banner se non c'è consenso
-    console.log('Nessun consenso salvato, mostro il banner');
-    banner.style.display = 'block';
-    
-    // Gestisci click su "Accetta"
-    acceptBtn.addEventListener('click', function() {
-        // Salva il consenso
-        localStorage.setItem(CONSENT_KEY, 'granted');
-        
-        // Carica GA4
-        loadGA4();
-        
-        // Aggiorna il consenso (funziona sia se gtag è già caricato che se si caricherà dopo)
-        // Se gtag è già disponibile, aggiorna immediatamente
-        if (window.gtag && typeof window.gtag === 'function') {
-            window.gtag('consent', 'update', {
-                'ad_storage': 'granted',
-                'analytics_storage': 'granted',
-                'ad_user_data': 'granted',
-                'ad_personalization': 'granted'
-            });
-        } else {
-            // Se gtag non è ancora disponibile, aspetta che si carichi
-            // e poi aggiorna il consenso
-            const checkGtag = setInterval(function() {
-                if (window.gtag && typeof window.gtag === 'function') {
-                    window.gtag('consent', 'update', {
-                        'ad_storage': 'granted',
-                        'analytics_storage': 'granted',
-                        'ad_user_data': 'granted',
-                        'ad_personalization': 'granted'
-                    });
-                    clearInterval(checkGtag);
-                }
-            }, 100);
+        // Se il consenso è già stato dato o negato, nascondi il banner
+        if (consent === 'granted' || consent === 'denied') {
+            console.log('Consenso già presente:', consent);
+            banner.style.display = 'none';
             
-            // Timeout di sicurezza dopo 5 secondi
-            setTimeout(function() {
-                clearInterval(checkGtag);
-            }, 5000);
+            // Se il consenso è stato dato, carica GA4
+            if (consent === 'granted') {
+                console.log('Consenso granted, carico GA4');
+                loadGA4();
+            }
+            return;
         }
         
-        // Nascondi il banner
-        banner.style.display = 'none';
-    });
-    
-    // Gestisci click su "Rifiuta"
-    rejectBtn.addEventListener('click', function() {
-        // Salva il rifiuto
-        localStorage.setItem(CONSENT_KEY, 'denied');
+        // Mostra il banner se non c'è consenso
+        console.log('Nessun consenso salvato, mostro il banner');
+        banner.style.display = 'block';
+        console.log('Banner display impostato a block, valore attuale:', banner.style.display);
         
-        // Nascondi il banner
-        banner.style.display = 'none';
+        // Gestisci click su "Accetta"
+        acceptBtn.addEventListener('click', function() {
+            console.log('Click su Accetta');
+            // Salva il consenso
+            localStorage.setItem(CONSENT_KEY, 'granted');
+            
+            // Carica GA4
+            loadGA4();
+            
+            // Aggiorna il consenso (funziona sia se gtag è già caricato che se si caricherà dopo)
+            // Se gtag è già disponibile, aggiorna immediatamente
+            if (window.gtag && typeof window.gtag === 'function') {
+                window.gtag('consent', 'update', {
+                    'ad_storage': 'granted',
+                    'analytics_storage': 'granted',
+                    'ad_user_data': 'granted',
+                    'ad_personalization': 'granted'
+                });
+            } else {
+                // Se gtag non è ancora disponibile, aspetta che si carichi
+                // e poi aggiorna il consenso
+                const checkGtag = setInterval(function() {
+                    if (window.gtag && typeof window.gtag === 'function') {
+                        window.gtag('consent', 'update', {
+                            'ad_storage': 'granted',
+                            'analytics_storage': 'granted',
+                            'ad_user_data': 'granted',
+                            'ad_personalization': 'granted'
+                        });
+                        clearInterval(checkGtag);
+                    }
+                }, 100);
+                
+                // Timeout di sicurezza dopo 5 secondi
+                setTimeout(function() {
+                    clearInterval(checkGtag);
+                }, 5000);
+            }
+            
+            // Nascondi il banner
+            banner.style.display = 'none';
+        });
         
-        // NON caricare GA4
-    });
+        // Gestisci click su "Rifiuta"
+        rejectBtn.addEventListener('click', function() {
+            console.log('Click su Rifiuta');
+            // Salva il rifiuto
+            localStorage.setItem(CONSENT_KEY, 'denied');
+            
+            // Nascondi il banner
+            banner.style.display = 'none';
+            
+            // NON caricare GA4
+        });
+    }, 100);
 }
 
 // Inizializza quando il DOM è pronto
+console.log('Stato DOM:', document.readyState);
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCookieBanner);
+    console.log('DOM in caricamento, aspetto DOMContentLoaded');
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded evento, inizializzo banner');
+        initCookieBanner();
+    });
 } else {
+    console.log('DOM già pronto, inizializzo banner immediatamente');
     initCookieBanner();
 }
 
