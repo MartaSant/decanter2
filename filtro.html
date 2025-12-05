@@ -26,8 +26,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-2KB68FNNQ8', {
-        'cookie_domain': 'auto',
-        'cookie_flags': 'SameSite=None;Secure'
+        'cookie_domain': 'auto'
       });
     </script>
     
@@ -37,8 +36,8 @@
     <!-- Font Awesome - Preconnect per velocizzare il caricamento -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <!-- Font Awesome - Caricamento con fallback -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" id="fontAwesomeCSS" onerror="this.onerror=null; this.href='https://use.fontawesome.com/releases/v6.5.0/css/all.css';">
+    <!-- Font Awesome - Caricamento con timestamp per evitare cache -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css?v=2" crossorigin="anonymous" id="fontAwesomeCSS">
     
     <style>
         /* Stili per i filtri */
@@ -1610,21 +1609,29 @@
 
         // Verifica e forza ricaricamento Font Awesome se necessario
         function verifyFontAwesome() {
-            setTimeout(function() {
+            let attempts = 0;
+            const maxAttempts = 3;
+            
+            function checkAndReload() {
+                attempts++;
                 const testIcon = document.createElement('i');
                 testIcon.className = 'fas fa-check';
                 testIcon.style.position = 'absolute';
                 testIcon.style.left = '-9999px';
                 testIcon.style.fontSize = '1px';
+                testIcon.style.opacity = '0';
                 document.body.appendChild(testIcon);
                 
                 setTimeout(function() {
                     const style = window.getComputedStyle(testIcon, ':before');
                     const fontFamily = style.getPropertyValue('font-family');
+                    const content = style.getPropertyValue('content');
                     
-                    // Se Font Awesome non è caricato, prova a ricaricarlo
-                    if (!fontFamily || (!fontFamily.includes('Font Awesome') && !fontFamily.includes('FontAwesome'))) {
-                        console.warn('Font Awesome non caricato correttamente. Tentativo di ricaricamento...');
+                    // Verifica se Font Awesome è caricato
+                    const isLoaded = fontFamily && (fontFamily.includes('Font Awesome') || fontFamily.includes('FontAwesome')) && content && content !== 'none' && content !== '""';
+                    
+                    if (!isLoaded && attempts < maxAttempts) {
+                        console.warn('Font Awesome non caricato correttamente. Tentativo', attempts, 'di', maxAttempts);
                         
                         // Rimuovi il link esistente
                         const existingLink = document.getElementById('fontAwesomeCSS');
@@ -1639,13 +1646,21 @@
                         newLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css?v=' + Date.now();
                         newLink.crossOrigin = 'anonymous';
                         document.head.appendChild(newLink);
+                        
+                        // Riprova dopo un breve delay
+                        setTimeout(checkAndReload, 500);
+                    } else if (!isLoaded) {
+                        console.error('Font Awesome non è riuscito a caricarsi dopo', maxAttempts, 'tentativi');
                     }
                     
                     if (document.body.contains(testIcon)) {
                         document.body.removeChild(testIcon);
                     }
                 }, 300);
-            }, 1000);
+            }
+            
+            // Inizia il controllo dopo un breve delay
+            setTimeout(checkAndReload, 500);
         }
         
         // Inizializza la griglia quando il DOM è pronto
