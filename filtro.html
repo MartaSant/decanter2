@@ -26,8 +26,9 @@
     <!-- Font Awesome - Preconnect per velocizzare il caricamento -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <!-- Font Awesome - Caricamento con timestamp per evitare cache -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css?v=2" crossorigin="anonymous" id="fontAwesomeCSS">
+    <!-- Font Awesome - Caricamento con timestamp per evitare cache - con fallback locale -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css?v=2" crossorigin="anonymous" id="fontAwesomeCSS"
+          onerror="this.onerror=null; this.href='fonts/font-awesome/css/all.min.css';">
     
     <style>
         /* Stili per i filtri */
@@ -1261,7 +1262,7 @@
                 // Silenzioso: non bloccare l'esperienza utente
             }
         }
-        
+
         // Gestione click sui pulsanti filtro
         filterButtons.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -1629,12 +1630,17 @@
                             existingLink.remove();
                         }
                         
-                        // Crea un nuovo link senza cache
+                        // Prova il fallback locale
                         const newLink = document.createElement('link');
                         newLink.id = 'fontAwesomeCSS';
                         newLink.rel = 'stylesheet';
-                        newLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css?v=' + Date.now();
-                        newLink.crossOrigin = 'anonymous';
+                        newLink.href = 'fonts/font-awesome/css/all.min.css';
+                        newLink.onerror = function() {
+                            // Se anche il fallback locale fallisce, riprova CDN
+                            this.onerror = null;
+                            this.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css?v=' + Date.now();
+                            this.crossOrigin = 'anonymous';
+                        };
                         document.head.appendChild(newLink);
                         
                         // Riprova dopo un breve delay
@@ -1652,7 +1658,7 @@
             // Inizia il controllo dopo un breve delay
             setTimeout(checkAndReload, 500);
         }
-        
+
         // Inizializza la griglia quando il DOM è pronto
         document.addEventListener('DOMContentLoaded', function() {
             // Verifica Font Awesome
