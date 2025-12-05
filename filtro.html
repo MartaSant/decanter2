@@ -646,7 +646,10 @@
         }
         
         function toggleFavorite(vino, button) {
+            console.log('=== toggleFavorite chiamata ===', vino.nome);
+            
             if (isFavorite(vino.nome)) {
+                console.log('Rimuovendo dai preferiti:', vino.nome);
                 // Rimuove dai preferiti
                 removeFromFavorites(vino.nome);
                 button.classList.remove('active');
@@ -654,6 +657,7 @@
                 
                 // Google Analytics 4: traccia la rimozione dai preferiti
                 try {
+                    console.log('Invio evento GA4 favorite_removed per:', vino.nome);
                     if (window.dataLayer && typeof window.gtag === 'function') {
                         window.gtag('event', 'favorite_removed', {
                             'product_name': vino.nome,
@@ -670,7 +674,7 @@
                             'product_price': vino.prezzo
                         });
                         
-                        console.log('GA4 Event sent: favorite_removed', vino.nome);
+                        console.log('✅ GA4 Event sent: favorite_removed', vino.nome);
                     } else if (window.dataLayer) {
                         window.dataLayer.push({
                             'event': 'favorite_removed',
@@ -679,12 +683,15 @@
                             'product_region': vino.regione,
                             'product_price': vino.prezzo
                         });
-                        console.log('GA4 Event sent (dataLayer): favorite_removed', vino.nome);
+                        console.log('✅ GA4 Event sent (dataLayer): favorite_removed', vino.nome);
+                    } else {
+                        console.warn('⚠️ GA4 non disponibile - dataLayer:', window.dataLayer, 'gtag:', typeof window.gtag);
                     }
                 } catch (e) {
-                    console.error('Errore nell\'invio evento GA4 favorite_removed:', e);
+                    console.error('❌ Errore nell\'invio evento GA4 favorite_removed:', e);
                 }
             } else {
+                console.log('Aggiungendo ai preferiti:', vino.nome);
                 // Aggiunge ai preferiti
                 addToFavorites(vino);
                 button.classList.add('active');
@@ -692,6 +699,7 @@
                 
                 // Google Analytics 4: traccia l'aggiunta ai preferiti
                 try {
+                    console.log('Invio evento GA4 favorite_added per:', vino.nome);
                     if (window.dataLayer && typeof window.gtag === 'function') {
                         window.gtag('event', 'favorite_added', {
                             'product_name': vino.nome,
@@ -708,7 +716,7 @@
                             'product_price': vino.prezzo
                         });
                         
-                        console.log('GA4 Event sent: favorite_added', vino.nome);
+                        console.log('✅ GA4 Event sent: favorite_added', vino.nome);
                     } else if (window.dataLayer) {
                         window.dataLayer.push({
                             'event': 'favorite_added',
@@ -717,10 +725,12 @@
                             'product_region': vino.regione,
                             'product_price': vino.prezzo
                         });
-                        console.log('GA4 Event sent (dataLayer): favorite_added', vino.nome);
+                        console.log('✅ GA4 Event sent (dataLayer): favorite_added', vino.nome);
+                    } else {
+                        console.warn('⚠️ GA4 non disponibile - dataLayer:', window.dataLayer, 'gtag:', typeof window.gtag);
                     }
                 } catch (e) {
-                    console.error('Errore nell\'invio evento GA4 favorite_added:', e);
+                    console.error('❌ Errore nell\'invio evento GA4 favorite_added:', e);
                 }
             }
         }
