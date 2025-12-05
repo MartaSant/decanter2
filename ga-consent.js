@@ -12,15 +12,21 @@ function hasAnalyticsConsent() {
 
 // Carica Google Analytics 4 solo se il consenso è stato dato
 function loadGA4() {
+    console.log('loadGA4 chiamato');
+    
     // Se GA è già caricato, esci
     if (window.gtag && window.dataLayer) {
+        console.log('GA4 già caricato');
         return;
     }
     
     // Se il consenso non è stato dato, esci
     if (!hasAnalyticsConsent()) {
+        console.log('Consenso non dato, GA4 non caricato');
         return;
     }
+    
+    console.log('Caricamento GA4...');
     
     // Inizializza dataLayer PRIMA di qualsiasi chiamata gtag
     window.dataLayer = window.dataLayer || [];
@@ -43,8 +49,14 @@ function loadGA4() {
     
     // Inizializza GA4 quando lo script è caricato
     script.onload = function() {
+        console.log('Script GA4 caricato, inizializzo...');
         gtag('js', new Date());
         gtag('config', GA_MEASUREMENT_ID);
+        console.log('GA4 inizializzato');
+    };
+    
+    script.onerror = function() {
+        console.error('Errore nel caricamento dello script GA4');
     };
     
     document.head.appendChild(script);
@@ -59,10 +71,19 @@ function initCookieBanner() {
     // Leggi il consenso esistente
     const consent = localStorage.getItem(CONSENT_KEY);
     
+    console.log('Cookie Banner Init:', {
+        banner: !!banner,
+        acceptBtn: !!acceptBtn,
+        rejectBtn: !!rejectBtn,
+        consent: consent
+    });
+    
     // Se il banner non esiste (es. index.html senza banner), 
     // carica comunque GA4 se il consenso è già stato dato
     if (!banner || !acceptBtn || !rejectBtn) {
+        console.log('Banner o pulsanti non trovati, controllo consenso esistente');
         if (consent === 'granted') {
+            console.log('Consenso già dato, carico GA4');
             loadGA4();
         }
         return;
@@ -70,16 +91,19 @@ function initCookieBanner() {
     
     // Se il consenso è già stato dato o negato, nascondi il banner
     if (consent === 'granted' || consent === 'denied') {
+        console.log('Consenso già presente:', consent);
         banner.style.display = 'none';
         
         // Se il consenso è stato dato, carica GA4
         if (consent === 'granted') {
+            console.log('Consenso granted, carico GA4');
             loadGA4();
         }
         return;
     }
     
     // Mostra il banner se non c'è consenso
+    console.log('Nessun consenso salvato, mostro il banner');
     banner.style.display = 'block';
     
     // Gestisci click su "Accetta"
