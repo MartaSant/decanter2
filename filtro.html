@@ -34,10 +34,23 @@
     <link rel="stylesheet" href="style.css">
     <!-- Google Fonts con font-display: swap per evitare FOUC -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome - Preconnect per velocizzare il caricamento -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4+Z2HeJsjwOymKjO+3WnyWvEctH94N7X/mzLgJ6u2VqPkIV5oPm6p4S8s6Yw8mkYIBGQvD2sQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
     
     <style>
+        /* Nascondi icone finché Font Awesome non è caricato */
+        .fa, .fas, .far, .fab {
+            visibility: hidden;
+        }
+        
+        /* Mostra icone quando Font Awesome è caricato */
+        .fa-loaded .fa, .fa-loaded .fas, .fa-loaded .far, .fa-loaded .fab {
+            visibility: visible;
+        }
+        
         /* Stili per i filtri */
         .filter-section {
             background: rgba(0, 0, 0, 0.85);
@@ -1605,8 +1618,65 @@
             });
         })();
 
+        // Verifica che Font Awesome sia caricato prima di mostrare le icone
+        function checkFontAwesomeLoaded() {
+            // Funzione per mostrare le icone
+            function showIcons() {
+                document.body.classList.add('fa-loaded');
+            }
+            
+            // Verifica se Font Awesome è già caricato
+            function testFontAwesome() {
+                try {
+                    // Crea un elemento di test con un'icona Font Awesome
+                    const testEl = document.createElement('i');
+                    testEl.className = 'fas fa-check';
+                    testEl.style.position = 'absolute';
+                    testEl.style.visibility = 'hidden';
+                    testEl.style.fontSize = '1px';
+                    document.body.appendChild(testEl);
+                    
+                    // Verifica se il font è caricato controllando la computed style
+                    setTimeout(function() {
+                        const style = window.getComputedStyle(testEl, ':before');
+                        const content = style.getPropertyValue('content');
+                        const fontFamily = style.getPropertyValue('font-family');
+                        
+                        // Se Font Awesome è caricato, content non sarà 'none' e font-family conterrà 'Font Awesome'
+                        if ((content && content !== 'none' && content !== '""') || 
+                            (fontFamily && (fontFamily.includes('Font Awesome') || fontFamily.includes('FontAwesome')))) {
+                            showIcons();
+                        }
+                        
+                        if (document.body.contains(testEl)) {
+                            document.body.removeChild(testEl);
+                        }
+                    }, 100);
+                } catch (e) {
+                    // In caso di errore, mostra le icone comunque
+                    showIcons();
+                }
+            }
+            
+            // Prova immediatamente
+            testFontAwesome();
+            
+            // Prova anche quando la pagina è completamente caricata
+            if (document.readyState === 'complete') {
+                testFontAwesome();
+            } else {
+                window.addEventListener('load', testFontAwesome);
+            }
+            
+            // Timeout di sicurezza: mostra le icone dopo 1.5 secondi
+            setTimeout(showIcons, 1500);
+        }
+        
         // Inizializza la griglia quando il DOM è pronto
         document.addEventListener('DOMContentLoaded', function() {
+            // Verifica caricamento Font Awesome
+            checkFontAwesomeLoaded();
+            
             initWineGrid();
             applyFilters();
             
