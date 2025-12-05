@@ -1,0 +1,140 @@
+// Google Analytics 4 Consent Management
+// Questo file gestisce il consenso per GA4 e carica GA4 solo se l'utente accetta
+
+const GA_MEASUREMENT_ID = 'G-2KB68FNNQ8';
+const CONSENT_KEY = 'ga_consent';
+
+// Verifica se l'utente ha già dato il consenso
+function hasAnalyticsConsent() {
+    const consent = localStorage.getItem(CONSENT_KEY);
+    return consent === 'granted';
+}
+
+// Carica Google Analytics 4 solo se il consenso è stato dato
+function loadGA4() {
+    // Se GA è già caricato, esci
+    if (window.gtag && window.dataLayer) {
+        return;
+    }
+    
+    // Se il consenso non è stato dato, esci
+    if (!hasAnalyticsConsent()) {
+        return;
+    }
+    
+    // Inizializza dataLayer PRIMA di qualsiasi chiamata gtag
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    
+    // Imposta Google Consent Mode v2 con tutti i storage negati di default
+    // Questo deve essere fatto PRIMA di caricare lo script GA4
+    gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'analytics_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied'
+    });
+    
+    // Carica lo script GA4
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
+    
+    // Inizializza GA4 quando lo script è caricato
+    script.onload = function() {
+        gtag('js', new Date());
+        gtag('config', GA_MEASUREMENT_ID);
+    };
+    
+    document.head.appendChild(script);
+}
+
+// Gestisce il banner dei cookie
+function initCookieBanner() {
+    const banner = document.getElementById('cookie-banner');
+    if (!banner) return;
+    
+    const acceptBtn = document.getElementById('cookie-accept');
+    const rejectBtn = document.getElementById('cookie-reject');
+    
+    if (!acceptBtn || !rejectBtn) return;
+    
+    // Leggi il consenso esistente
+    const consent = localStorage.getItem(CONSENT_KEY);
+    
+    // Se il consenso è già stato dato o negato, nascondi il banner
+    if (consent === 'granted' || consent === 'denied') {
+        banner.style.display = 'none';
+        
+        // Se il consenso è stato dato, carica GA4
+        if (consent === 'granted') {
+            loadGA4();
+        }
+        return;
+    }
+    
+    // Mostra il banner se non c'è consenso
+    banner.style.display = 'block';
+    
+    // Gestisci click su "Accetta"
+    acceptBtn.addEventListener('click', function() {
+        // Salva il consenso
+        localStorage.setItem(CONSENT_KEY, 'granted');
+        
+        // Carica GA4
+        loadGA4();
+        
+        // Aggiorna il consenso (funziona sia se gtag è già caricato che se si caricherà dopo)
+        // Se gtag è già disponibile, aggiorna immediatamente
+        if (window.gtag && typeof window.gtag === 'function') {
+            window.gtag('consent', 'update', {
+                'ad_storage': 'granted',
+                'analytics_storage': 'granted',
+                'ad_user_data': 'granted',
+                'ad_personalization': 'granted'
+            });
+        } else {
+            // Se gtag non è ancora disponibile, aspetta che si carichi
+            // e poi aggiorna il consenso
+            const checkGtag = setInterval(function() {
+                if (window.gtag && typeof window.gtag === 'function') {
+                    window.gtag('consent', 'update', {
+                        'ad_storage': 'granted',
+                        'analytics_storage': 'granted',
+                        'ad_user_data': 'granted',
+                        'ad_personalization': 'granted'
+                    });
+                    clearInterval(checkGtag);
+                }
+            }, 100);
+            
+            // Timeout di sicurezza dopo 5 secondi
+            setTimeout(function() {
+                clearInterval(checkGtag);
+            }, 5000);
+        }
+        
+        // Nascondi il banner
+        banner.style.display = 'none';
+    });
+    
+    // Gestisci click su "Rifiuta"
+    rejectBtn.addEventListener('click', function() {
+        // Salva il rifiuto
+        localStorage.setItem(CONSENT_KEY, 'denied');
+        
+        // Nascondi il banner
+        banner.style.display = 'none';
+        
+        // NON caricare GA4
+    });
+}
+
+// Inizializza quando il DOM è pronto
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCookieBanner);
+} else {
+    initCookieBanner();
+}
+

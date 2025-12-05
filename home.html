@@ -19,14 +19,6 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="logo.ico">
     
-    <!-- Google tag (gtag.js) - Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2KB68FNNQ8"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2KB68FNNQ8');
-    </script>
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://decanterwinemore.github.io/home.html">
@@ -803,5 +795,24 @@
             }
         })();
     </script>
+    
+    <!-- Cookie Banner -->
+    <div id="cookie-banner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.95); color: #ffffff; padding: 1.5rem; z-index: 10000; border-top: 2px solid #FFC928; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);">
+        <p style="margin: 0 0 1rem 0; font-size: 0.9rem; line-height: 1.5;">
+            Questo sito utilizza Google Analytics 4, Google Signals e dati demografici per migliorare l'esperienza utente. 
+            I dati vengono raccolti solo con il tuo consenso esplicito.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button id="cookie-reject" style="padding: 0.6rem 1.5rem; background: transparent; border: 2px solid #FFC928; color: #FFC928; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                Rifiuta
+            </button>
+            <button id="cookie-accept" style="padding: 0.6rem 1.5rem; background: #FFC928; border: 2px solid #FFC928; color: #000000; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                Accetta
+            </button>
+        </div>
+    </div>
+    
+    <!-- Google Analytics Consent Management -->
+    <script src="ga-consent.js"></script>
 </body>
 </html>
