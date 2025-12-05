@@ -19,6 +19,18 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="logo.ico">
     
+    <!-- Google tag (gtag.js) - Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2KB68FNNQ8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2KB68FNNQ8', {
+        'cookie_domain': 'auto',
+        'cookie_flags': 'SameSite=None;Secure'
+      });
+    </script>
+    
     <link rel="stylesheet" href="style.css">
     <!-- Preload font critico Montserrat -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" as="style">
@@ -26,15 +38,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- Google tag (gtag.js) - Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2KB68FNNQ8"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2KB68FNNQ8');
-    </script>
     
     <style>
         .wine-grid {
@@ -401,6 +404,37 @@
                 if (favoriteBtn) {
                     favoriteBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
+                        
+                        // Google Analytics 4: traccia la rimozione dai preferiti
+                        try {
+                            if (window.dataLayer && typeof window.gtag === 'function') {
+                                window.gtag('event', 'favorite_removed', {
+                                    'product_name': vinoNome,
+                                    'product_type': vinoTono,
+                                    'product_region': vinoRegione,
+                                    'product_price': vinoPrezzo
+                                });
+                                
+                                window.dataLayer.push({
+                                    'event': 'favorite_removed',
+                                    'product_name': vinoNome,
+                                    'product_type': vinoTono,
+                                    'product_region': vinoRegione,
+                                    'product_price': vinoPrezzo
+                                });
+                            } else if (window.dataLayer) {
+                                window.dataLayer.push({
+                                    'event': 'favorite_removed',
+                                    'product_name': vinoNome,
+                                    'product_type': vinoTono,
+                                    'product_region': vinoRegione,
+                                    'product_price': vinoPrezzo
+                                });
+                            }
+                        } catch (e) {
+                            console.error('Errore nell\'invio evento GA4 favorite_removed:', e);
+                        }
+                        
                         removeFromFavorites(vinoNome);
                         renderFavorites(); // Ricarica la lista
                     });

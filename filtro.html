@@ -647,13 +647,75 @@
         
         function toggleFavorite(vino, button) {
             if (isFavorite(vino.nome)) {
+                // Rimuove dai preferiti
                 removeFromFavorites(vino.nome);
                 button.classList.remove('active');
                 button.setAttribute('aria-label', 'Aggiungi ai preferiti');
+                
+                // Google Analytics 4: traccia la rimozione dai preferiti
+                try {
+                    if (window.dataLayer && typeof window.gtag === 'function') {
+                        window.gtag('event', 'favorite_removed', {
+                            'product_name': vino.nome,
+                            'product_type': vino.tono,
+                            'product_region': vino.regione,
+                            'product_price': vino.prezzo
+                        });
+                        
+                        window.dataLayer.push({
+                            'event': 'favorite_removed',
+                            'product_name': vino.nome,
+                            'product_type': vino.tono,
+                            'product_region': vino.regione,
+                            'product_price': vino.prezzo
+                        });
+                    } else if (window.dataLayer) {
+                        window.dataLayer.push({
+                            'event': 'favorite_removed',
+                            'product_name': vino.nome,
+                            'product_type': vino.tono,
+                            'product_region': vino.regione,
+                            'product_price': vino.prezzo
+                        });
+                    }
+                } catch (e) {
+                    console.error('Errore nell\'invio evento GA4 favorite_removed:', e);
+                }
             } else {
+                // Aggiunge ai preferiti
                 addToFavorites(vino);
                 button.classList.add('active');
                 button.setAttribute('aria-label', 'Rimuovi dai preferiti');
+                
+                // Google Analytics 4: traccia l'aggiunta ai preferiti
+                try {
+                    if (window.dataLayer && typeof window.gtag === 'function') {
+                        window.gtag('event', 'favorite_added', {
+                            'product_name': vino.nome,
+                            'product_type': vino.tono,
+                            'product_region': vino.regione,
+                            'product_price': vino.prezzo
+                        });
+                        
+                        window.dataLayer.push({
+                            'event': 'favorite_added',
+                            'product_name': vino.nome,
+                            'product_type': vino.tono,
+                            'product_region': vino.regione,
+                            'product_price': vino.prezzo
+                        });
+                    } else if (window.dataLayer) {
+                        window.dataLayer.push({
+                            'event': 'favorite_added',
+                            'product_name': vino.nome,
+                            'product_type': vino.tono,
+                            'product_region': vino.regione,
+                            'product_price': vino.prezzo
+                        });
+                    }
+                } catch (e) {
+                    console.error('Errore nell\'invio evento GA4 favorite_added:', e);
+                }
             }
         }
 
