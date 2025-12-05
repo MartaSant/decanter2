@@ -376,8 +376,32 @@
             // scroll to top button
             const btn = document.querySelector('.scroll-top');
             if (btn) {
-                // click handler
+                // click handler con tracking
                 btn.addEventListener('click', function () {
+                    // Tracking click su "Torna all'inizio"
+                    try {
+                        if (window.dataLayer && typeof window.gtag === 'function') {
+                            window.gtag('event', 'scroll_to_top_click', {
+                                'button_name': 'Torna all\'inizio',
+                                'page_location': window.location.pathname
+                            });
+                            
+                            window.dataLayer.push({
+                                'event': 'scroll_to_top_click',
+                                'button_name': 'Torna all\'inizio',
+                                'page_location': window.location.pathname
+                            });
+                        } else if (window.dataLayer) {
+                            window.dataLayer.push({
+                                'event': 'scroll_to_top_click',
+                                'button_name': 'Torna all\'inizio',
+                                'page_location': window.location.pathname
+                            });
+                        }
+                    } catch (e) {
+                        // Silenzioso: non bloccare l'esperienza utente
+                    }
+                    
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
                 

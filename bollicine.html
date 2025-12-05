@@ -236,6 +236,30 @@
             if (!btn) return;
             
             btn.addEventListener('click', function () {
+                // Tracking click su "Torna all'inizio"
+                try {
+                    if (window.dataLayer && typeof window.gtag === 'function') {
+                        window.gtag('event', 'scroll_to_top_click', {
+                            'button_name': 'Torna all\'inizio',
+                            'page_location': window.location.pathname
+                        });
+                        
+                        window.dataLayer.push({
+                            'event': 'scroll_to_top_click',
+                            'button_name': 'Torna all\'inizio',
+                            'page_location': window.location.pathname
+                        });
+                    } else if (window.dataLayer) {
+                        window.dataLayer.push({
+                            'event': 'scroll_to_top_click',
+                            'button_name': 'Torna all\'inizio',
+                            'page_location': window.location.pathname
+                        });
+                    }
+                } catch (e) {
+                    // Silenzioso: non bloccare l'esperienza utente
+                }
+                
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             
@@ -249,6 +273,37 @@
                 } else {
                     btn.classList.remove('visible');
                 }
+            });
+        })();
+
+        // Tracking click su "Torna a home"
+        (function() {
+            const homeLinks = document.querySelectorAll('a[href*="home.html"], a.menu-close[href*="home"]');
+            homeLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    try {
+                        if (window.dataLayer && typeof window.gtag === 'function') {
+                            window.gtag('event', 'home_link_click', {
+                                'button_name': 'Torna a Home',
+                                'page_location': window.location.pathname
+                            });
+                            
+                            window.dataLayer.push({
+                                'event': 'home_link_click',
+                                'button_name': 'Torna a Home',
+                                'page_location': window.location.pathname
+                            });
+                        } else if (window.dataLayer) {
+                            window.dataLayer.push({
+                                'event': 'home_link_click',
+                                'button_name': 'Torna a Home',
+                                'page_location': window.location.pathname
+                            });
+                        }
+                    } catch (e) {
+                        // Silenzioso: non bloccare l'esperienza utente
+                    }
+                });
             });
         })();
 

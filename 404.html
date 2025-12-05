@@ -175,6 +175,37 @@
         </a>
     </div>
     <script>
+        // Tracking click su "Torna a home"
+        (function() {
+            const homeLinks = document.querySelectorAll('a[href*="home.html"]');
+            homeLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    try {
+                        if (window.dataLayer && typeof window.gtag === 'function') {
+                            window.gtag('event', 'home_link_click', {
+                                'button_name': 'Torna a Home',
+                                'page_location': window.location.pathname
+                            });
+                            
+                            window.dataLayer.push({
+                                'event': 'home_link_click',
+                                'button_name': 'Torna a Home',
+                                'page_location': window.location.pathname
+                            });
+                        } else if (window.dataLayer) {
+                            window.dataLayer.push({
+                                'event': 'home_link_click',
+                                'button_name': 'Torna a Home',
+                                'page_location': window.location.pathname
+                            });
+                        }
+                    } catch (e) {
+                        // Silenzioso: non bloccare l'esperienza utente
+                    }
+                });
+            });
+        })();
+
         // Registrazione Service Worker (solo se non si usa file://)
         if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
             window.addEventListener('load', function() {
