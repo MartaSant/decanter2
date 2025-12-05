@@ -418,6 +418,86 @@
         .search-input::placeholder {
             color: rgba(255, 255, 255, 0.5);
         }
+        
+        /* Sezione ricerche senza risultati */
+        .no-results-section {
+            margin-top: 2rem;
+            background: rgba(139, 69, 19, 0.1);
+            border: 1px solid rgba(255, 201, 40, 0.3);
+            border-radius: 0.7rem;
+            padding: 1rem;
+        }
+        
+        .no-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .no-results-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 201, 40, 0.8);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .no-results-toggle {
+            background: transparent;
+            border: 1px solid rgba(255, 201, 40, 0.3);
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 201, 40, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .no-results-toggle:hover {
+            background: rgba(255, 201, 40, 0.1);
+            border-color: rgba(255, 201, 40, 0.5);
+        }
+        
+        .no-results-toggle.expanded i {
+            transform: rotate(180deg);
+        }
+        
+        .no-results-content {
+            margin-top: 0.5rem;
+        }
+        
+        .no-results-info {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+        
+        .no-results-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        
+        .no-results-list li {
+            padding: 0.5rem;
+            background: rgba(17, 17, 17, 0.5);
+            border-radius: 0.4rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.9);
+            border-left: 3px solid rgba(255, 201, 40, 0.5);
+        }
+        
+        .no-results-list li:empty {
+            display: none;
+        }
     </style>
 </head>
 <body class="menu-body">
@@ -519,6 +599,22 @@
             <h2 class="menu-section-title">Vini Disponibili</h2>
             <div class="wine-grid" id="wineGrid">
                 <!-- I vini verranno caricati dinamicamente -->
+            </div>
+            
+            <!-- Sezione ricerche senza risultati (nascosta di default) -->
+            <div id="noResultsSection" class="no-results-section" style="display: none;">
+                <div class="no-results-header">
+                    <h3 class="no-results-title">Ricerche senza risultati</h3>
+                    <button class="no-results-toggle" id="noResultsToggle" aria-label="Mostra/Nascondi ricerche senza risultati">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="no-results-content" id="noResultsContent" style="display: none;">
+                    <p class="no-results-info">Queste sono le ricerche effettuate che non hanno dato risultati:</p>
+                    <ul class="no-results-list" id="noResultsList">
+                        <!-- Le ricerche senza risultati verranno aggiunte qui -->
+                    </ul>
+                </div>
             </div>
         </section>
 
@@ -985,6 +1081,7 @@
         // Funzione per applicare i filtri combinati
         function applyFilters() {
             const wineItems = document.querySelectorAll('.wine-item');
+            let visibleCount = 0;
             
             wineItems.forEach(item => {
                 const itemTono = item.getAttribute('data-tono');
@@ -1009,6 +1106,7 @@
                     item.classList.remove('hidden', 'hiding');
                     item.classList.add('showing');
                     item.style.display = 'block';
+                    visibleCount++;
                 } else {
                     item.classList.remove('showing');
                     item.classList.add('hiding');
@@ -1018,8 +1116,160 @@
                     }, 300);
                 }
             });
+            
+            // Tracking: verifica se la ricerca non ha dato risultati
+            if (searchTerms.length > 0 && visibleCount === 0) {
+                const searchText = searchInput ? searchInput.value : '';
+                trackSearchNoResults(searchText);
+            }
+        }
+        
+        // Funzione per salvare e mostrare ricerche senza risultati
+        const NO_RESULTS_KEY = 'decanter_no_results_searches';
+        
+        function getNoResultsSearches() {
+            try {
+                const searches = localStorage.getItem(NO_RESULTS_KEY);
+                if (!searches || searches === 'null' || searches === 'undefined') {
+                    return [];
+                }
+                const parsed = JSON.parse(searches);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+        
+        function saveNoResultsSearch(searchText) {
+            try {
+                const searches = getNoResultsSearches();
+                // Aggiungi solo se non è già presente (evita duplicati)
+                if (!searches.includes(searchText.trim())) {
+                    searches.push(searchText.trim());
+                    // Mantieni solo le ultime 50 ricerche
+                    if (searches.length > 50) {
+                        searches.shift();
+                    }
+                    localStorage.setItem(NO_RESULTS_KEY, JSON.stringify(searches));
+                    updateNoResultsDisplay();
+                }
+            } catch (e) {
+                // Ignora errori
+            }
+        }
+        
+        function updateNoResultsDisplay() {
+            const noResultsSection = document.getElementById('noResultsSection');
+            const noResultsList = document.getElementById('noResultsList');
+            
+            if (!noResultsSection || !noResultsList) return;
+            
+            const searches = getNoResultsSearches();
+            
+            if (searches.length > 0) {
+                noResultsSection.style.display = 'block';
+                noResultsList.innerHTML = '';
+                searches.forEach(search => {
+                    const li = document.createElement('li');
+                    li.textContent = search;
+                    noResultsList.appendChild(li);
+                });
+            } else {
+                noResultsSection.style.display = 'none';
+            }
+        }
+        
+        // Funzione per tracciare ricerche senza risultati
+        function trackSearchNoResults(searchText) {
+            const trimmedSearch = searchText.trim();
+            if (trimmedSearch.length === 0) return;
+            
+            // Salva la ricerca senza risultati
+            saveNoResultsSearch(trimmedSearch);
+            
+            // Traccia in GA4
+            try {
+                if (window.dataLayer && typeof window.gtag === 'function') {
+                    window.gtag('event', 'search_no_results', {
+                        'search_term': trimmedSearch,
+                        'search_type': 'wine_search'
+                    });
+                    
+                    window.dataLayer.push({
+                        'event': 'search_no_results',
+                        'search_term': trimmedSearch,
+                        'search_type': 'wine_search'
+                    });
+                } else if (window.dataLayer) {
+                    window.dataLayer.push({
+                        'event': 'search_no_results',
+                        'search_term': trimmedSearch,
+                        'search_type': 'wine_search'
+                    });
+                }
+            } catch (e) {
+                // Silenzioso: non bloccare l'esperienza utente
+            }
+        }
+        
+        // Funzione per tracciare le ricerche (con risultati)
+        function trackSearch(searchText, resultCount) {
+            try {
+                if (window.dataLayer && typeof window.gtag === 'function') {
+                    window.gtag('event', 'search', {
+                        'search_term': searchText,
+                        'search_results': resultCount,
+                        'search_type': 'wine_search'
+                    });
+                    
+                    window.dataLayer.push({
+                        'event': 'search',
+                        'search_term': searchText,
+                        'search_results': resultCount,
+                        'search_type': 'wine_search'
+                    });
+                } else if (window.dataLayer) {
+                    window.dataLayer.push({
+                        'event': 'search',
+                        'search_term': searchText,
+                        'search_results': resultCount,
+                        'search_type': 'wine_search'
+                    });
+                }
+            } catch (e) {
+                // Silenzioso: non bloccare l'esperienza utente
+            }
         }
 
+        // Funzione per tracciare i click sui filtri
+        function trackFilterClick(filterType, category, isActive) {
+            try {
+                if (window.dataLayer && typeof window.gtag === 'function') {
+                    window.gtag('event', 'filter_click', {
+                        'filter_type': filterType,
+                        'filter_category': category,
+                        'filter_action': isActive ? 'activated' : 'deactivated'
+                    });
+                    
+                    window.dataLayer.push({
+                        'event': 'filter_click',
+                        'filter_type': filterType,
+                        'filter_category': category,
+                        'filter_action': isActive ? 'activated' : 'deactivated'
+                    });
+                } else if (window.dataLayer) {
+                    window.dataLayer.push({
+                        'event': 'filter_click',
+                        'filter_type': filterType,
+                        'filter_category': category,
+                        'filter_action': isActive ? 'activated' : 'deactivated'
+                    });
+                }
+            } catch (e) {
+                // Silenzioso: non bloccare l'esperienza utente
+            }
+        }
+        
         // Gestione click sui pulsanti filtro
         filterButtons.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -1030,12 +1280,15 @@
                     btn.getAttribute('data-filter-type') === filterType
                 );
                 
+                let isActivating = false;
+                
                 if (category === 'all') {
                     // Se clicco "Tutto", deseleziono tutto e seleziono solo "all"
                     filterSet.clear();
                     filterSet.add('all');
                     buttons.forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
+                    isActivating = true;
                 } else {
                     // Rimuovo "all" se presente
                     filterSet.delete('all');
@@ -1044,9 +1297,11 @@
                     if (filterSet.has(category)) {
                         filterSet.delete(category);
                         button.classList.remove('active');
+                        isActivating = false;
                     } else {
                         filterSet.add(category);
                         button.classList.add('active');
+                        isActivating = true;
                     }
                     
                     // Se nessuna categoria è selezionata, seleziono "all" di default
@@ -1061,6 +1316,9 @@
                     }
                 }
                 
+                // Traccia il click sul filtro
+                trackFilterClick(filterType, category, isActivating);
+                
                 // Applica il filtro
                 applyFilters();
             });
@@ -1068,10 +1326,30 @@
 
         // Event listener per la barra di ricerca
         if (searchInput) {
+            let searchTimeout;
+            let lastSearchText = '';
+            
             searchInput.addEventListener('input', (e) => {
                 const searchText = e.target.value;
                 searchTerms = parseSearchTerms(searchText);
+                
+                // Applica i filtri
                 applyFilters();
+                
+                // Traccia la ricerca dopo un breve delay (per evitare troppi eventi)
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    if (searchText.trim().length > 0 && searchText !== lastSearchText) {
+                        const visibleItems = document.querySelectorAll('.wine-item:not(.hidden)');
+                        const resultCount = visibleItems.length;
+                        
+                        if (resultCount > 0) {
+                            trackSearch(searchText, resultCount);
+                        }
+                        
+                        lastSearchText = searchText;
+                    }
+                }, 500); // Attendi 500ms dopo l'ultimo input
             });
             
             // Stili focus
@@ -1092,6 +1370,30 @@
             if (!btn) return;
             
             btn.addEventListener('click', function () {
+                // Tracking click su "Torna all'inizio"
+                try {
+                    if (window.dataLayer && typeof window.gtag === 'function') {
+                        window.gtag('event', 'scroll_to_top_click', {
+                            'button_name': 'Torna all\'inizio',
+                            'page_location': window.location.pathname
+                        });
+                        
+                        window.dataLayer.push({
+                            'event': 'scroll_to_top_click',
+                            'button_name': 'Torna all\'inizio',
+                            'page_location': window.location.pathname
+                        });
+                    } else if (window.dataLayer) {
+                        window.dataLayer.push({
+                            'event': 'scroll_to_top_click',
+                            'button_name': 'Torna all\'inizio',
+                            'page_location': window.location.pathname
+                        });
+                    }
+                } catch (e) {
+                    // Silenzioso: non bloccare l'esperienza utente
+                }
+                
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             
@@ -1307,6 +1609,20 @@
         document.addEventListener('DOMContentLoaded', function() {
             initWineGrid();
             applyFilters();
+            
+            // Inizializza la sezione ricerche senza risultati
+            updateNoResultsDisplay();
+            
+            // Toggle per mostrare/nascondere ricerche senza risultati
+            const noResultsToggle = document.getElementById('noResultsToggle');
+            const noResultsContent = document.getElementById('noResultsContent');
+            if (noResultsToggle && noResultsContent) {
+                noResultsToggle.addEventListener('click', function() {
+                    const isExpanded = noResultsContent.style.display !== 'none';
+                    noResultsContent.style.display = isExpanded ? 'none' : 'block';
+                    noResultsToggle.classList.toggle('expanded', !isExpanded);
+                });
+            }
         });
     </script>
 </body>
