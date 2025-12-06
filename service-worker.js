@@ -64,7 +64,7 @@ self.addEventListener('install', (event) => {
                 } else {
                   return Promise.resolve(); // Continua anche se il file non esiste
                 }
-              })
+      })
               .catch(() => {
                 return Promise.resolve(); // Continua anche se c'è un errore
               });
@@ -105,7 +105,7 @@ self.addEventListener('fetch', (event) => {
 
   // Ignora richieste a domini esterni (CDN, API, ecc.)
   try {
-    const url = new URL(event.request.url);
+  const url = new URL(event.request.url);
     const origin = self.location ? self.location.origin : url.origin;
     
     // Font Awesome: NON cachare, sempre dalla rete per evitare problemi
@@ -117,9 +117,9 @@ self.addEventListener('fetch', (event) => {
     }
     
     if (url.origin !== origin && 
-        !url.href.includes('fonts.googleapis.com') &&
-        !url.href.includes('fonts.gstatic.com') &&
-        !url.href.includes('cdnjs.cloudflare.com')) {
+      !url.href.includes('fonts.googleapis.com') &&
+      !url.href.includes('fonts.gstatic.com') &&
+      !url.href.includes('cdnjs.cloudflare.com')) {
       return;
     }
   } catch (e) {

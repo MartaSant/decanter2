@@ -201,9 +201,94 @@
         </a>
     </div>
 
+    <!-- Banner Cookie Consenso -->
+    <div id="cookie-banner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.95); color: #ffffff; padding: 1.5rem; z-index: 10000; border-top: 2px solid #FFC928; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);">
+    <script>
+        // Controllo immediato del consenso PRIMA che il DOM sia completamente caricato
+        // Questo assicura che il banner venga mostrato/nascosto correttamente
+        (function() {
+            const CONSENT_KEY = window.CONSENT_KEY || 'ga_consent';
+            
+            // Funzione per gestire il banner - legge il consenso ogni volta
+            function handleBanner() {
+                const banner = document.getElementById('cookie-banner');
+                if (!banner) {
+                    // Se il banner non esiste ancora, riprova dopo un breve delay
+                    setTimeout(handleBanner, 50);
+                    return;
+                }
+                
+                // Leggi il consenso ogni volta (non solo all'inizio)
+                const consent = localStorage.getItem(CONSENT_KEY);
+                
+                // Se il consenso è già stato dato, nascondi il banner
+                if (consent === 'granted') {
+                    banner.style.display = 'none';
+                } else {
+                    // Se il consenso è negato o non esiste (null), mostra il banner
+                    // Questo assicura che il banner venga riproposto ad ogni visita
+                    banner.style.display = 'block';
+                }
+            }
+            
+            // Esegui quando il DOM è disponibile
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', handleBanner);
+            } else {
+                // Se il DOM è già pronto, esegui immediatamente
+                handleBanner();
+            }
+            
+            // Riprova anche dopo un breve delay per assicurarsi che il banner sia gestito
+            setTimeout(handleBanner, 200);
+        })();
+    </script>
+        <p style="margin: 0 0 1rem 0; font-size: 0.9rem; line-height: 1.5;">
+            Questo sito utilizza Google Analytics 4, Google Signals e dati demografici per migliorare l'esperienza utente. 
+            I dati vengono raccolti solo con il tuo consenso esplicito.
+        </p>
+        <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center;">
+            <a href="policy.html" style="color: #FFC928; text-decoration: underline; font-size: 0.85rem;" id="cookie-policy-link">Privacy Policy</a>
+            <button id="cookie-reject" style="padding: 0.6rem 1.5rem; background: transparent; border: 2px solid #FFC928; color: #FFC928; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                Rifiuta
+            </button>
+            <button id="cookie-accept" style="padding: 0.6rem 1.5rem; background: #FFC928; border: 2px solid #FFC928; color: #000000; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                Accetta
+            </button>
+        </div>
+    </div>
+
     <button class="scroll-top" aria-label="Torna all'inizio">
         <i class="fas fa-chevron-up"></i>
     </button>
+    
+    <!-- Bottone modifica consenso cookie -->
+    <button class="cookie-settings-btn" id="cookieSettingsBtn" aria-label="Impostazioni cookie">
+        <i class="fas fa-cookie"></i>
+    </button>
+    
+    <!-- Banner modifica consenso -->
+    <div id="cookie-settings-banner" class="cookie-settings-banner" style="display: none;">
+        <div class="cookie-settings-content">
+            <h3 class="cookie-settings-title">Gestisci le tue preferenze cookie</h3>
+            <p class="cookie-settings-desc">Puoi modificare la tua scelta in qualsiasi momento.</p>
+            <div class="cookie-settings-status">
+                <p id="cookie-settings-status-text">Stato attuale: <strong id="cookie-current-status">Non impostato</strong></p>
+            </div>
+            <div class="cookie-settings-buttons">
+                <button id="cookie-settings-accept" class="cookie-settings-btn-action cookie-settings-accept">
+                    Accetta
+                </button>
+                <button id="cookie-settings-reject" class="cookie-settings-btn-action cookie-settings-reject">
+                    Rifiuta
+                </button>
+                <button id="cookie-settings-close" class="cookie-settings-btn-action cookie-settings-close">
+                    Chiudi
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="cookie-settings-overlay" class="cookie-settings-overlay" style="display: none;"></div>
 
     <script>
         // scroll to top button
@@ -481,6 +566,179 @@
     
     <!-- Google Analytics Consent Management -->
     <script src="ga-consent.js"></script>
+    
+    <!-- Inizializza dataLayer anche se GA4 non è ancora caricato -->
+    <script>
+        // Assicura che dataLayer esista sempre (per eventi in coda)
+        window.dataLayer = window.dataLayer || [];
+        
+        // Gestione bottone e banner modifica consenso cookie
+        (function() {
+            // Usa la chiave globale da ga-consent.js, fallback a 'ga_consent' se non disponibile
+            const CONSENT_KEY = window.CONSENT_KEY || 'ga_consent';
+            const settingsBtn = document.getElementById('cookieSettingsBtn');
+            const settingsBanner = document.getElementById('cookie-settings-banner');
+            const settingsOverlay = document.getElementById('cookie-settings-overlay');
+            const acceptBtn = document.getElementById('cookie-settings-accept');
+            const rejectBtn = document.getElementById('cookie-settings-reject');
+            const closeBtn = document.getElementById('cookie-settings-close');
+            const statusText = document.getElementById('cookie-current-status');
+            const cookieBanner = document.getElementById('cookie-banner');
+            
+            if (!settingsBtn || !settingsBanner || !settingsOverlay) return;
+            
+            // Funzione per aggiornare lo stato visualizzato
+            function updateConsentStatus() {
+                const consent = localStorage.getItem(CONSENT_KEY);
+                if (statusText) {
+                    if (consent === 'granted') {
+                        statusText.textContent = 'Accettato';
+                        statusText.style.color = '#4CAF50';
+                    } else if (consent === 'denied') {
+                        statusText.textContent = 'Rifiutato';
+                        statusText.style.color = '#F44336';
+                    } else {
+                        statusText.textContent = 'Non impostato';
+                        statusText.style.color = '#FFC928';
+                    }
+                }
+            }
+            
+            // Funzione per mostrare/nascondere il bottone in base al banner cookie
+            function toggleSettingsButton() {
+                if (cookieBanner && cookieBanner.style.display !== 'none') {
+                    // Banner cookie visibile, nascondi bottone
+                    settingsBtn.classList.add('hidden');
+                } else {
+                    // Banner cookie non visibile, mostra bottone
+                    settingsBtn.classList.remove('hidden');
+                }
+            }
+            
+            // Controlla periodicamente se il banner cookie è visibile
+            setInterval(toggleSettingsButton, 500);
+            toggleSettingsButton(); // Controllo iniziale
+            
+            // Funzione per aprire il banner modifica consenso
+            function openSettingsBanner() {
+                updateConsentStatus();
+                settingsBanner.style.display = 'block';
+                settingsOverlay.style.display = 'block';
+                
+                setTimeout(function() {
+                    settingsBanner.classList.add('open');
+                    settingsOverlay.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }, 10);
+            }
+            
+            // Funzione per chiudere il banner modifica consenso
+            function closeSettingsBanner() {
+                settingsBanner.classList.remove('open');
+                settingsOverlay.classList.remove('show');
+                
+                setTimeout(function() {
+                    settingsBanner.style.display = 'none';
+                    settingsOverlay.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+            
+            // Click sul bottone per aprire il banner
+            settingsBtn.addEventListener('click', function() {
+                openSettingsBanner();
+            });
+            
+            // Click sull'overlay per chiudere
+            settingsOverlay.addEventListener('click', function() {
+                closeSettingsBanner();
+            });
+            
+            // Click su "Accetta"
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', function() {
+                    localStorage.setItem(CONSENT_KEY, 'granted');
+                    try {
+                        window.dispatchEvent(new StorageEvent('storage', {
+                            key: CONSENT_KEY,
+                            newValue: 'granted',
+                            oldValue: localStorage.getItem(CONSENT_KEY),
+                            storageArea: localStorage
+                        }));
+                    } catch (e) {}
+                    updateConsentStatus();
+                    if (cookieBanner) cookieBanner.style.display = 'none';
+                    if (window.loadGA4 && typeof window.loadGA4 === 'function') {
+                        window.loadGA4();
+                    } else if (typeof loadGA4 === 'function') {
+                        loadGA4();
+                    }
+                    setTimeout(function() {
+                        closeSettingsBanner();
+                    }, 500);
+                });
+            }
+            
+            // Click su "Rifiuta"
+            if (rejectBtn) {
+                rejectBtn.addEventListener('click', function() {
+                    localStorage.setItem(CONSENT_KEY, 'denied');
+                    try {
+                        window.dispatchEvent(new StorageEvent('storage', {
+                            key: CONSENT_KEY,
+                            newValue: 'denied',
+                            oldValue: localStorage.getItem(CONSENT_KEY),
+                            storageArea: localStorage
+                        }));
+                    } catch (e) {}
+                    updateConsentStatus();
+                    if (cookieBanner) cookieBanner.style.display = 'none';
+                    if (window.stopGA4 && typeof window.stopGA4 === 'function') {
+                        window.stopGA4();
+                    } else if (typeof stopGA4 === 'function') {
+                        stopGA4();
+                    }
+                    setTimeout(function() {
+                        closeSettingsBanner();
+                    }, 500);
+                });
+            }
+            
+            // Click su "Chiudi"
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    closeSettingsBanner();
+                });
+            }
+            
+            // Aggiorna lo stato all'apertura
+            updateConsentStatus();
+            
+            // Ascolta i cambiamenti di localStorage per aggiornare lo stato in tempo reale
+            // Questo è importante quando il consenso viene modificato in altre pagine
+            window.addEventListener('storage', function(e) {
+                if (e.key === CONSENT_KEY) {
+                    updateConsentStatus();
+                }
+            });
+            
+            // Per iframe same-origin, l'evento storage potrebbe non funzionare
+            // Quindi controlliamo periodicamente se il consenso è cambiato
+            let lastConsent = localStorage.getItem(CONSENT_KEY);
+            const checkConsentInterval = setInterval(function() {
+                const currentConsent = localStorage.getItem(CONSENT_KEY);
+                if (currentConsent !== lastConsent) {
+                    updateConsentStatus();
+                    lastConsent = currentConsent;
+                }
+            }, 500);
+            
+            // Ferma il controllo dopo 30 secondi (dopo quel tempo, il consenso è stabile)
+            setTimeout(function() {
+                clearInterval(checkConsentInterval);
+            }, 30000);
+        })();
+    </script>
 </body>
 </html>
 

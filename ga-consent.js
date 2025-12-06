@@ -6,6 +6,9 @@ console.log('ga-consent.js caricato');
 const GA_MEASUREMENT_ID = 'G-2KB68FNNQ8';
 const CONSENT_KEY = 'ga_consent';
 
+// Esponi CONSENT_KEY globalmente per uso in tutte le pagine
+window.CONSENT_KEY = CONSENT_KEY;
+
 // Verifica se l'utente ha già dato il consenso
 function hasAnalyticsConsent() {
     const consent = localStorage.getItem(CONSENT_KEY);
@@ -171,6 +174,53 @@ function sendGA4Event(eventName, eventParams) {
 
 // Esponi la funzione globalmente per uso in altre pagine
 window.sendGA4Event = sendGA4Event;
+// Esponi anche loadGA4 globalmente per uso in altre pagine
+window.loadGA4 = loadGA4;
+
+// Funzione per fermare GA4 quando il consenso viene negato
+function stopGA4() {
+    console.log('stopGA4 chiamato - fermo GA4');
+    
+    // Aggiorna il consenso mode a "denied" per fermare il tracking
+    if (window.gtag && typeof window.gtag === 'function') {
+        try {
+            gtag('consent', 'update', {
+                'ad_storage': 'denied',
+                'analytics_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied'
+            });
+            console.log('Consenso GA4 aggiornato a denied');
+        } catch (e) {
+            console.error('Errore aggiornamento consenso GA4:', e);
+        }
+    }
+    
+    // Resetta i flag
+    ga4Ready = false;
+    window.ga4Ready = false;
+    ga4Loading = false;
+    window.ga4Loading = false;
+    
+    // Rimuovi lo script GA4 dal DOM se esiste
+    const ga4Script = document.querySelector('script[src*="googletagmanager.com/gtag/js"]');
+    if (ga4Script) {
+        ga4Script.remove();
+        console.log('Script GA4 rimosso dal DOM');
+    }
+    
+    // Rimuovi anche il dataLayer o resettalo (opzionale, potrebbe essere usato da altri script)
+    // Non rimuoviamo completamente dataLayer per evitare errori, ma lo svuotiamo
+    if (window.dataLayer) {
+        // Manteniamo dataLayer ma non inviamo più eventi
+        console.log('DataLayer mantenuto ma non verrà più utilizzato');
+    }
+    
+    console.log('GA4 fermato');
+}
+
+// Esponi stopGA4 globalmente
+window.stopGA4 = stopGA4;
 
 // Gestisce il banner dei cookie
 function initCookieBanner() {
@@ -204,29 +254,45 @@ function initCookieBanner() {
             return;
         }
         
-        // Se il consenso è già stato dato o negato, nascondi il banner
-        if (consent === 'granted' || consent === 'denied') {
-            console.log('Consenso già presente:', consent);
+        // NUOVA LOGICA:
+        // - Se consenso è "granted": nascondi banner (non mostrare più)
+        // - Se consenso è "denied": mostra banner (riproponi ad ogni load)
+        // - Se non c'è consenso: mostra banner (prima visita o consenso rimosso)
+        
+        if (consent === 'granted') {
+            // Consenso accettato: nascondi banner e carica GA4
+            console.log('Consenso granted, nascondo banner e carico GA4');
             banner.style.display = 'none';
-            
-            // Se il consenso è stato dato, carica GA4
-            if (consent === 'granted') {
-                console.log('Consenso granted, carico GA4');
-                loadGA4();
-            }
+            loadGA4();
             return;
         }
         
-        // Mostra il banner se non c'è consenso
-        console.log('Nessun consenso salvato, mostro il banner');
+        // Se consenso è "denied" o non esiste, mostra il banner
+        // Questo permette di riproporre il banner se l'utente ha negato il consenso
+        // o se non ha ancora dato una risposta
+        console.log('Consenso denied o non presente, mostro banner');
         banner.style.display = 'block';
         console.log('Banner display impostato a block, valore attuale:', banner.style.display);
         
         // Gestisci click su "Accetta"
         acceptBtn.addEventListener('click', function() {
             console.log('Click su Accetta');
-            // Salva il consenso
+            // Salva il consenso - questo è condiviso tra tutte le pagine
             localStorage.setItem(CONSENT_KEY, 'granted');
+            
+            // Trigger evento personalizzato per sincronizzare altre pagine/iframe
+            // Questo è importante per aggiornare le pagine aperte in altre tab/iframe
+            try {
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: CONSENT_KEY,
+                    newValue: 'granted',
+                    oldValue: localStorage.getItem(CONSENT_KEY),
+                    storageArea: localStorage
+                }));
+            } catch (e) {
+                // Fallback per browser che non supportano StorageEvent personalizzato
+                console.log('StorageEvent non supportato, uso fallback');
+            }
             
             // Carica GA4
             loadGA4();
@@ -241,10 +307,31 @@ function initCookieBanner() {
         // Gestisci click su "Rifiuta"
         rejectBtn.addEventListener('click', function() {
             console.log('Click su Rifiuta');
-            // Salva il rifiuto
+            // Salva il rifiuto - questo è condiviso tra tutte le pagine
             localStorage.setItem(CONSENT_KEY, 'denied');
             
-            // Nascondi il banner
+            // Trigger evento personalizzato per sincronizzare altre pagine/iframe
+            // Questo è importante per aggiornare le pagine aperte in altre tab/iframe
+            try {
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: CONSENT_KEY,
+                    newValue: 'denied',
+                    oldValue: localStorage.getItem(CONSENT_KEY),
+                    storageArea: localStorage
+                }));
+            } catch (e) {
+                // Fallback per browser che non supportano StorageEvent personalizzato
+                console.log('StorageEvent non supportato, uso fallback');
+            }
+            
+            // Ferma GA4 se è caricato
+            if (window.stopGA4 && typeof window.stopGA4 === 'function') {
+                window.stopGA4();
+            }
+            
+            // NON nascondere il banner: verrà riproposto al prossimo load di pagina
+            // Questo permette all'utente di cambiare idea in futuro
+            // Il banner verrà mostrato di nuovo quando l'utente naviga o ricarica la pagina
             banner.style.display = 'none';
             
             // NON caricare GA4
