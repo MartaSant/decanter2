@@ -4,7 +4,7 @@
 console.log('ga-consent.js caricato');
 
 const GA_MEASUREMENT_ID = 'G-2KB68FNNQ8';
-const CONSENT_KEY = 'ga_consent';
+const CONSENT_KEY = 'cookie_consent_idedecanter';
 
 // Esponi CONSENT_KEY globalmente per uso in tutte le pagine
 window.CONSENT_KEY = CONSENT_KEY;
