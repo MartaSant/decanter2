@@ -54,6 +54,9 @@
             flex-direction: column;
             flex: 1 1 0;
             min-width: 0;
+            align-self: flex-start;
+            height: auto;
+            min-height: 0;
         }
         
         .filter-section.collapsed {
@@ -87,22 +90,29 @@
         }
         
         .category-filter {
-            display: none;
+            display: none !important;
             flex-direction: column;
             gap: 0.6rem;
             max-height: 0;
+            height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease, margin-top 0.3s ease, opacity 0.3s ease;
             margin-top: 0;
             opacity: 0;
+            padding: 0;
         }
         
         .filter-section.collapsed .category-filter {
             display: none !important;
+            height: 0 !important;
+            max-height: 0 !important;
+            margin-top: 0 !important;
+            padding: 0 !important;
         }
         
         .filter-section:not(.collapsed) .category-filter {
-            display: flex;
+            display: flex !important;
+            height: auto;
             max-height: 300px;
             margin-top: 0.8rem;
             opacity: 1;
@@ -1814,7 +1824,6 @@
             }
             
             // Toggle per comprimere/espandere le sezioni filtro
-            // Quando si clicca su una tenda, si aprono entrambe
             const filterSections = document.querySelectorAll('.filter-section');
             filterSections.forEach(function(section) {
                 const title = section.querySelector('.filter-section-title');
@@ -1824,28 +1833,9 @@
                         // Previeni il click se si clicca direttamente sull'icona
                         e.stopPropagation();
                         
-                        // Controlla se la tenda cliccata è attualmente chiusa
-                        const isCurrentlyCollapsed = section.classList.contains('collapsed');
-                        
-                        // Se è chiusa, apri entrambe le tende
-                        if (isCurrentlyCollapsed) {
-                            filterSections.forEach(function(s) {
-                                s.classList.remove('collapsed');
-                                const sIcon = s.querySelector('.filter-section-title-icon');
-                                if (sIcon) {
-                                    updateFilterIcon(sIcon, false);
-                                }
-                            });
-                        } else {
-                            // Se è aperta, chiudi entrambe le tende
-                            filterSections.forEach(function(s) {
-                                s.classList.add('collapsed');
-                                const sIcon = s.querySelector('.filter-section-title-icon');
-                                if (sIcon) {
-                                    updateFilterIcon(sIcon, true);
-                                }
-                            });
-                        }
+                        // Toggle dello stato collapsed
+                        const isCollapsed = section.classList.toggle('collapsed');
+                        updateFilterIcon(icon, isCollapsed);
                     });
                 }
             });
