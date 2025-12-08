@@ -39,6 +39,11 @@
             padding: 0.9rem 0.95rem 1rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
             margin-bottom: 1.2rem;
+            transition: padding 0.3s ease;
+        }
+        
+        .filter-section.collapsed {
+            padding: 0.6rem 0.95rem;
         }
         
         .filter-section-title {
@@ -46,13 +51,43 @@
             text-transform: uppercase;
             letter-spacing: 0.14em;
             color: #D4AF37;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.3rem 0;
+            transition: color 0.2s ease;
+        }
+        
+        .filter-section-title:hover {
+            color: #FFC928;
+        }
+        
+        .filter-section-title-icon {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+            margin-left: 0.5rem;
+            color: #D4AF37;
         }
         
         .category-filter {
             display: flex;
             flex-wrap: wrap;
             gap: 0.6rem;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, margin-top 0.3s ease, opacity 0.3s ease;
+            margin-top: 0.8rem;
+            opacity: 1;
+        }
+        
+        .filter-section.collapsed .category-filter {
+            max-height: 0;
+            margin-top: 0;
+            opacity: 0;
+            overflow: hidden;
         }
         
         .filter-btn {
@@ -561,8 +596,11 @@
         </div>
 
         <!-- Filtro Tono -->
-        <div class="filter-section">
-            <h2 class="filter-section-title">Tono</h2>
+        <div class="filter-section collapsed" id="filter-tono">
+            <h2 class="filter-section-title">
+                <span>Tono</span>
+                <i class="fas fa-chevron-right filter-section-title-icon"></i>
+            </h2>
             <div class="category-filter">
                 <button class="filter-btn active" data-filter-type="tono" data-category="all">Tutto</button>
                 <button class="filter-btn" data-filter-type="tono" data-category="bianco">Bianco</button>
@@ -574,8 +612,11 @@
         </div>
 
         <!-- Filtro Regione -->
-        <div class="filter-section">
-            <h2 class="filter-section-title">Regione</h2>
+        <div class="filter-section collapsed" id="filter-regione">
+            <h2 class="filter-section-title">
+                <span>Regione</span>
+                <i class="fas fa-chevron-right filter-section-title-icon"></i>
+            </h2>
             <div class="category-filter">
                 <button class="filter-btn active" data-filter-type="regione" data-category="all">Tutto</button>
                 <button class="filter-btn" data-filter-type="regione" data-category="toscana">Toscana</button>
@@ -1718,6 +1759,34 @@
                     noResultsContent.style.display = isExpanded ? 'none' : 'block';
                     noResultsToggle.classList.toggle('expanded', !isExpanded);
                 });
+            }
+            
+            // Toggle per comprimere/espandere le sezioni filtro
+            const filterSections = document.querySelectorAll('.filter-section');
+            filterSections.forEach(function(section) {
+                const title = section.querySelector('.filter-section-title');
+                const icon = section.querySelector('.filter-section-title-icon');
+                if (title && icon) {
+                    title.addEventListener('click', function(e) {
+                        // Previeni il click se si clicca direttamente sull'icona
+                        e.stopPropagation();
+                        
+                        // Toggle dello stato collapsed
+                        const isCollapsed = section.classList.toggle('collapsed');
+                        updateFilterIcon(icon, isCollapsed);
+                    });
+                }
+            });
+            
+            // Funzione helper per aggiornare l'icona
+            function updateFilterIcon(iconElement, isCollapsed) {
+                if (isCollapsed) {
+                    iconElement.classList.remove('fa-chevron-down');
+                    iconElement.classList.add('fa-chevron-right');
+                } else {
+                    iconElement.classList.remove('fa-chevron-right');
+                    iconElement.classList.add('fa-chevron-down');
+                }
             }
         });
     </script>
