@@ -154,11 +154,11 @@
         
         .filters-wrapper:not(.collapsed) .category-filter {
             /* Altezza per mostrare massimo 4 tab: 
-               Ogni bottone: padding 0.7rem*2 + border 2px*2 + altezza testo ~1.1rem = ~2.6rem
-               4 bottoni = 4 * 2.6rem = 10.4rem
+               Ogni bottone: padding 0.7rem*2 (1.4rem) + border 4px (~0.25rem) + altezza testo con line-height 1.2 (~1.1rem) = ~2.75rem
+               4 bottoni = 4 * 2.75rem = 11rem
                3 gap = 3 * 0.6rem = 1.8rem
-               Totale: ~12.2rem */
-            max-height: 12.5rem;
+               Totale: ~12.8rem, arrotondato a 13.5rem per sicurezza */
+            max-height: 13.5rem;
             margin-top: 0.8rem;
             opacity: 1;
             overflow-y: auto;
@@ -646,6 +646,15 @@
             
             .category-filter {
                 gap: 0.4rem;
+            }
+            
+            /* Altezza per 4 tab su mobile: bottoni più piccoli
+               Ogni bottone mobile: padding 0.4rem*2 (0.8rem) + border 4px (~0.25rem) + testo 0.75rem*1.2 (~0.9rem) = ~1.95rem
+               4 bottoni = 4 * 1.95rem = 7.8rem
+               3 gap = 3 * 0.4rem = 1.2rem
+               Totale: ~9rem */
+            .filters-wrapper:not(.collapsed) .category-filter {
+                max-height: 9.5rem;
             }
         }
     </style>
