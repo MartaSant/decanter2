@@ -35,10 +35,12 @@
         .filters-container {
             display: flex;
             flex-direction: row;
+            flex-wrap: nowrap;
             gap: 0.8rem;
             margin-bottom: 1.2rem;
             align-items: flex-start;
             width: 100%;
+            box-sizing: border-box;
         }
         
         .filter-section {
@@ -48,8 +50,10 @@
             padding: 0.9rem 0.95rem 1rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
             transition: padding 0.3s ease;
-            flex: 1 1 0;
-            min-width: 0;
+            flex: 1 1 50%;
+            width: 50%;
+            max-width: 50%;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
         }
