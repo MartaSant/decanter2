@@ -32,35 +32,84 @@
     
     <style>
         /* Stili per i filtri */
+        .filters-wrapper {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 201, 40, 0.55);
+            padding: 0.75rem 0.95rem 0.9rem;
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
+            margin-bottom: 1.2rem;
+            box-sizing: border-box;
+            transition: padding 0.3s ease;
+        }
+
+        .filters-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .filters-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #D4AF37;
+        }
+
+        .filters-toggle {
+            border: none;
+            background: transparent;
+            color: #D4AF37;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.2rem;
+            cursor: pointer;
+        }
+
+        .filters-toggle-icon {
+            font-size: 0.9rem;
+            transition: transform 0.25s ease;
+        }
+
+        .filters-wrapper:not(.collapsed) .filters-toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        /* Contenitore interno con Tono e Regione affiancati */
         .filters-container {
             display: flex;
             flex-direction: row;
             gap: 0.8rem;
-            margin-bottom: 1.2rem;
             width: 100%;
             box-sizing: border-box;
-            align-items: flex-start;
+            margin-top: 0.6rem;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+
+        .filters-wrapper.collapsed .filters-container {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .filters-wrapper:not(.collapsed) .filters-container {
+            max-height: 400px;
+            opacity: 1;
         }
         
         .filter-section {
-            background: rgba(0, 0, 0, 0.85);
-            border-radius: 1rem;
-            border: 1px solid rgba(255, 201, 40, 0.55);
-            padding: 0.9rem 0.95rem 1rem;
-            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
-            transition: padding 0.3s ease;
+            background: transparent;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 201, 40, 0.4);
+            padding: 0.6rem 0.6rem 0.8rem;
+            box-shadow: none;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             flex: 1 1 0;
-            min-width: 0;
-            align-self: flex-start;
-            height: auto;
-            min-height: 0;
-        }
-        
-        .filter-section.collapsed {
-            padding: 0.6rem 0.95rem;
         }
         
         .filter-section-title {
@@ -78,41 +127,22 @@
             transition: color 0.2s ease;
         }
         
-        .filter-section-title:hover {
-            color: #FFC928;
-        }
-        
         .filter-section-title-icon {
-            font-size: 0.9rem;
-            transition: transform 0.3s ease;
-            margin-left: 0.5rem;
-            color: #D4AF37;
+            display: none;
         }
         
         .category-filter {
-            display: none !important;
+            display: flex;
             flex-direction: column;
             gap: 0.6rem;
             max-height: 0;
-            height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease, margin-top 0.3s ease, opacity 0.3s ease;
             margin-top: 0;
             opacity: 0;
-            padding: 0;
         }
         
-        .filter-section.collapsed .category-filter {
-            display: none !important;
-            height: 0 !important;
-            max-height: 0 !important;
-            margin-top: 0 !important;
-            padding: 0 !important;
-        }
-        
-        .filter-section:not(.collapsed) .category-filter {
-            display: flex !important;
-            height: auto;
+        .filters-wrapper:not(.collapsed) .category-filter {
             max-height: 300px;
             margin-top: 0.8rem;
             opacity: 1;
@@ -578,10 +608,16 @@
             display: none;
         }
         
-        /* Media query per schermi piccoli: sotto una certa larghezza le schede vanno in colonna */
-        @media (max-width: 480px) {
+        /* Media query per schermi molto piccoli */
+        @media (max-width: 360px) {
             .filters-container {
                 flex-direction: column;
+            }
+            
+            @supports (display: grid) {
+                .filters-container {
+                    grid-template-columns: 1fr;
+                }
             }
         }
     </style>
@@ -654,40 +690,42 @@
                    id="menuSearchInput">
         </div>
 
-        <!-- Container per i filtri affiancati -->
-        <div class="filters-container">
-            <!-- Filtro Tono -->
-            <div class="filter-section collapsed" id="filter-tono">
-                <h2 class="filter-section-title">
-                    <span>Tono</span>
-                    <i class="fas fa-chevron-right filter-section-title-icon"></i>
-                </h2>
-                <div class="category-filter">
-                    <button class="filter-btn active" data-filter-type="tono" data-category="all">Tutto</button>
-                    <button class="filter-btn" data-filter-type="tono" data-category="bianco">Bianco</button>
-                    <button class="filter-btn" data-filter-type="tono" data-category="rosso">Rosso</button>
-                    <button class="filter-btn" data-filter-type="tono" data-category="rosè">Rosè</button>
-                    <button class="filter-btn" data-filter-type="tono" data-category="prosecco">Prosecco</button>
-                    <button class="filter-btn" data-filter-type="tono" data-category="champagne">Champagne</button>
-                </div>
+        <!-- Box Filtri con Tono e Regione affiancati -->
+        <section class="filters-wrapper collapsed" aria-label="Filtri">
+            <div class="filters-header">
+                <span class="filters-title">Filtri</span>
+                <button class="filters-toggle" type="button" aria-expanded="false">
+                    <i class="fas fa-chevron-right filters-toggle-icon"></i>
+                </button>
             </div>
+            <div class="filters-container">
+                <!-- Filtro Tono -->
+                <div class="filter-section" id="filter-tono">
+                    <h2 class="filter-section-title">Tono</h2>
+                    <div class="category-filter">
+                        <button class="filter-btn active" data-filter-type="tono" data-category="all">Tutto</button>
+                        <button class="filter-btn" data-filter-type="tono" data-category="bianco">Bianco</button>
+                        <button class="filter-btn" data-filter-type="tono" data-category="rosso">Rosso</button>
+                        <button class="filter-btn" data-filter-type="tono" data-category="rosè">Rosè</button>
+                        <button class="filter-btn" data-filter-type="tono" data-category="prosecco">Prosecco</button>
+                        <button class="filter-btn" data-filter-type="tono" data-category="champagne">Champagne</button>
+                    </div>
+                </div>
 
-            <!-- Filtro Regione -->
-            <div class="filter-section collapsed" id="filter-regione">
-                <h2 class="filter-section-title">
-                    <span>Regione</span>
-                    <i class="fas fa-chevron-right filter-section-title-icon"></i>
-                </h2>
-                <div class="category-filter">
-                    <button class="filter-btn active" data-filter-type="regione" data-category="all">Tutto</button>
-                    <button class="filter-btn" data-filter-type="regione" data-category="toscana">Toscana</button>
-                    <button class="filter-btn" data-filter-type="regione" data-category="piemonte">Piemonte</button>
-                    <button class="filter-btn" data-filter-type="regione" data-category="veneto">Veneto</button>
-                    <button class="filter-btn" data-filter-type="regione" data-category="campania">Campania</button>
-                    <button class="filter-btn" data-filter-type="regione" data-category="sicilia">Sicilia</button>
+                <!-- Filtro Regione -->
+                <div class="filter-section" id="filter-regione">
+                    <h2 class="filter-section-title">Regione</h2>
+                    <div class="category-filter">
+                        <button class="filter-btn active" data-filter-type="regione" data-category="all">Tutto</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="toscana">Toscana</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="piemonte">Piemonte</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="veneto">Veneto</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="campania">Campania</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="sicilia">Sicilia</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Lista Vini -->
         <section class="menu-section">
@@ -1822,26 +1860,25 @@
                     noResultsToggle.classList.toggle('expanded', !isExpanded);
                 });
             }
-            
-            // Toggle per comprimere/espandere le sezioni filtro
-            const filterSections = document.querySelectorAll('.filter-section');
-            filterSections.forEach(function(section) {
-                const title = section.querySelector('.filter-section-title');
-                const icon = section.querySelector('.filter-section-title-icon');
-                if (title && icon) {
-                    title.addEventListener('click', function(e) {
-                        // Previeni il click se si clicca direttamente sull'icona
-                        e.stopPropagation();
-                        
-                        // Toggle dello stato collapsed
-                        const isCollapsed = section.classList.toggle('collapsed');
-                        updateFilterIcon(icon, isCollapsed);
-                    });
-                }
-            });
-            
-            // Funzione helper per aggiornare l'icona
-            function updateFilterIcon(iconElement, isCollapsed) {
+
+            // Toggle unica per aprire/chiudere i filtri (Tono + Regione insieme)
+            const filtersWrapper = document.querySelector('.filters-wrapper');
+            const filtersToggle = document.querySelector('.filters-toggle');
+            const filtersIcon = document.querySelector('.filters-toggle-icon');
+
+            if (filtersWrapper && filtersToggle && filtersIcon) {
+                filtersWrapper.classList.add('collapsed');
+                filtersToggle.setAttribute('aria-expanded', 'false');
+
+                filtersToggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const isCollapsed = filtersWrapper.classList.toggle('collapsed');
+                    filtersToggle.setAttribute('aria-expanded', (!isCollapsed).toString());
+                    updateFiltersIcon(filtersIcon, isCollapsed);
+                });
+            }
+
+            function updateFiltersIcon(iconElement, isCollapsed) {
                 if (isCollapsed) {
                     iconElement.classList.remove('fa-chevron-down');
                     iconElement.classList.add('fa-chevron-right');
