@@ -618,16 +618,28 @@
             display: none;
         }
         
-        /* Media query per schermi molto piccoli */
-        @media (max-width: 360px) {
+        /* Media query per schermi piccoli - riduce dimensioni schede */
+        @media (max-width: 480px) {
             .filters-container {
-                flex-direction: column;
+                gap: 0.4rem;
             }
             
-            @supports (display: grid) {
-                .filters-container {
-                    grid-template-columns: 1fr;
-                }
+            .filter-section {
+                padding: 0.4rem 0.4rem 0.5rem;
+            }
+            
+            .filter-section-title {
+                font-size: 0.7rem;
+                padding: 0.2rem 0;
+            }
+            
+            .filter-btn {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.75rem;
+            }
+            
+            .category-filter {
+                gap: 0.4rem;
             }
         }
     </style>
