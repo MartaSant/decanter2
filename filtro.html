@@ -1814,6 +1814,7 @@
             }
             
             // Toggle per comprimere/espandere le sezioni filtro
+            // Quando si clicca su una tenda, si aprono entrambe
             const filterSections = document.querySelectorAll('.filter-section');
             filterSections.forEach(function(section) {
                 const title = section.querySelector('.filter-section-title');
@@ -1823,9 +1824,28 @@
                         // Previeni il click se si clicca direttamente sull'icona
                         e.stopPropagation();
                         
-                        // Toggle dello stato collapsed
-                        const isCollapsed = section.classList.toggle('collapsed');
-                        updateFilterIcon(icon, isCollapsed);
+                        // Controlla se la tenda cliccata è attualmente chiusa
+                        const isCurrentlyCollapsed = section.classList.contains('collapsed');
+                        
+                        // Se è chiusa, apri entrambe le tende
+                        if (isCurrentlyCollapsed) {
+                            filterSections.forEach(function(s) {
+                                s.classList.remove('collapsed');
+                                const sIcon = s.querySelector('.filter-section-title-icon');
+                                if (sIcon) {
+                                    updateFilterIcon(sIcon, false);
+                                }
+                            });
+                        } else {
+                            // Se è aperta, chiudi entrambe le tende
+                            filterSections.forEach(function(s) {
+                                s.classList.add('collapsed');
+                                const sIcon = s.querySelector('.filter-section-title-icon');
+                                if (sIcon) {
+                                    updateFilterIcon(sIcon, true);
+                                }
+                            });
+                        }
                     });
                 }
             });
