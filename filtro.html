@@ -45,10 +45,12 @@
 
         .filters-header {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             cursor: pointer;
             user-select: none;
+            gap: 0.25rem;
         }
 
         .filters-title {
@@ -56,26 +58,25 @@
             text-transform: uppercase;
             letter-spacing: 0.14em;
             color: #D4AF37;
+            text-align: center;
         }
 
-        .filters-toggle {
-            border: none;
-            background: transparent;
-            color: #D4AF37;
-            display: inline-flex;
+        /* Handle con due trattini */
+        .filters-handle {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0.2rem;
-            cursor: pointer;
+            gap: 0.12rem;
+            padding-top: 0.15rem;
+            padding-bottom: 0.1rem;
         }
 
-        .filters-toggle-icon {
-            font-size: 0.9rem;
-            transition: transform 0.25s ease;
-        }
-
-        .filters-wrapper:not(.collapsed) .filters-toggle-icon {
-            transform: rotate(90deg);
+        .filters-handle-line {
+            width: 22px;
+            height: 2px;
+            border-radius: 999px;
+            background-color: rgba(255, 201, 40, 0.85);
         }
 
         /* Contenitore interno con Tono e Regione affiancati */
@@ -87,6 +88,11 @@
             box-sizing: border-box;
             margin-top: 0.6rem;
             transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+
+        .filters-wrapper {
+            display: flex;
+            flex-direction: column;
         }
 
         .filters-wrapper.collapsed .filters-container {
@@ -694,9 +700,10 @@
         <section class="filters-wrapper collapsed" aria-label="Filtri">
             <div class="filters-header">
                 <span class="filters-title">Filtri</span>
-                <button class="filters-toggle" type="button" aria-expanded="false">
-                    <i class="fas fa-chevron-right filters-toggle-icon"></i>
-                </button>
+                <div class="filters-handle">
+                    <span class="filters-handle-line"></span>
+                    <span class="filters-handle-line"></span>
+                </div>
             </div>
             <div class="filters-container">
                 <!-- Filtro Tono -->
@@ -1863,29 +1870,15 @@
 
             // Toggle unica per aprire/chiudere i filtri (Tono + Regione insieme)
             const filtersWrapper = document.querySelector('.filters-wrapper');
-            const filtersToggle = document.querySelector('.filters-toggle');
-            const filtersIcon = document.querySelector('.filters-toggle-icon');
+            const filtersHeader = document.querySelector('.filters-header');
 
-            if (filtersWrapper && filtersToggle && filtersIcon) {
+            if (filtersWrapper && filtersHeader) {
                 filtersWrapper.classList.add('collapsed');
-                filtersToggle.setAttribute('aria-expanded', 'false');
 
-                filtersToggle.addEventListener('click', function (e) {
+                filtersHeader.addEventListener('click', function (e) {
                     e.preventDefault();
-                    const isCollapsed = filtersWrapper.classList.toggle('collapsed');
-                    filtersToggle.setAttribute('aria-expanded', (!isCollapsed).toString());
-                    updateFiltersIcon(filtersIcon, isCollapsed);
+                    filtersWrapper.classList.toggle('collapsed');
                 });
-            }
-
-            function updateFiltersIcon(iconElement, isCollapsed) {
-                if (isCollapsed) {
-                    iconElement.classList.remove('fa-chevron-down');
-                    iconElement.classList.add('fa-chevron-right');
-                } else {
-                    iconElement.classList.remove('fa-chevron-right');
-                    iconElement.classList.add('fa-chevron-down');
-                }
             }
         });
     </script>
