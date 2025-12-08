@@ -32,9 +32,10 @@
     
     <style>
         /* Stili per i filtri */
+        /* Fallback: flexbox (per browser che non supportano CSS Grid) */
         .filters-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: row;
             gap: 0.8rem;
             margin-bottom: 1.2rem;
             width: 100%;
@@ -48,10 +49,24 @@
             padding: 0.9rem 0.95rem 1rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
             transition: padding 0.3s ease;
-            width: 100%;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            flex: 1 1 0;
+        }
+
+        /* Layout principale: CSS Grid (quando supportato) */
+        @supports (display: grid) {
+            .filters-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+            
+            .filter-section {
+                width: 100%;
+                flex: initial;
+            }
         }
         
         .filter-section.collapsed {
@@ -564,7 +579,13 @@
         /* Media query per schermi molto piccoli */
         @media (max-width: 360px) {
             .filters-container {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+            }
+            
+            @supports (display: grid) {
+                .filters-container {
+                    grid-template-columns: 1fr;
+                }
             }
         }
     </style>
