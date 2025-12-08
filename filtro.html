@@ -32,7 +32,6 @@
     
     <style>
         /* Stili per i filtri */
-        /* Fallback: flexbox (per browser che non supportano CSS Grid) */
         .filters-container {
             display: flex;
             flex-direction: row;
@@ -40,6 +39,7 @@
             margin-bottom: 1.2rem;
             width: 100%;
             box-sizing: border-box;
+            align-items: flex-start;
         }
         
         .filter-section {
@@ -53,20 +53,7 @@
             display: flex;
             flex-direction: column;
             flex: 1 1 0;
-        }
-
-        /* Layout principale: CSS Grid (quando supportato) */
-        @supports (display: grid) {
-            .filters-container {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 0.8rem;
-            }
-            
-            .filter-section {
-                width: 100%;
-                flex: initial;
-            }
+            min-width: 0;
         }
         
         .filter-section.collapsed {
@@ -581,16 +568,10 @@
             display: none;
         }
         
-        /* Media query per schermi molto piccoli */
-        @media (max-width: 360px) {
+        /* Media query per schermi piccoli: sotto una certa larghezza le schede vanno in colonna */
+        @media (max-width: 480px) {
             .filters-container {
                 flex-direction: column;
-            }
-            
-            @supports (display: grid) {
-                .filters-container {
-                    grid-template-columns: 1fr;
-                }
             }
         }
     </style>
