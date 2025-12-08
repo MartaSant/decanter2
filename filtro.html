@@ -36,17 +36,17 @@
             background: rgba(0, 0, 0, 0.85);
             border-radius: 1rem;
             border: 1px solid rgba(255, 201, 40, 0.55);
-            padding: 0.4rem 0.85rem;
+            padding: 0.5rem 0.95rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            transition: padding 0.25s ease, margin-bottom 0.25s ease;
+            transition: padding 0.3s ease;
         }
 
         .filters-wrapper:not(.collapsed) {
-            padding: 0.4rem 0.85rem 0.45rem;
+            padding: 0.5rem 0.95rem 0.6rem;
         }
 
         .filters-header {
@@ -90,10 +90,10 @@
         .filters-container {
             display: flex;
             flex-direction: row;
-            gap: 0.6rem;
+            gap: 0.8rem;
             width: 100%;
             box-sizing: border-box;
-            margin-top: 0.4rem;
+            margin-top: 0.5rem;
             transition: max-height 0.3s ease, opacity 0.3s ease;
             position: relative;
         }
@@ -154,9 +154,13 @@
         
         .filters-wrapper:not(.collapsed) .category-filter {
             /* Altezza fissa per mostrare esattamente 4 tab:
-               Ogni bottone ~2.4rem, 4 bottoni = 9.6rem, 3 gap da 0.4rem = 1.2rem, totale ~10.8rem */
-            height: 10.8rem;
-            margin-top: 0.6rem;
+               Ogni bottone: padding 0.7rem*2 (1.4rem) + border 2px*2 (0.25rem) + line-height 1.2*0.9rem (1.08rem) = ~2.73rem
+               4 bottoni = 4 * 2.73rem = 10.92rem
+               3 gap = 3 * 0.6rem = 1.8rem
+               Totale: ~12.72rem */
+            height: 12.8rem !important;
+            max-height: 12.8rem !important;
+            margin-top: 0.8rem;
             opacity: 1;
             overflow-y: auto;
             overflow-x: hidden;
@@ -182,11 +186,11 @@
         }
         
         .filter-btn {
-            padding: 0.6rem 1.2rem;
+            padding: 0.7rem 1rem;
             background: transparent;
             border: 2px solid rgba(255, 201, 40, 0.5);
-            border-radius: 30px;
-            font-size: 0.85rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
@@ -194,6 +198,10 @@
             position: relative;
             overflow: hidden;
             font-family: 'Montserrat', sans-serif;
+            width: 100%;
+            text-align: center;
+            white-space: nowrap;
+            line-height: 1.2;
         }
         
         .filter-btn::before {
@@ -640,6 +648,16 @@
             .category-filter {
                 gap: 0.4rem;
             }
+            
+            /* Altezza fissa per 4 tab su mobile (bottoni più piccoli):
+               Ogni bottone: padding 0.4rem*2 (0.8rem) + border 2px*2 (0.25rem) + line-height 1.2*0.75rem (0.9rem) = ~1.95rem
+               4 bottoni = 4 * 1.95rem = 7.8rem
+               3 gap = 3 * 0.4rem = 1.2rem
+               Totale: ~9rem */
+            .filters-wrapper:not(.collapsed) .category-filter {
+                height: 9rem !important;
+                max-height: 9rem !important;
+            }
         }
     </style>
 </head>
@@ -735,11 +753,26 @@
                     <h2 class="filter-section-title">Regione</h2>
                     <div class="category-filter">
                         <button class="filter-btn active" data-filter-type="regione" data-category="all">Tutto</button>
-                        <button class="filter-btn" data-filter-type="regione" data-category="toscana">Toscana</button>
-                        <button class="filter-btn" data-filter-type="regione" data-category="piemonte">Piemonte</button>
-                        <button class="filter-btn" data-filter-type="regione" data-category="veneto">Veneto</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="abruzzo">Abruzzo</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="basilicata">Basilicata</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="calabria">Calabria</button>
                         <button class="filter-btn" data-filter-type="regione" data-category="campania">Campania</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="emilia-romagna">Emilia-Romagna</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="friuli-venezia-giulia">Friuli-Venezia Giulia</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="lazio">Lazio</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="liguria">Liguria</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="lombardia">Lombardia</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="marche">Marche</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="molise">Molise</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="piemonte">Piemonte</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="puglia">Puglia</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="sardegna">Sardegna</button>
                         <button class="filter-btn" data-filter-type="regione" data-category="sicilia">Sicilia</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="toscana">Toscana</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="trentino-alto-adige">Trentino-Alto Adige</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="umbria">Umbria</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="valle-d-aosta">Valle d'Aosta</button>
+                        <button class="filter-btn" data-filter-type="regione" data-category="veneto">Veneto</button>
                     </div>
                 </div>
             </div>
