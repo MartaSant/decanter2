@@ -36,17 +36,17 @@
             background: rgba(0, 0, 0, 0.85);
             border-radius: 1rem;
             border: 1px solid rgba(255, 201, 40, 0.55);
-            padding: 0.5rem 0.95rem;
+            padding: 0.4rem 0.85rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            transition: padding 0.3s ease;
+            transition: padding 0.25s ease, margin-bottom 0.25s ease;
         }
 
         .filters-wrapper:not(.collapsed) {
-            padding: 0.5rem 0.95rem 0.6rem;
+            padding: 0.4rem 0.85rem 0.45rem;
         }
 
         .filters-header {
@@ -90,10 +90,10 @@
         .filters-container {
             display: flex;
             flex-direction: row;
-            gap: 0.8rem;
+            gap: 0.6rem;
             width: 100%;
             box-sizing: border-box;
-            margin-top: 0.5rem;
+            margin-top: 0.4rem;
             transition: max-height 0.3s ease, opacity 0.3s ease;
             position: relative;
         }
@@ -154,12 +154,9 @@
         
         .filters-wrapper:not(.collapsed) .category-filter {
             /* Altezza fissa per mostrare esattamente 4 tab:
-               Ogni bottone: padding 0.7rem*2 (1.4rem) + border 2px*2 (0.25rem) + line-height 1.2*0.9rem (1.08rem) = ~2.73rem
-               4 bottoni = 4 * 2.73rem = 10.92rem
-               3 gap = 3 * 0.6rem = 1.8rem
-               Totale: ~12.72rem */
-            height: 12.8rem;
-            margin-top: 0.8rem;
+               Ogni bottone ~2.4rem, 4 bottoni = 9.6rem, 3 gap da 0.4rem = 1.2rem, totale ~10.8rem */
+            height: 10.8rem;
+            margin-top: 0.6rem;
             opacity: 1;
             overflow-y: auto;
             overflow-x: hidden;
