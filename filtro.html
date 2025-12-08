@@ -32,14 +32,22 @@
     
     <style>
         /* Stili per i filtri */
+        .filters-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        
         .filter-section {
             background: rgba(0, 0, 0, 0.85);
             border-radius: 1rem;
             border: 1px solid rgba(255, 201, 40, 0.55);
             padding: 0.9rem 0.95rem 1rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
-            margin-bottom: 1.2rem;
             transition: padding 0.3s ease;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .filter-section.collapsed {
@@ -74,27 +82,47 @@
         
         .category-filter {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 0.6rem;
-            max-height: 500px;
+            max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease, margin-top 0.3s ease, opacity 0.3s ease;
-            margin-top: 0.8rem;
-            opacity: 1;
-        }
-        
-        .filter-section.collapsed .category-filter {
-            max-height: 0;
             margin-top: 0;
             opacity: 0;
-            overflow: hidden;
+        }
+        
+        .filter-section:not(.collapsed) .category-filter {
+            max-height: 300px;
+            margin-top: 0.8rem;
+            opacity: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        /* Stile scrollbar personalizzato per category-filter */
+        .category-filter::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .category-filter::-webkit-scrollbar-track {
+            background: rgba(17, 17, 17, 0.5);
+            border-radius: 3px;
+        }
+        
+        .category-filter::-webkit-scrollbar-thumb {
+            background: rgba(255, 201, 40, 0.5);
+            border-radius: 3px;
+        }
+        
+        .category-filter::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 201, 40, 0.7);
         }
         
         .filter-btn {
-            padding: 0.6rem 1.2rem;
+            padding: 0.6rem 1rem;
             background: transparent;
             border: 2px solid rgba(255, 201, 40, 0.5);
-            border-radius: 30px;
+            border-radius: 0.5rem;
             font-size: 0.85rem;
             font-weight: 500;
             color: rgba(255, 255, 255, 0.8);
@@ -103,6 +131,8 @@
             position: relative;
             overflow: hidden;
             font-family: 'Montserrat', sans-serif;
+            width: 100%;
+            text-align: left;
         }
         
         .filter-btn::before {
@@ -525,6 +555,13 @@
         .no-results-list li:empty {
             display: none;
         }
+        
+        /* Media query per schermi piccoli */
+        @media (max-width: 480px) {
+            .filters-container {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body class="menu-body">
@@ -595,35 +632,38 @@
                    id="menuSearchInput">
         </div>
 
-        <!-- Filtro Tono -->
-        <div class="filter-section collapsed" id="filter-tono">
-            <h2 class="filter-section-title">
-                <span>Tono</span>
-                <i class="fas fa-chevron-right filter-section-title-icon"></i>
-            </h2>
-            <div class="category-filter">
-                <button class="filter-btn active" data-filter-type="tono" data-category="all">Tutto</button>
-                <button class="filter-btn" data-filter-type="tono" data-category="bianco">Bianco</button>
-                <button class="filter-btn" data-filter-type="tono" data-category="rosso">Rosso</button>
-                <button class="filter-btn" data-filter-type="tono" data-category="rosè">Rosè</button>
-                <button class="filter-btn" data-filter-type="tono" data-category="prosecco">Prosecco</button>
-                <button class="filter-btn" data-filter-type="tono" data-category="champagne">Champagne</button>
+        <!-- Container per i filtri affiancati -->
+        <div class="filters-container">
+            <!-- Filtro Tono -->
+            <div class="filter-section collapsed" id="filter-tono">
+                <h2 class="filter-section-title">
+                    <span>Tono</span>
+                    <i class="fas fa-chevron-right filter-section-title-icon"></i>
+                </h2>
+                <div class="category-filter">
+                    <button class="filter-btn active" data-filter-type="tono" data-category="all">Tutto</button>
+                    <button class="filter-btn" data-filter-type="tono" data-category="bianco">Bianco</button>
+                    <button class="filter-btn" data-filter-type="tono" data-category="rosso">Rosso</button>
+                    <button class="filter-btn" data-filter-type="tono" data-category="rosè">Rosè</button>
+                    <button class="filter-btn" data-filter-type="tono" data-category="prosecco">Prosecco</button>
+                    <button class="filter-btn" data-filter-type="tono" data-category="champagne">Champagne</button>
+                </div>
             </div>
-        </div>
 
-        <!-- Filtro Regione -->
-        <div class="filter-section collapsed" id="filter-regione">
-            <h2 class="filter-section-title">
-                <span>Regione</span>
-                <i class="fas fa-chevron-right filter-section-title-icon"></i>
-            </h2>
-            <div class="category-filter">
-                <button class="filter-btn active" data-filter-type="regione" data-category="all">Tutto</button>
-                <button class="filter-btn" data-filter-type="regione" data-category="toscana">Toscana</button>
-                <button class="filter-btn" data-filter-type="regione" data-category="piemonte">Piemonte</button>
-                <button class="filter-btn" data-filter-type="regione" data-category="veneto">Veneto</button>
-                <button class="filter-btn" data-filter-type="regione" data-category="campania">Campania</button>
-                <button class="filter-btn" data-filter-type="regione" data-category="sicilia">Sicilia</button>
+            <!-- Filtro Regione -->
+            <div class="filter-section collapsed" id="filter-regione">
+                <h2 class="filter-section-title">
+                    <span>Regione</span>
+                    <i class="fas fa-chevron-right filter-section-title-icon"></i>
+                </h2>
+                <div class="category-filter">
+                    <button class="filter-btn active" data-filter-type="regione" data-category="all">Tutto</button>
+                    <button class="filter-btn" data-filter-type="regione" data-category="toscana">Toscana</button>
+                    <button class="filter-btn" data-filter-type="regione" data-category="piemonte">Piemonte</button>
+                    <button class="filter-btn" data-filter-type="regione" data-category="veneto">Veneto</button>
+                    <button class="filter-btn" data-filter-type="regione" data-category="campania">Campania</button>
+                    <button class="filter-btn" data-filter-type="regione" data-category="sicilia">Sicilia</button>
+                </div>
             </div>
         </div>
 
