@@ -36,11 +36,17 @@
             background: rgba(0, 0, 0, 0.85);
             border-radius: 1rem;
             border: 1px solid rgba(255, 201, 40, 0.55);
-            padding: 0.75rem 0.95rem 0.9rem;
+            padding: 0.5rem 0.95rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
             margin-bottom: 1.2rem;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
             transition: padding 0.3s ease;
+        }
+
+        .filters-wrapper:not(.collapsed) {
+            padding: 0.5rem 0.95rem 0.6rem;
         }
 
         .filters-header {
@@ -50,7 +56,7 @@
             justify-content: flex-start;
             cursor: pointer;
             user-select: none;
-            gap: 0.25rem;
+            padding: 0.2rem 0;
         }
 
         .filters-title {
@@ -61,15 +67,16 @@
             text-align: center;
         }
 
-        /* Handle con due trattini */
+        /* Handle con due trattini - posizionato in fondo */
         .filters-handle {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 0.12rem;
-            padding-top: 0.15rem;
-            padding-bottom: 0.1rem;
+            padding-top: 0.3rem;
+            padding-bottom: 0.15rem;
+            margin-top: auto;
         }
 
         .filters-handle-line {
@@ -86,19 +93,16 @@
             gap: 0.8rem;
             width: 100%;
             box-sizing: border-box;
-            margin-top: 0.6rem;
+            margin-top: 0.5rem;
             transition: max-height 0.3s ease, opacity 0.3s ease;
-        }
-
-        .filters-wrapper {
-            display: flex;
-            flex-direction: column;
+            position: relative;
         }
 
         .filters-wrapper.collapsed .filters-container {
             max-height: 0;
             opacity: 0;
             overflow: hidden;
+            margin-top: 0;
         }
 
         .filters-wrapper:not(.collapsed) .filters-container {
@@ -700,10 +704,6 @@
         <section class="filters-wrapper collapsed" aria-label="Filtri">
             <div class="filters-header">
                 <span class="filters-title">Filtri</span>
-                <div class="filters-handle">
-                    <span class="filters-handle-line"></span>
-                    <span class="filters-handle-line"></span>
-                </div>
             </div>
             <div class="filters-container">
                 <!-- Filtro Tono -->
@@ -731,6 +731,10 @@
                         <button class="filter-btn" data-filter-type="regione" data-category="sicilia">Sicilia</button>
                     </div>
                 </div>
+            </div>
+            <div class="filters-handle">
+                <span class="filters-handle-line"></span>
+                <span class="filters-handle-line"></span>
             </div>
         </section>
 
@@ -1871,14 +1875,24 @@
             // Toggle unica per aprire/chiudere i filtri (Tono + Regione insieme)
             const filtersWrapper = document.querySelector('.filters-wrapper');
             const filtersHeader = document.querySelector('.filters-header');
+            const filtersHandle = document.querySelector('.filters-handle');
 
             if (filtersWrapper && filtersHeader) {
                 filtersWrapper.classList.add('collapsed');
 
+                // Click sull'header
                 filtersHeader.addEventListener('click', function (e) {
                     e.preventDefault();
                     filtersWrapper.classList.toggle('collapsed');
                 });
+
+                // Click sull'handle
+                if (filtersHandle) {
+                    filtersHandle.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        filtersWrapper.classList.toggle('collapsed');
+                    });
+                }
             }
         });
     </script>
