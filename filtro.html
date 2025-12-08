@@ -153,7 +153,9 @@
         }
         
         .filters-wrapper:not(.collapsed) .category-filter {
-            max-height: 300px;
+            /* Altezza per mostrare massimo 4 tab: 
+               4 bottoni (padding 0.65rem top+bottom = 1.3rem + altezza testo ~1rem) + 3 gap da 0.6rem */
+            max-height: calc((1.3rem + 1rem) * 4 + 0.6rem * 3);
             margin-top: 0.8rem;
             opacity: 1;
             overflow-y: auto;
@@ -1892,17 +1894,48 @@
             if (filtersWrapper && filtersHeader) {
                 filtersWrapper.classList.add('collapsed');
 
+                // Funzione per scroll automatico quando si apre
+                function scrollToFilters() {
+                    if (!filtersWrapper.classList.contains('collapsed')) {
+                        setTimeout(function() {
+                            const rect = filtersWrapper.getBoundingClientRect();
+                            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                            const elementTop = rect.top + scrollTop;
+                            const elementCenter = elementTop + (rect.height / 2);
+                            const viewportHeight = window.innerHeight;
+                            const targetScroll = elementCenter - (viewportHeight / 2);
+                            
+                            window.scrollTo({
+                                top: Math.max(0, targetScroll),
+                                behavior: 'smooth'
+                            });
+                        }, 100); // Piccolo delay per permettere l'animazione di apertura
+                    }
+                }
+
                 // Click sull'header
                 filtersHeader.addEventListener('click', function (e) {
                     e.preventDefault();
+                    const wasCollapsed = filtersWrapper.classList.contains('collapsed');
                     filtersWrapper.classList.toggle('collapsed');
+                    
+                    // Se si sta aprendo (era chiusa), scrolla
+                    if (wasCollapsed) {
+                        scrollToFilters();
+                    }
                 });
 
                 // Click sull'handle
                 if (filtersHandle) {
                     filtersHandle.addEventListener('click', function (e) {
                         e.preventDefault();
+                        const wasCollapsed = filtersWrapper.classList.contains('collapsed');
                         filtersWrapper.classList.toggle('collapsed');
+                        
+                        // Se si sta aprendo (era chiusa), scrolla
+                        if (wasCollapsed) {
+                            scrollToFilters();
+                        }
                     });
                 }
             }
