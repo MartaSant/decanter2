@@ -154,8 +154,11 @@
         
         .filters-wrapper:not(.collapsed) .category-filter {
             /* Altezza per mostrare massimo 4 tab: 
-               4 bottoni (padding 0.65rem top+bottom = 1.3rem + altezza testo ~1rem) + 3 gap da 0.6rem */
-            max-height: calc((1.3rem + 1rem) * 4 + 0.6rem * 3);
+               Ogni bottone: padding 0.7rem*2 + border 2px*2 + altezza testo ~1.1rem = ~2.6rem
+               4 bottoni = 4 * 2.6rem = 10.4rem
+               3 gap = 3 * 0.6rem = 1.8rem
+               Totale: ~12.2rem */
+            max-height: 12.5rem;
             margin-top: 0.8rem;
             opacity: 1;
             overflow-y: auto;
@@ -182,11 +185,11 @@
         }
         
         .filter-btn {
-            padding: 0.65rem 1rem;
+            padding: 0.7rem 1rem;
             background: transparent;
             border: 2px solid rgba(255, 201, 40, 0.5);
             border-radius: 2rem;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
@@ -197,6 +200,7 @@
             width: 100%;
             text-align: center;
             white-space: nowrap;
+            line-height: 1.2;
         }
         
         .filter-btn::before {
