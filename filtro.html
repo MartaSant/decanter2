@@ -120,14 +120,6 @@
             display: flex;
             flex-direction: column;
             flex: 1 1 0;
-            /* Altezza fissa per mostrare esattamente 4 tag filtro:
-               Titolo: ~1.6rem (padding + testo)
-               4 bottoni: 4 * (0.7rem*2 + 0.9rem*1.2 + 4px border) = 4 * 2.78rem = 11.12rem
-               3 gap: 3 * 0.6rem = 1.8rem
-               Padding sezione: 0.6rem top + 0.8rem bottom = 1.4rem
-               Totale: ~15.92rem */
-            height: 16rem;
-            overflow: hidden;
         }
         
         .filter-section-title {
@@ -153,24 +145,24 @@
             display: flex;
             flex-direction: column;
             gap: 0.6rem;
-            max-height: 0;
+            height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease, margin-top 0.3s ease, opacity 0.3s ease;
+            transition: height 0.3s ease, margin-top 0.3s ease, opacity 0.3s ease;
             margin-top: 0;
             opacity: 0;
         }
         
         .filters-wrapper:not(.collapsed) .category-filter {
-            /* Altezza esatta per 4 bottoni:
-               4 bottoni: 4 * (0.7rem*2 + 0.9rem*1.2 + 4px) = 4 * 2.78rem = 11.12rem
-               3 gap: 3 * 0.6rem = 1.8rem
-               Totale: 12.92rem */
-            height: 12.92rem;
+            /* Altezza fissa per mostrare esattamente 4 tab:
+               Ogni bottone: padding 0.7rem*2 (1.4rem) + border 2px*2 (0.25rem) + line-height 1.2*0.9rem (1.08rem) = ~2.73rem
+               4 bottoni = 4 * 2.73rem = 10.92rem
+               3 gap = 3 * 0.6rem = 1.8rem
+               Totale: ~12.72rem */
+            height: 12.8rem;
             margin-top: 0.8rem;
             opacity: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            flex-shrink: 0;
         }
         
         /* Stile scrollbar personalizzato per category-filter */
