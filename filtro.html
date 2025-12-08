@@ -33,12 +33,10 @@
     <style>
         /* Stili per i filtri */
         .filters-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 0.8rem;
             margin-bottom: 1.2rem;
-            align-items: flex-start;
             width: 100%;
             box-sizing: border-box;
         }
@@ -50,9 +48,7 @@
             padding: 0.9rem 0.95rem 1rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.75);
             transition: padding 0.3s ease;
-            flex: 1 1 50%;
-            width: 50%;
-            max-width: 50%;
+            width: 100%;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -565,10 +561,10 @@
             display: none;
         }
         
-        /* Media query per schermi piccoli */
-        @media (max-width: 480px) {
+        /* Media query per schermi molto piccoli */
+        @media (max-width: 360px) {
             .filters-container {
-                flex-direction: column;
+                grid-template-columns: 1fr;
             }
         }
     </style>
