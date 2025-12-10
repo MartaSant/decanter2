@@ -372,6 +372,15 @@
             let isScrolling = false;
             let isTouching = false;
             
+            // Verifica se il target è uno degli elementi UI o un loro figlio
+            function isUIElement(target) {
+                if (!target) return false;
+                return target === bottomBar || target === scrollTopBtn || target === cookieSettingsBtn ||
+                       (bottomBar && bottomBar.contains(target)) ||
+                       (scrollTopBtn && scrollTopBtn.contains(target)) ||
+                       (cookieSettingsBtn && cookieSettingsBtn.contains(target));
+            }
+            
             function hideUI() {
                 if (!isScrolling) {
                     isScrolling = true;
@@ -402,7 +411,11 @@
             }
             
             // Gestione eventi touch
-            window.addEventListener('touchstart', function() {
+            window.addEventListener('touchstart', function(e) {
+                // Non nascondere se l'utente sta toccando uno degli elementi UI
+                if (isUIElement(e.target)) {
+                    return;
+                }
                 isTouching = true;
                 hideUI();
             }, { passive: true });
