@@ -340,6 +340,43 @@
             });
         })();
 
+        // Nascondi elementi UI durante lo scroll
+        (function() {
+            const bottomBar = document.querySelector('.bottom-bar');
+            const scrollTopBtn = document.querySelector('.scroll-top');
+            const cookieSettingsBtn = document.querySelector('.cookie-settings-btn');
+            
+            if (!bottomBar && !scrollTopBtn && !cookieSettingsBtn) {
+                return; // Nessun elemento da gestire
+            }
+            
+            let scrollTimeout;
+            let isScrolling = false;
+            
+            function handleScroll() {
+                // Nascondi gli elementi durante lo scroll
+                if (!isScrolling) {
+                    isScrolling = true;
+                    if (bottomBar) bottomBar.classList.add('scrolling');
+                    if (scrollTopBtn) scrollTopBtn.classList.add('scrolling');
+                    if (cookieSettingsBtn) cookieSettingsBtn.classList.add('scrolling');
+                }
+                
+                // Cancella il timeout precedente
+                clearTimeout(scrollTimeout);
+                
+                // Mostra gli elementi quando l'utente smette di scrollare
+                scrollTimeout = setTimeout(function() {
+                    isScrolling = false;
+                    if (bottomBar) bottomBar.classList.remove('scrolling');
+                    if (scrollTopBtn) scrollTopBtn.classList.remove('scrolling');
+                    if (cookieSettingsBtn) cookieSettingsBtn.classList.remove('scrolling');
+                }, 150); // 150ms di inattività prima di mostrare di nuovo
+            }
+            
+            window.addEventListener('scroll', handleScroll, { passive: true });
+        })();
+
         // Tracking click su "Torna a home"
         (function() {
             const homeLinks = document.querySelectorAll('a[href*="home.html"], a.menu-close[href*="home"]');

@@ -624,6 +624,15 @@ button {
     gap: 0.4rem;
     z-index: 50;
     backdrop-filter: blur(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Nasconde la bottom-bar durante lo scroll */
+.bottom-bar.scrolling {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(20px);
+    pointer-events: none;
 }
 
 .bottom-bar-btn {
@@ -1038,6 +1047,14 @@ body.menu-body {
     pointer-events: auto;
 }
 
+/* Nasconde il scroll-top durante lo scroll */
+.scroll-top.scrolling {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(20px);
+    pointer-events: none !important;
+}
+
 .scroll-top:hover {
     background: #FFC928;
     color: #111111;
@@ -1078,6 +1095,14 @@ body.menu-body {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+}
+
+/* Nasconde il cookie-settings-btn durante lo scroll */
+.cookie-settings-btn.scrolling {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(20px);
+    pointer-events: none !important;
 }
 
 /* Banner modifica consenso */
