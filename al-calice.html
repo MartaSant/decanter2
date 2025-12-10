@@ -340,27 +340,47 @@
             
             let scrollTimeout;
             let isScrolling = false;
+            let isTouching = false;
             
-            function handleScroll() {
-                // Nascondi gli elementi durante lo scroll
+            function hideUI() {
                 if (!isScrolling) {
                     isScrolling = true;
                     if (bottomBar) bottomBar.classList.add('scrolling');
                     if (scrollTopBtn) scrollTopBtn.classList.add('scrolling');
                     if (cookieSettingsBtn) cookieSettingsBtn.classList.add('scrolling');
                 }
-                
+            }
+            
+            function showUI() {
                 // Cancella il timeout precedente
                 clearTimeout(scrollTimeout);
                 
-                // Mostra gli elementi quando l'utente smette di scrollare
+                // Mostra gli elementi quando l'utente smette di scrollare e non sta toccando
                 scrollTimeout = setTimeout(function() {
-                    isScrolling = false;
-                    if (bottomBar) bottomBar.classList.remove('scrolling');
-                    if (scrollTopBtn) scrollTopBtn.classList.remove('scrolling');
-                    if (cookieSettingsBtn) cookieSettingsBtn.classList.remove('scrolling');
-                }, 150); // 150ms di inattività prima di mostrare di nuovo
+                    if (!isTouching) {
+                        isScrolling = false;
+                        if (bottomBar) bottomBar.classList.remove('scrolling');
+                        if (scrollTopBtn) scrollTopBtn.classList.remove('scrolling');
+                        if (cookieSettingsBtn) cookieSettingsBtn.classList.remove('scrolling');
+                    }
+                }, 500); // 500ms di inattività prima di mostrare di nuovo
             }
+            
+            function handleScroll() {
+                hideUI();
+                showUI();
+            }
+            
+            // Gestione eventi touch
+            window.addEventListener('touchstart', function() {
+                isTouching = true;
+                hideUI();
+            }, { passive: true });
+            
+            window.addEventListener('touchend', function() {
+                isTouching = false;
+                showUI();
+            }, { passive: true });
             
             window.addEventListener('scroll', handleScroll, { passive: true });
         })();
