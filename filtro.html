@@ -1668,19 +1668,13 @@
             if (uiElements.length === 0) return;
             
             let touchStartTime = null;
-            let touchDuration = 0;
             let isTouching = false;
-            let hideTimeout = null;
             let showTimeout = null;
-            let isScrolling = false;
+            let scrollTimeout = null;
             const TOUCH_THRESHOLD = 20; // 20ms = 2 centesimi di secondo
             const SHOW_DELAY = 500; // 500ms = mezzo secondo
             
             function hideUI() {
-                if (hideTimeout) {
-                    clearTimeout(hideTimeout);
-                    hideTimeout = null;
-                }
                 uiElements.forEach(el => {
                     if (el && !el.classList.contains('ui-hidden')) {
                         el.classList.add('ui-hidden');
@@ -1689,17 +1683,20 @@
             }
             
             function showUI() {
+                uiElements.forEach(el => {
+                    if (el) {
+                        el.classList.remove('ui-hidden');
+                    }
+                });
+            }
+            
+            function resetShowTimeout() {
                 if (showTimeout) {
                     clearTimeout(showTimeout);
                 }
                 showTimeout = setTimeout(function() {
-                    uiElements.forEach(el => {
-                        if (el) {
-                            el.classList.remove('ui-hidden');
-                        }
-                    });
+                    showUI();
                     showTimeout = null;
-                    isScrolling = false;
                 }, SHOW_DELAY);
             }
             
@@ -1707,72 +1704,53 @@
             let touchStartHandler = function(e) {
                 touchStartTime = Date.now();
                 isTouching = true;
-                touchDuration = 0;
-                
-                // Dopo TOUCH_THRESHOLD ms, se il touch è ancora attivo, nascondi UI
-                hideTimeout = setTimeout(function() {
-                    if (isTouching) {
-                        hideUI();
-                    }
-                }, TOUCH_THRESHOLD);
             };
             
             let touchEndHandler = function(e) {
-                touchDuration = Date.now() - touchStartTime;
+                const touchDuration = Date.now() - touchStartTime;
                 isTouching = false;
+                touchStartTime = null;
                 
-                if (hideTimeout) {
-                    clearTimeout(hideTimeout);
-                    hideTimeout = null;
-                }
-                
-                // Se il touch è durato abbastanza e c'è stato scroll, mostra UI dopo delay
-                if (touchDuration >= TOUCH_THRESHOLD && isScrolling) {
+                // Se il touch è durato meno del threshold (click), mostra subito UI
+                if (touchDuration < TOUCH_THRESHOLD) {
+                    if (showTimeout) {
+                        clearTimeout(showTimeout);
+                        showTimeout = null;
+                    }
                     showUI();
-                } else if (touchDuration >= TOUCH_THRESHOLD && !isScrolling) {
-                    // Touch durato abbastanza ma senza scroll (es. long press), mostra subito UI
-                    uiElements.forEach(el => {
-                        if (el) {
-                            el.classList.remove('ui-hidden');
-                        }
-                    });
-                } else if (touchDuration < TOUCH_THRESHOLD) {
-                    // Touch troppo breve (click), mostra subito UI se nascosta
-                    uiElements.forEach(el => {
-                        if (el) {
-                            el.classList.remove('ui-hidden');
-                        }
-                    });
                 }
             };
             
             // Scroll event
             let scrollHandler = function() {
+                // Cancella il timeout di show precedente
+                if (showTimeout) {
+                    clearTimeout(showTimeout);
+                    showTimeout = null;
+                }
+                
                 if (isTouching && touchStartTime !== null) {
                     // Calcola la durata del touch al momento dello scroll
                     const currentTouchDuration = Date.now() - touchStartTime;
                     if (currentTouchDuration >= TOUCH_THRESHOLD) {
-                        isScrolling = true;
+                        // Touch durato abbastanza, nascondi UI
                         hideUI();
+                        // Reset timeout per mostrare dopo inattività
+                        resetShowTimeout();
                     }
-                } else if (!isTouching && isScrolling) {
-                    // Scroll continuo dopo touchend (momentum scroll)
+                } else {
+                    // Scroll con mouse wheel (desktop) o momentum scroll
                     hideUI();
-                    showUI();
-                } else if (!isTouching && !isScrolling) {
-                    // Scroll con mouse wheel (desktop)
-                    isScrolling = true;
-                    hideUI();
-                    showUI();
+                    // Reset timeout per mostrare dopo inattività
+                    resetShowTimeout();
                 }
             };
             
-            // Wheel event per desktop
+            // Wheel event per desktop (più reattivo del scroll)
             let wheelHandler = function() {
                 if (!isTouching) {
-                    isScrolling = true;
                     hideUI();
-                    showUI();
+                    resetShowTimeout();
                 }
             };
             
