@@ -233,6 +233,16 @@
             box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
         }
         
+        /* Nascondere elementi UI durante lo scroll */
+        .bottom-bar.ui-hidden,
+        .scroll-top.ui-hidden,
+        .cookie-settings-btn.ui-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
         .wine-grid {
             display: flex;
             flex-direction: column;
@@ -1645,6 +1655,133 @@
                     btn.classList.remove('visible');
                 }
             });
+        })();
+
+        // Nascondere elementi UI durante lo scroll
+        (function() {
+            const uiElements = [
+                document.querySelector('.bottom-bar'),
+                document.querySelector('.scroll-top'),
+                document.querySelector('.cookie-settings-btn')
+            ].filter(el => el !== null); // Rimuove null se qualche elemento non esiste
+            
+            if (uiElements.length === 0) return;
+            
+            let touchStartTime = null;
+            let touchDuration = 0;
+            let isTouching = false;
+            let hideTimeout = null;
+            let showTimeout = null;
+            let isScrolling = false;
+            const TOUCH_THRESHOLD = 20; // 20ms = 2 centesimi di secondo
+            const SHOW_DELAY = 500; // 500ms = mezzo secondo
+            
+            function hideUI() {
+                if (hideTimeout) {
+                    clearTimeout(hideTimeout);
+                    hideTimeout = null;
+                }
+                uiElements.forEach(el => {
+                    if (el && !el.classList.contains('ui-hidden')) {
+                        el.classList.add('ui-hidden');
+                    }
+                });
+            }
+            
+            function showUI() {
+                if (showTimeout) {
+                    clearTimeout(showTimeout);
+                }
+                showTimeout = setTimeout(function() {
+                    uiElements.forEach(el => {
+                        if (el) {
+                            el.classList.remove('ui-hidden');
+                        }
+                    });
+                    showTimeout = null;
+                    isScrolling = false;
+                }, SHOW_DELAY);
+            }
+            
+            // Touch events per mobile
+            let touchStartHandler = function(e) {
+                touchStartTime = Date.now();
+                isTouching = true;
+                touchDuration = 0;
+                
+                // Dopo TOUCH_THRESHOLD ms, se il touch è ancora attivo, nascondi UI
+                hideTimeout = setTimeout(function() {
+                    if (isTouching) {
+                        hideUI();
+                    }
+                }, TOUCH_THRESHOLD);
+            };
+            
+            let touchEndHandler = function(e) {
+                touchDuration = Date.now() - touchStartTime;
+                isTouching = false;
+                
+                if (hideTimeout) {
+                    clearTimeout(hideTimeout);
+                    hideTimeout = null;
+                }
+                
+                // Se il touch è durato abbastanza e c'è stato scroll, mostra UI dopo delay
+                if (touchDuration >= TOUCH_THRESHOLD && isScrolling) {
+                    showUI();
+                } else if (touchDuration >= TOUCH_THRESHOLD && !isScrolling) {
+                    // Touch durato abbastanza ma senza scroll (es. long press), mostra subito UI
+                    uiElements.forEach(el => {
+                        if (el) {
+                            el.classList.remove('ui-hidden');
+                        }
+                    });
+                } else if (touchDuration < TOUCH_THRESHOLD) {
+                    // Touch troppo breve (click), mostra subito UI se nascosta
+                    uiElements.forEach(el => {
+                        if (el) {
+                            el.classList.remove('ui-hidden');
+                        }
+                    });
+                }
+            };
+            
+            // Scroll event
+            let scrollHandler = function() {
+                if (isTouching && touchStartTime !== null) {
+                    // Calcola la durata del touch al momento dello scroll
+                    const currentTouchDuration = Date.now() - touchStartTime;
+                    if (currentTouchDuration >= TOUCH_THRESHOLD) {
+                        isScrolling = true;
+                        hideUI();
+                    }
+                } else if (!isTouching && isScrolling) {
+                    // Scroll continuo dopo touchend (momentum scroll)
+                    hideUI();
+                    showUI();
+                } else if (!isTouching && !isScrolling) {
+                    // Scroll con mouse wheel (desktop)
+                    isScrolling = true;
+                    hideUI();
+                    showUI();
+                }
+            };
+            
+            // Wheel event per desktop
+            let wheelHandler = function() {
+                if (!isTouching) {
+                    isScrolling = true;
+                    hideUI();
+                    showUI();
+                }
+            };
+            
+            // Aggiungi event listeners
+            document.addEventListener('touchstart', touchStartHandler, { passive: true });
+            document.addEventListener('touchend', touchEndHandler, { passive: true });
+            document.addEventListener('touchcancel', touchEndHandler, { passive: true });
+            window.addEventListener('scroll', scrollHandler, { passive: true });
+            window.addEventListener('wheel', wheelHandler, { passive: true });
         })();
 
         // Registrazione Service Worker (solo se non si usa file://)
